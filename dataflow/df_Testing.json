@@ -1,6 +1,9 @@
 {
-	"name": "dataflow1",
+	"name": "df_Testing",
 	"properties": {
+		"folder": {
+			"name": "Testing"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
