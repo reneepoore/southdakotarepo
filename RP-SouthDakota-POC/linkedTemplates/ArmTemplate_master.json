@@ -11,14 +11,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AdventureWorksLT2019'"
 		},
-		"SouthDakotaGitHub_credential": {
-			"type": "secureString",
-			"metadata": "Secure string for 'credential' of 'SouthDakotaGitHub'"
-		},
-		"SouthDakotaGitHub_properties_typeProperties_username": {
-			"type": "string",
-			"defaultValue": "reneepoore"
-		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -48,12 +40,6 @@
 					},
 					"AdventureWorksLT2019_connectionString": {
 						"value": "[parameters('AdventureWorksLT2019_connectionString')]"
-					},
-					"SouthDakotaGitHub_credential": {
-						"value": "[parameters('SouthDakotaGitHub_credential')]"
-					},
-					"SouthDakotaGitHub_properties_typeProperties_username": {
-						"value": "[parameters('SouthDakotaGitHub_properties_typeProperties_username')]"
 					}
 				}
 			},

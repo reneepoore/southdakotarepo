@@ -7,12 +7,6 @@
 		},
 		"AdventureWorksLT2019_connectionString": {
 			"value": ""
-		},
-		"SouthDakotaGitHub_credential": {
-			"value": ""
-		},
-		"SouthDakotaGitHub_properties_typeProperties_username": {
-			"value": "reneepoore"
 		}
 	}
 }
