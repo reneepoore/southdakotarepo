@@ -1,5 +1,5 @@
 {
-	"name": "FactSalesOrder",
+	"name": "pl_FactSalesOrder",
 	"properties": {
 		"description": "Pipeline for all fact jobs\n",
 		"activities": [
