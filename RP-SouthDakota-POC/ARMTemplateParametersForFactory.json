@@ -1,0 +1,18 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "RP-SouthDakota-POC"
+		},
+		"AdventureWorksLT2019_connectionString": {
+			"value": ""
+		},
+		"SouthDakotaGitHub_credential": {
+			"value": ""
+		},
+		"SouthDakotaGitHub_properties_typeProperties_username": {
+			"value": "reneepoore"
+		}
+	}
+}
