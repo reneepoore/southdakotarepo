@@ -361,18 +361,15 @@
 					},
 					{
 						"name": "CustomerDescription",
-						"type": "int",
-						"precision": 10
+						"type": "nvarchar"
 					},
 					{
 						"name": "ShipToAddressDescription",
-						"type": "int",
-						"precision": 10
+						"type": "nvarchar"
 					},
 					{
 						"name": "BillToAddressDesciption",
-						"type": "int",
-						"precision": 10
+						"type": "nvarchar"
 					},
 					{
 						"name": "ShipMethod",
@@ -640,9 +637,9 @@
 						"          SalesOrderNumber as string,",
 						"          PurchaseOrderNumber as string,",
 						"          AccountNumber as string,",
-						"          CustomerDescription as integer,",
-						"          ShipToAddressDescription as integer,",
-						"          BillToAddressDesciption as integer,",
+						"          CustomerDescription as string,",
+						"          ShipToAddressDescription as string,",
+						"          BillToAddressDesciption as string,",
 						"          ShipMethod as string,",
 						"          SubTotal as decimal(19,4),",
 						"          TaxAmt as decimal(19,4),",
@@ -689,7 +686,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/FactSalesOrder')]",
+			"name": "[concat(parameters('factoryName'), '/pl_FactSalesOrder')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -700,7 +697,7 @@
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
-							"timeout": "0.12:00:00",
+							"timeout": "0.00:05:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -717,7 +714,8 @@
 									"DimAddress": {},
 									"DimCustomer": {},
 									"targetSalesOrderHeader": {}
-								}
+								},
+								"linkedServiceParameters": {}
 							},
 							"staging": {},
 							"compute": {
@@ -731,6 +729,7 @@
 						}
 					}
 				],
+				"concurrency": 1,
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
@@ -740,61 +739,6 @@
 				},
 				"annotations": [],
 				"lastPublishTime": "2022-10-10T17:20:59Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_FactSalesOrderHeader')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "df_FactSalesOrderHeader",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_FactSalesOrderHeader",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"reportingSalesOrderHeader": {},
-									"DimAddress": {},
-									"DimCustomer": {},
-									"targetSalesOrderHeader": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine",
-							"continuationSettings": {
-								"customizedCheckpointKey": "5407c0a3-b745-41fd-be3f-281018716c07"
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Dimensions"
-				},
-				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/df_FactSalesOrderHeader')]"
