@@ -41,18 +41,15 @@
 			},
 			{
 				"name": "CustomerDescription",
-				"type": "int",
-				"precision": 10
+				"type": "nvarchar"
 			},
 			{
 				"name": "ShipToAddressDescription",
-				"type": "int",
-				"precision": 10
+				"type": "nvarchar"
 			},
 			{
 				"name": "BillToAddressDesciption",
-				"type": "int",
-				"precision": 10
+				"type": "nvarchar"
 			},
 			{
 				"name": "ShipMethod",
