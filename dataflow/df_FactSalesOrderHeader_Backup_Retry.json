@@ -59,9 +59,6 @@
 				},
 				{
 					"name": "SelectColumnsWCustomerDescription"
-				},
-				{
-					"name": "Upsert"
 				}
 			],
 			"scriptLines": [
@@ -208,8 +205,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectColumnsWCustomerDescription",
-				"SelectColumnsWCustomerDescription alterRow(insertIf(true())) ~> Upsert",
-				"Upsert sink(allowSchemaDrift: false,",
+				"SelectColumnsWCustomerDescription sink(allowSchemaDrift: false,",
 				"     validateSchema: false,",
 				"     input(",
 				"          SalesOrderID as integer,",
