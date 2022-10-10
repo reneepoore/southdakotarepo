@@ -1,0 +1,9 @@
+{
+	"name": "RP-SouthDakota-POC",
+	"location": "centralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "26b88113-700f-4eb4-b183-62b0ecacb390",
+		"tenantId": "32599cbd-2936-4030-972f-1bdcfa8a673b"
+	}
+}
