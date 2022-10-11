@@ -4,11 +4,11 @@
 		"description": "Pipeline for all fact jobs\n",
 		"activities": [
 			{
-				"name": "df_FactSalesOrderHeader_Backup_Retry",
+				"name": "df_FactSalesOrderHeader",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
-					"timeout": "0.00:05:00",
+					"timeout": "0.12:00:00",
 					"retry": 0,
 					"retryIntervalInSeconds": 30,
 					"secureOutput": false,
@@ -17,7 +17,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_FactSalesOrderHeader_Backup_Phase1",
+						"referenceName": "df_FactSalesOrderHeader",
 						"type": "DataFlowReference"
 					},
 					"compute": {
@@ -26,7 +26,7 @@
 					},
 					"traceLevel": "Fine",
 					"continuationSettings": {
-						"customizedCheckpointKey": "3ed283d7-ebb6-4727-8a1b-6cc91b792794"
+						"customizedCheckpointKey": "35de8662-643f-4cf3-919e-476e4eb2932b"
 					}
 				}
 			}
