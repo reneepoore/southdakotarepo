@@ -1230,6 +1230,9 @@
 						},
 						{
 							"name": "LkpShipToAddress"
+						},
+						{
+							"name": "Upsert"
 						}
 					],
 					"scriptLines": [
@@ -1301,7 +1304,8 @@
 						"     multiple: false,",
 						"     pickup: 'any',",
 						"     broadcast: 'auto')~> LkpShipToAddress",
-						"SelectColumnsWShipToDescription sink(allowSchemaDrift: true,",
+						"SelectColumnsWShipToDescription alterRow(upsertIf(true())) ~> Upsert",
+						"Upsert sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
 						"          SalesOrderID as integer,",
@@ -1321,9 +1325,10 @@
 						"          ModifiedDate as timestamp",
 						"     ),",
 						"     deletable:false,",
-						"     insertable:true,",
+						"     insertable:false,",
 						"     updateable:false,",
-						"     upsertable:false,",
+						"     upsertable:true,",
+						"     keys:['SalesOrderID'],",
 						"     format: 'table',",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
