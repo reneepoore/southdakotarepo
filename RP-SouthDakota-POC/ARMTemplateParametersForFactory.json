@@ -7,6 +7,15 @@
 		},
 		"AdventureWorksLT2019_connectionString": {
 			"value": ""
+		},
+		"AzureBlobStorage1_connectionString": {
+			"value": ""
+		},
+		"textSinkTest_accountKey": {
+			"value": ""
+		},
+		"textSinkTest_properties_typeProperties_url": {
+			"value": "https://reneetesting.dfs.core.windows.net/"
 		}
 	}
 }

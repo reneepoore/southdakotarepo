@@ -11,6 +11,18 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AdventureWorksLT2019'"
 		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+		},
+		"textSinkTest_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'textSinkTest'"
+		},
+		"textSinkTest_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://reneetesting.dfs.core.windows.net/"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -40,6 +52,15 @@
 					},
 					"AdventureWorksLT2019_connectionString": {
 						"value": "[parameters('AdventureWorksLT2019_connectionString')]"
+					},
+					"AzureBlobStorage1_connectionString": {
+						"value": "[parameters('AzureBlobStorage1_connectionString')]"
+					},
+					"textSinkTest_accountKey": {
+						"value": "[parameters('textSinkTest_accountKey')]"
+					},
+					"textSinkTest_properties_typeProperties_url": {
+						"value": "[parameters('textSinkTest_properties_typeProperties_url')]"
 					}
 				}
 			},
