@@ -53,6 +53,12 @@
 				},
 				{
 					"name": "SelectColumnWCustDescrip"
+				},
+				{
+					"name": "LkpBillToAddressDescr"
+				},
+				{
+					"name": "SelectColumnsWBillToDescr"
 				}
 			],
 			"scriptLines": [
@@ -99,7 +105,7 @@
 				"          rowguid as string,",
 				"          ModifiedDate as timestamp",
 				"     ),",
-				"     allowSchemaDrift: true,",
+				"     allowSchemaDrift: false,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> DimAddress",
@@ -138,7 +144,8 @@
 				"          TotalDue,",
 				"          ModifiedDate = reportingSalesOrderHeader@ModifiedDate,",
 				"          ShipToAddressDesscription = AddressLine1,",
-				"          CustomerID",
+				"          CustomerID,",
+				"          BillToAddressID",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectColumnsWShipToDescription",
@@ -146,7 +153,7 @@
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LkpShipToAddress",
-				"SelectColumnWCustDescrip alterRow(upsertIf(true())) ~> Upsert",
+				"SelectColumnsWBillToDescr alterRow(upsertIf(true())) ~> Upsert",
 				"SelectColumnsWShipToDescription, DimCustomer lookup(SelectColumnsWShipToDescription@CustomerID == DimCustomer@CustomerID,",
 				"     multiple: false,",
 				"     pickup: 'any',",
@@ -166,10 +173,34 @@
 				"          ModifiedDate = SelectColumnsWShipToDescription@ModifiedDate,",
 				"          ShipToAddressDesscription,",
 				"          CustomerDescription = CompanyName,",
-				"          ModifiedDate = DimCustomer@ModifiedDate",
+				"          ModifiedDate = DimCustomer@ModifiedDate,",
+				"          BillToAddressID",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectColumnWCustDescrip",
+				"SelectColumnWCustDescrip, DimAddress lookup(BillToAddressID == AddressLine1,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LkpBillToAddressDescr",
+				"LkpBillToAddressDescr select(mapColumn(",
+				"          SalesOrderID,",
+				"          OrderDate,",
+				"          Status,",
+				"          SalesOrderNumber,",
+				"          PurchaseOrderNumber,",
+				"          AccountNumber,",
+				"          ShipMethod,",
+				"          SubTotal,",
+				"          TaxAmt,",
+				"          Freight,",
+				"          TotalDue,",
+				"          ModifiedDate = SelectColumnWCustDescrip@ModifiedDate,",
+				"          ShipToAddressDesscription,",
+				"          BillToAddressDesciption = AddressLine1,",
+				"          CustomerDescription",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectColumnsWBillToDescr",
 				"Upsert sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -212,7 +243,8 @@
 				"          TotalDue,",
 				"          ModifiedDate,",
 				"          ShipToAddressDescription = ShipToAddressDesscription,",
-				"          CustomerDescription",
+				"          CustomerDescription,",
+				"          BillToAddressDesciption",
 				"     )) ~> targetSalesOrders"
 			]
 		}
