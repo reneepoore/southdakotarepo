@@ -54,6 +54,7 @@
 								"parameters": {},
 								"datasetParameters": {
 									"reportingSalesOrderHeader": {},
+									"DimAddress": {},
 									"sink1": {}
 								}
 							},
@@ -109,9 +110,9 @@
 								"parameters": {},
 								"datasetParameters": {
 									"reportingSalesOrderHeader": {},
+									"DimAddress": {},
 									"sink1": {}
-								},
-								"linkedServiceParameters": {}
+								}
 							},
 							"staging": {},
 							"compute": {
@@ -1205,6 +1206,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "reportingSalesOrderHeader"
+						},
+						{
+							"dataset": {
+								"referenceName": "DimAddress",
+								"type": "DatasetReference"
+							},
+							"name": "DimAddress"
 						}
 					],
 					"sinks": [
@@ -1219,6 +1227,9 @@
 					"transformations": [
 						{
 							"name": "SelectColumnsWShipToDescription"
+						},
+						{
+							"name": "LkpShipToAddress"
 						}
 					],
 					"scriptLines": [
@@ -1252,7 +1263,22 @@
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table',",
 						"     mode: 'read') ~> reportingSalesOrderHeader",
-						"reportingSalesOrderHeader select(mapColumn(",
+						"source(output(",
+						"          AddressID as integer,",
+						"          AddressLine1 as string,",
+						"          AddressLine2 as string,",
+						"          City as string,",
+						"          StateProvince as string,",
+						"          CountryRegion as string,",
+						"          PostalCode as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> DimAddress",
+						"LkpShipToAddress select(mapColumn(",
 						"          SalesOrderID,",
 						"          OrderDate,",
 						"          Status,",
@@ -1264,10 +1290,15 @@
 						"          TaxAmt,",
 						"          Freight,",
 						"          TotalDue,",
-						"          ModifiedDate",
+						"          ModifiedDate = reportingSalesOrderHeader@ModifiedDate,",
+						"          ShipToAddressDesscription = AddressLine1",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> SelectColumnsWShipToDescription",
+						"reportingSalesOrderHeader, DimAddress lookup(ShipToAddressID == AddressID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LkpShipToAddress",
 						"SelectColumnsWShipToDescription sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -1307,13 +1338,15 @@
 						"          TaxAmt,",
 						"          Freight,",
 						"          TotalDue,",
-						"          ModifiedDate",
+						"          ModifiedDate,",
+						"          ShipToAddressDescription = ShipToAddressDesscription",
 						"     )) ~> sink1"
 					]
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]",
+				"[concat(variables('factoryId'), '/datasets/DimAddress')]",
 				"[concat(variables('factoryId'), '/datasets/targetSalesOrderHeader')]"
 			]
 		},
