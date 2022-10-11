@@ -110,7 +110,8 @@
 								"datasetParameters": {
 									"reportingSalesOrderHeader": {},
 									"sink1": {}
-								}
+								},
+								"linkedServiceParameters": {}
 							},
 							"staging": {},
 							"compute": {
@@ -1209,7 +1210,7 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "Dummy",
+								"referenceName": "targetSalesOrderHeader",
 								"type": "DatasetReference"
 							},
 							"name": "sink1"
@@ -1270,16 +1271,50 @@
 						"SelectColumnsWShipToDescription sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
-						"          Column_1 as string",
+						"          SalesOrderID as integer,",
+						"          OrderDate as timestamp,",
+						"          Status as integer,",
+						"          SalesOrderNumber as string,",
+						"          PurchaseOrderNumber as string,",
+						"          AccountNumber as string,",
+						"          CustomerDescription as string,",
+						"          ShipToAddressDescription as string,",
+						"          BillToAddressDesciption as string,",
+						"          ShipMethod as string,",
+						"          SubTotal as decimal(19,4),",
+						"          TaxAmt as decimal(19,4),",
+						"          Freight as decimal(19,4),",
+						"          TotalDue as decimal(19,4),",
+						"          ModifiedDate as timestamp",
 						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> sink1"
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          SalesOrderID,",
+						"          OrderDate,",
+						"          Status,",
+						"          SalesOrderNumber,",
+						"          PurchaseOrderNumber,",
+						"          AccountNumber,",
+						"          ShipMethod,",
+						"          SubTotal,",
+						"          TaxAmt,",
+						"          Freight,",
+						"          TotalDue,",
+						"          ModifiedDate",
+						"     )) ~> sink1"
 					]
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]",
-				"[concat(variables('factoryId'), '/datasets/Dummy')]"
+				"[concat(variables('factoryId'), '/datasets/targetSalesOrderHeader')]"
 			]
 		},
 		{
