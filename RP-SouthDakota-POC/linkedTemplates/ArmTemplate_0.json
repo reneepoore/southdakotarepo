@@ -1048,13 +1048,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "reportingSalesOrderHeader"
-						},
-						{
-							"dataset": {
-								"referenceName": "DimAddress",
-								"type": "DatasetReference"
-							},
-							"name": "DimAddress"
 						}
 					],
 					"sinks": [
@@ -1067,10 +1060,6 @@
 						}
 					],
 					"transformations": [
-						{
-							"name": "LkpShipToAddress",
-							"description": "Add second stream to the Lookup from settings. Lookup ShipTo Address"
-						},
 						{
 							"name": "SelectColumnsWShipToDescription"
 						}
@@ -1106,44 +1095,19 @@
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table',",
 						"     mode: 'read') ~> reportingSalesOrderHeader",
-						"source(output(",
-						"          AddressID as integer,",
-						"          AddressLine1 as string,",
-						"          AddressLine2 as string,",
-						"          City as string,",
-						"          StateProvince as string,",
-						"          CountryRegion as string,",
-						"          PostalCode as string,",
-						"          rowguid as string,",
-						"          ModifiedDate as timestamp",
-						"     ),",
-						"     allowSchemaDrift: false,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> DimAddress",
-						"reportingSalesOrderHeader, DimAddress lookup(ShipToAddressID == AddressID,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> LkpShipToAddress",
-						"LkpShipToAddress select(mapColumn(",
+						"reportingSalesOrderHeader select(mapColumn(",
 						"          SalesOrderID,",
 						"          OrderDate,",
 						"          Status,",
 						"          SalesOrderNumber,",
 						"          PurchaseOrderNumber,",
 						"          AccountNumber,",
-						"          CustomerID,",
-						"          ShipToAddressID,",
-						"          BillToAddressID,",
 						"          ShipMethod,",
 						"          SubTotal,",
 						"          TaxAmt,",
 						"          Freight,",
 						"          TotalDue,",
-						"          Comment,",
-						"          rowguid = reportingSalesOrderHeader@rowguid,",
-						"          ModifiedDate = reportingSalesOrderHeader@ModifiedDate,",
-						"          ShipToAddressLine1 = AddressLine1",
+						"          ModifiedDate",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> SelectColumnsWShipToDescription",
@@ -1159,7 +1123,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]",
-				"[concat(variables('factoryId'), '/datasets/DimAddress')]",
 				"[concat(variables('factoryId'), '/datasets/Dummy')]"
 			]
 		},
@@ -1262,7 +1225,6 @@
 								"parameters": {},
 								"datasetParameters": {
 									"reportingSalesOrderHeader": {},
-									"DimAddress": {},
 									"sink1": {}
 								}
 							},
@@ -1294,6 +1256,56 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/pl_Test_Orders')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "df_FactSalesOrderHeader_Backup_Retry",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:05:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_FactSalesOrderHeader_Backup_Retry",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"reportingSalesOrderHeader": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_FactSalesOrderHeader_Backup_Retry')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/pl_Testing')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1304,7 +1316,7 @@
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
-							"timeout": "0.12:00:00",
+							"timeout": "0.00:05:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
