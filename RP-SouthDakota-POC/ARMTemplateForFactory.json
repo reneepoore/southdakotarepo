@@ -143,11 +143,11 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "dataflow1",
+						"name": "df_FactSalesOrderHeader_Backup",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
-							"timeout": "0.00:05:00",
+							"timeout": "0.12:00:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -156,12 +156,14 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_Testing",
+								"referenceName": "df_FactSalesOrderHeader_Backup",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"source1": {},
-									"sink1": {}
+									"reportingSalesOrderHeader": {},
+									"DimAddress": {},
+									"DimCustomer": {},
+									"targetSalesOrderHeader": {}
 								}
 							},
 							"staging": {},
@@ -169,7 +171,10 @@
 								"coreCount": 8,
 								"computeType": "General"
 							},
-							"traceLevel": "Fine"
+							"traceLevel": "Fine",
+							"continuationSettings": {
+								"customizedCheckpointKey": "8c28a6a0-6697-4a24-ab01-470ae25be398"
+							}
 						}
 					}
 				],
@@ -183,7 +188,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_Testing')]"
+				"[concat(variables('factoryId'), '/dataflows/df_FactSalesOrderHeader_Backup')]"
 			]
 		},
 		{
