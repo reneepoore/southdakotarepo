@@ -1032,7 +1032,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_FactSalesOrderHeader_Backup_Retry')]",
+			"name": "[concat(parameters('factoryName'), '/df_FactSalesOrderHeader_Backup_Phase2')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1055,6 +1055,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "DimAddress"
+						},
+						{
+							"dataset": {
+								"referenceName": "DimCustomer",
+								"type": "DatasetReference"
+							},
+							"name": "DimCustomer"
 						}
 					],
 					"sinks": [
@@ -1075,6 +1082,12 @@
 						},
 						{
 							"name": "Upsert"
+						},
+						{
+							"name": "LkpCustomerDescip"
+						},
+						{
+							"name": "SelectColumnWCustDescrip"
 						}
 					],
 					"scriptLines": [
@@ -1125,6 +1138,27 @@
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> DimAddress",
+						"source(output(",
+						"          CustomerID as integer,",
+						"          NameStyle as boolean,",
+						"          Title as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          Suffix as string,",
+						"          CompanyName as string,",
+						"          SalesPerson as string,",
+						"          EmailAddress as string,",
+						"          Phone as string,",
+						"          PasswordHash as string,",
+						"          PasswordSalt as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> DimCustomer",
 						"LkpShipToAddress select(mapColumn(",
 						"          SalesOrderID,",
 						"          OrderDate,",
@@ -1138,7 +1172,8 @@
 						"          Freight,",
 						"          TotalDue,",
 						"          ModifiedDate = reportingSalesOrderHeader@ModifiedDate,",
-						"          ShipToAddressDesscription = AddressLine1",
+						"          ShipToAddressDesscription = AddressLine1,",
+						"          CustomerID",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> SelectColumnsWShipToDescription",
@@ -1146,7 +1181,30 @@
 						"     multiple: false,",
 						"     pickup: 'any',",
 						"     broadcast: 'auto')~> LkpShipToAddress",
-						"SelectColumnsWShipToDescription alterRow(upsertIf(true())) ~> Upsert",
+						"SelectColumnWCustDescrip alterRow(upsertIf(true())) ~> Upsert",
+						"SelectColumnsWShipToDescription, DimCustomer lookup(SelectColumnsWShipToDescription@CustomerID == DimCustomer@CustomerID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LkpCustomerDescip",
+						"LkpCustomerDescip select(mapColumn(",
+						"          SalesOrderID,",
+						"          OrderDate,",
+						"          Status,",
+						"          SalesOrderNumber,",
+						"          PurchaseOrderNumber,",
+						"          AccountNumber,",
+						"          ShipMethod,",
+						"          SubTotal,",
+						"          TaxAmt,",
+						"          Freight,",
+						"          TotalDue,",
+						"          ModifiedDate = SelectColumnsWShipToDescription@ModifiedDate,",
+						"          ShipToAddressDesscription,",
+						"          CustomerDescription = CompanyName,",
+						"          ModifiedDate = DimCustomer@ModifiedDate",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumnWCustDescrip",
 						"Upsert sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -1188,7 +1246,8 @@
 						"          Freight,",
 						"          TotalDue,",
 						"          ModifiedDate,",
-						"          ShipToAddressDescription = ShipToAddressDesscription",
+						"          ShipToAddressDescription = ShipToAddressDesscription,",
+						"          CustomerDescription",
 						"     )) ~> sink1"
 					]
 				}
@@ -1196,11 +1255,12 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]",
 				"[concat(variables('factoryId'), '/datasets/DimAddress')]",
+				"[concat(variables('factoryId'), '/datasets/DimCustomer')]",
 				"[concat(variables('factoryId'), '/datasets/targetSalesOrderHeader')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_FactSalesOrderHeader_Backup_phase2')]",
+			"name": "[concat(parameters('factoryName'), '/df_FactSalesOrderHeader_Backup_Retry')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1555,11 +1615,11 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "df_FactSalesOrderHeader_Backup_phase2",
+						"name": "df_FactSalesOrderHeader_Backup_Phase2",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
-							"timeout": "0.12:00:00",
+							"timeout": "0.00:05:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -1568,12 +1628,13 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_FactSalesOrderHeader_Backup_phase2",
+								"referenceName": "df_FactSalesOrderHeader_Backup_Phase2",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
 									"reportingSalesOrderHeader": {},
 									"DimAddress": {},
+									"DimCustomer": {},
 									"sink1": {}
 								}
 							},
@@ -1599,7 +1660,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_FactSalesOrderHeader_Backup_phase2')]"
+				"[concat(variables('factoryId'), '/dataflows/df_FactSalesOrderHeader_Backup_Phase2')]"
 			]
 		},
 		{
