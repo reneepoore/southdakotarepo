@@ -35,7 +35,7 @@
 						"referenceName": "targetSalesOrderHeader",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "targetSalesOrders"
 				}
 			],
 			"transformations": [
@@ -213,7 +213,7 @@
 				"          ModifiedDate,",
 				"          ShipToAddressDescription = ShipToAddressDesscription,",
 				"          CustomerDescription",
-				"     )) ~> sink1"
+				"     )) ~> targetSalesOrders"
 			]
 		}
 	}
