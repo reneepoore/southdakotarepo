@@ -178,7 +178,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectColumnWCustDescrip",
-				"SelectColumnWCustDescrip, DimAddress lookup(BillToAddressID == AddressLine1,",
+				"SelectColumnWCustDescrip, DimAddress lookup(BillToAddressID == AddressID,",
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LkpBillToAddressDescr",
