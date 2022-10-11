@@ -1,5 +1,5 @@
 {
-	"name": "DelimitedText1",
+	"name": "Dummy",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureBlobStorage1",

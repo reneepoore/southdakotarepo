@@ -18,7 +18,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "DelimitedText1",
+						"referenceName": "Dummy",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
