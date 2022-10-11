@@ -1,5 +1,5 @@
 {
-	"name": "df_FactSalesOrderHeader_Backup_phase2",
+	"name": "df_FactSalesOrderHeader_Backup_Phase2",
 	"properties": {
 		"folder": {
 			"name": "Facts"
@@ -20,6 +20,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "DimAddress"
+				},
+				{
+					"dataset": {
+						"referenceName": "DimCustomer",
+						"type": "DatasetReference"
+					},
+					"name": "DimCustomer"
 				}
 			],
 			"sinks": [
@@ -40,6 +47,12 @@
 				},
 				{
 					"name": "Upsert"
+				},
+				{
+					"name": "LkpCustomerDescip"
+				},
+				{
+					"name": "SelectColumnWCustDescrip"
 				}
 			],
 			"scriptLines": [
@@ -90,6 +103,27 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> DimAddress",
+				"source(output(",
+				"          CustomerID as integer,",
+				"          NameStyle as boolean,",
+				"          Title as string,",
+				"          FirstName as string,",
+				"          MiddleName as string,",
+				"          LastName as string,",
+				"          Suffix as string,",
+				"          CompanyName as string,",
+				"          SalesPerson as string,",
+				"          EmailAddress as string,",
+				"          Phone as string,",
+				"          PasswordHash as string,",
+				"          PasswordSalt as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: false,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> DimCustomer",
 				"LkpShipToAddress select(mapColumn(",
 				"          SalesOrderID,",
 				"          OrderDate,",
@@ -103,7 +137,8 @@
 				"          Freight,",
 				"          TotalDue,",
 				"          ModifiedDate = reportingSalesOrderHeader@ModifiedDate,",
-				"          ShipToAddressDesscription = AddressLine1",
+				"          ShipToAddressDesscription = AddressLine1,",
+				"          CustomerID",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectColumnsWShipToDescription",
@@ -111,7 +146,30 @@
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LkpShipToAddress",
-				"SelectColumnsWShipToDescription alterRow(upsertIf(true())) ~> Upsert",
+				"SelectColumnWCustDescrip alterRow(upsertIf(true())) ~> Upsert",
+				"SelectColumnsWShipToDescription, DimCustomer lookup(SelectColumnsWShipToDescription@CustomerID == DimCustomer@CustomerID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LkpCustomerDescip",
+				"LkpCustomerDescip select(mapColumn(",
+				"          SalesOrderID,",
+				"          OrderDate,",
+				"          Status,",
+				"          SalesOrderNumber,",
+				"          PurchaseOrderNumber,",
+				"          AccountNumber,",
+				"          ShipMethod,",
+				"          SubTotal,",
+				"          TaxAmt,",
+				"          Freight,",
+				"          TotalDue,",
+				"          ModifiedDate = SelectColumnsWShipToDescription@ModifiedDate,",
+				"          ShipToAddressDesscription,",
+				"          CustomerDescription = CompanyName,",
+				"          ModifiedDate = DimCustomer@ModifiedDate",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectColumnWCustDescrip",
 				"Upsert sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -153,7 +211,8 @@
 				"          Freight,",
 				"          TotalDue,",
 				"          ModifiedDate,",
-				"          ShipToAddressDescription = ShipToAddressDesscription",
+				"          ShipToAddressDescription = ShipToAddressDesscription,",
+				"          CustomerDescription",
 				"     )) ~> sink1"
 			]
 		}
