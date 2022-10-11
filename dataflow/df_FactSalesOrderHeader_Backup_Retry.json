@@ -13,13 +13,6 @@
 						"type": "DatasetReference"
 					},
 					"name": "reportingSalesOrderHeader"
-				},
-				{
-					"dataset": {
-						"referenceName": "DimAddress",
-						"type": "DatasetReference"
-					},
-					"name": "DimAddress"
 				}
 			],
 			"sinks": [
@@ -32,10 +25,6 @@
 				}
 			],
 			"transformations": [
-				{
-					"name": "LkpShipToAddress",
-					"description": "Add second stream to the Lookup from settings. Lookup ShipTo Address"
-				},
 				{
 					"name": "SelectColumnsWShipToDescription"
 				}
@@ -71,44 +60,19 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table',",
 				"     mode: 'read') ~> reportingSalesOrderHeader",
-				"source(output(",
-				"          AddressID as integer,",
-				"          AddressLine1 as string,",
-				"          AddressLine2 as string,",
-				"          City as string,",
-				"          StateProvince as string,",
-				"          CountryRegion as string,",
-				"          PostalCode as string,",
-				"          rowguid as string,",
-				"          ModifiedDate as timestamp",
-				"     ),",
-				"     allowSchemaDrift: false,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> DimAddress",
-				"reportingSalesOrderHeader, DimAddress lookup(ShipToAddressID == AddressID,",
-				"     multiple: false,",
-				"     pickup: 'any',",
-				"     broadcast: 'auto')~> LkpShipToAddress",
-				"LkpShipToAddress select(mapColumn(",
+				"reportingSalesOrderHeader select(mapColumn(",
 				"          SalesOrderID,",
 				"          OrderDate,",
 				"          Status,",
 				"          SalesOrderNumber,",
 				"          PurchaseOrderNumber,",
 				"          AccountNumber,",
-				"          CustomerID,",
-				"          ShipToAddressID,",
-				"          BillToAddressID,",
 				"          ShipMethod,",
 				"          SubTotal,",
 				"          TaxAmt,",
 				"          Freight,",
 				"          TotalDue,",
-				"          Comment,",
-				"          rowguid = reportingSalesOrderHeader@rowguid,",
-				"          ModifiedDate = reportingSalesOrderHeader@ModifiedDate,",
-				"          ShipToAddressLine1 = AddressLine1",
+				"          ModifiedDate",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectColumnsWShipToDescription",
