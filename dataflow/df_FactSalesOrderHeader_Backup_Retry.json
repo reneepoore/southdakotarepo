@@ -20,13 +20,6 @@
 						"type": "DatasetReference"
 					},
 					"name": "DimAddress"
-				},
-				{
-					"dataset": {
-						"referenceName": "DimCustomer",
-						"type": "DatasetReference"
-					},
-					"name": "DimCustomer"
 				}
 			],
 			"sinks": [
@@ -45,13 +38,6 @@
 				},
 				{
 					"name": "SelectColumnsWShipToDescription"
-				},
-				{
-					"name": "LkpCustomerDescription",
-					"description": "Add second stream to the Lookup from settings. Lookup Customer Description"
-				},
-				{
-					"name": "SelectColumnsWCustomerDescription"
 				}
 			],
 			"scriptLines": [
@@ -102,27 +88,6 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> DimAddress",
-				"source(output(",
-				"          CustomerID as integer,",
-				"          NameStyle as boolean,",
-				"          Title as string,",
-				"          FirstName as string,",
-				"          MiddleName as string,",
-				"          LastName as string,",
-				"          Suffix as string,",
-				"          CompanyName as string,",
-				"          SalesPerson as string,",
-				"          EmailAddress as string,",
-				"          Phone as string,",
-				"          PasswordHash as string,",
-				"          PasswordSalt as string,",
-				"          rowguid as string,",
-				"          ModifiedDate as timestamp",
-				"     ),",
-				"     allowSchemaDrift: false,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> DimCustomer",
 				"reportingSalesOrderHeader, DimAddress lookup(ShipToAddressID == AddressID,",
 				"     multiple: false,",
 				"     pickup: 'any',",
@@ -149,29 +114,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectColumnsWShipToDescription",
-				"SelectColumnsWShipToDescription, DimCustomer lookup(SelectColumnsWShipToDescription@CustomerID == DimCustomer@CustomerID,",
-				"     multiple: false,",
-				"     pickup: 'any',",
-				"     broadcast: 'auto')~> LkpCustomerDescription",
-				"LkpCustomerDescription select(mapColumn(",
-				"          SalesOrderID,",
-				"          OrderDate,",
-				"          Status,",
-				"          SalesOrderNumber,",
-				"          PurchaseOrderNumber,",
-				"          AccountNumber,",
-				"          ShipMethod,",
-				"          SubTotal,",
-				"          TaxAmt,",
-				"          Freight,",
-				"          TotalDue,",
-				"          ShipToAddressDescription = ShipToAddressLine1,",
-				"          CustomerDescription = CompanyName,",
-				"          ModifiedDate = SelectColumnsWShipToDescription@ModifiedDate",
-				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectColumnsWCustomerDescription",
-				"SelectColumnsWCustomerDescription sink(allowSchemaDrift: true,",
+				"SelectColumnsWShipToDescription sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          Column_1 as string",
