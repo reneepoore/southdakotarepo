@@ -17,7 +17,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_FactSalesOrderHeader_Backup_Retry",
+						"referenceName": "df_FactSalesOrderHeader_Backup_Phase1",
 						"type": "DataFlowReference"
 					},
 					"compute": {

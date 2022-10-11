@@ -1,9 +1,9 @@
 {
-	"name": "pl_Test_Orders_Retry",
+	"name": "pl_Test_Orders_Phase1",
 	"properties": {
 		"activities": [
 			{
-				"name": "df_FactSalesOrderHeader_Backup_Retry",
+				"name": "df_FactSalesOrderHeader_Backup_Phase1",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_FactSalesOrderHeader_Backup_Retry",
+						"referenceName": "df_FactSalesOrderHeader_Backup_Phase1",
 						"type": "DataFlowReference"
 					},
 					"compute": {
