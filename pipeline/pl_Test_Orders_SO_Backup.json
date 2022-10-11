@@ -1,9 +1,9 @@
 {
-	"name": "pl_Testing",
+	"name": "pl_Test_Orders_SO_Backup",
 	"properties": {
 		"activities": [
 			{
-				"name": "df_Testing",
+				"name": "df_FactSalesOrderHeader_Backup_phase2",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,14 +16,17 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_Testing",
+						"referenceName": "df_FactSalesOrderHeader_Backup_phase2",
 						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
 					},
-					"traceLevel": "Fine"
+					"traceLevel": "Fine",
+					"continuationSettings": {
+						"customizedCheckpointKey": "3de86dab-4aee-4c8a-997a-f18d3a39c48c"
+					}
 				}
 			}
 		],
