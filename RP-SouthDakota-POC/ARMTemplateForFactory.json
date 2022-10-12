@@ -229,7 +229,7 @@
 							},
 							"traceLevel": "Fine",
 							"continuationSettings": {
-								"customizedCheckpointKey": "factsalesorderphase3"
+								"customizedCheckpointKey": "factsalesorderphase4"
 							}
 						}
 					}
