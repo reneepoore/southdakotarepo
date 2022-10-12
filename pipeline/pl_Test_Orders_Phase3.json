@@ -1,0 +1,38 @@
+{
+	"name": "pl_Test_Orders_Phase3",
+	"properties": {
+		"activities": [
+			{
+				"name": "df_FactSalesOrderHeader_Backup_Phase2",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:05:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_FactSalesOrderHeader_Backup_Phase2",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine",
+					"continuationSettings": {
+						"customizedCheckpointKey": "3de86dab-4aee-4c8a-997a-f18d3a39c48c"
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "Testing"
+		},
+		"annotations": []
+	}
+}
