@@ -1,9 +1,9 @@
 {
-	"name": "pipeline1",
+	"name": "DimPlaceHolder",
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "ThisIsAPlaceHolder",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
