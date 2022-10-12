@@ -1,0 +1,9 @@
+{
+	"name": "pl_StagingPlaceHolder",
+	"properties": {
+		"folder": {
+			"name": "Staging"
+		},
+		"annotations": []
+	}
+}
