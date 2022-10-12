@@ -25,7 +25,7 @@
 					},
 					"traceLevel": "Fine",
 					"continuationSettings": {
-						"customizedCheckpointKey": "3de86dab-4aee-4c8a-997a-f18d3a39c48c"
+						"customizedCheckpointKey": "test"
 					}
 				}
 			}
