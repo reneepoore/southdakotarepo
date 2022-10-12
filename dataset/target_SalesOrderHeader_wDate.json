@@ -1,0 +1,100 @@
+{
+	"name": "target_SalesOrderHeader_wDate",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AdventureWorksLT2019",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Testing"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SalesOrderID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "OrderDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Status",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "SalesOrderNumber",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PurchaseOrderNumber",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AccountNumber",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CustomerDescription",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ShipToAddressDescription",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BillToAddressDesciption",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ShipMethod",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SubTotal",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "TaxAmt",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "Freight",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "TotalDue",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "ModifiedDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDate",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "SalesLT",
+			"table": "target_SalesOrderHeader_wDate"
+		}
+	}
+}
