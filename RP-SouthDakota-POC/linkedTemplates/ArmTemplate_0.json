@@ -1340,7 +1340,7 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "targetSalesOrderHeader",
+								"referenceName": "target_SalesOrderHeader_wDate",
 								"type": "DatasetReference"
 							},
 							"name": "targetSalesOrders"
@@ -1526,7 +1526,8 @@
 						"          TaxAmt as decimal(19,4),",
 						"          Freight as decimal(19,4),",
 						"          TotalDue as decimal(19,4),",
-						"          ModifiedDate as timestamp",
+						"          ModifiedDate as timestamp,",
+						"          CreatedDate as timestamp",
 						"     ),",
 						"     deletable:false,",
 						"     insertable:false,",
@@ -1561,7 +1562,7 @@
 				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]",
 				"[concat(variables('factoryId'), '/datasets/DimAddress')]",
 				"[concat(variables('factoryId'), '/datasets/DimCustomer')]",
-				"[concat(variables('factoryId'), '/datasets/targetSalesOrderHeader')]"
+				"[concat(variables('factoryId'), '/datasets/target_SalesOrderHeader_wDate')]"
 			]
 		},
 		{
