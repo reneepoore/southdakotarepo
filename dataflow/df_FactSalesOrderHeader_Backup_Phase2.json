@@ -32,7 +32,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "target_SalesOrderHeader_wDate",
+						"referenceName": "targetSalesOrderHeader",
 						"type": "DatasetReference"
 					},
 					"name": "targetSalesOrders"
@@ -218,8 +218,7 @@
 				"          TaxAmt as decimal(19,4),",
 				"          Freight as decimal(19,4),",
 				"          TotalDue as decimal(19,4),",
-				"          ModifiedDate as timestamp,",
-				"          CreatedDate as timestamp",
+				"          ModifiedDate as timestamp",
 				"     ),",
 				"     deletable:false,",
 				"     insertable:false,",
