@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_PlaceHolder",
+						"referenceName": "df_DimPlaceHolder",
 						"type": "DataFlowReference"
 					},
 					"compute": {
