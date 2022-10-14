@@ -265,7 +265,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Execute Pipelines",
+						"name": "Execute pl_Testing",
 						"type": "ExecutePipeline",
 						"dependsOn": [],
 						"userProperties": [],
@@ -283,7 +283,7 @@
 						"type": "WebActivity",
 						"dependsOn": [
 							{
-								"activity": "Execute Pipelines",
+								"activity": "Execute pl_Testing",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -302,7 +302,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"@{activity('Execute Pipelines').output.pipelineName} SUCCEEDED!\",\n    \"message\": \"Pipeline run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipelines').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipelines').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
+								"value": "{\n    \"title\": \"@{activity('Execute pl_Testing').output.pipelineName} SUCCEEDED!\",\n    \"message\": \"Pipeline run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute pl_Testing').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute pl_Testing').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
 								"type": "Expression"
 							}
 						}
@@ -312,7 +312,7 @@
 						"type": "WebActivity",
 						"dependsOn": [
 							{
-								"activity": "Execute Pipelines",
+								"activity": "Execute pl_Testing",
 								"dependencyConditions": [
 									"Failed"
 								]
@@ -331,7 +331,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"@{activity('Execute Pipelines').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute Pipelines').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipelines').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipelines').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
+								"value": "{\n    \"title\": \"@{activity('Execute pl_Testing').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute pl_Testing').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute pl_Testing').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute pl_Testing').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
 								"type": "Expression"
 							}
 						}
@@ -573,7 +573,7 @@
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
-							"timeout": "0.12:00:00",
+							"timeout": "0.00:05:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -2223,7 +2223,8 @@
 								"referenceName": "targetSalesOrderHeader",
 								"type": "DatasetReference"
 							},
-							"name": "targetSalesOrders"
+							"name": "targetSalesOrders",
+							"description": "update/insert  data to targetSalesOrderHeader"
 						}
 					],
 					"transformations": [
@@ -2234,7 +2235,8 @@
 							"name": "LkpShipToAddress"
 						},
 						{
-							"name": "Upsert"
+							"name": "Upsert",
+							"description": "Update/Insert DimCustomer_Target"
 						}
 					],
 					"scriptLines": [
