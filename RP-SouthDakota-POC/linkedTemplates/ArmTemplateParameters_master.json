@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "RP-SouthDakota-POC"
 		},
+		"AdventureWorksDW_connectionString": {
+			"value": ""
+		},
 		"AdventureWorksLT2019_connectionString": {
 			"value": ""
 		},

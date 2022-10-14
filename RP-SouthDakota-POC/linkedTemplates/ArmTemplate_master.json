@@ -7,6 +7,10 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "RP-SouthDakota-POC"
 		},
+		"AdventureWorksDW_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AdventureWorksDW'"
+		},
 		"AdventureWorksLT2019_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AdventureWorksLT2019'"
@@ -49,6 +53,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"AdventureWorksDW_connectionString": {
+						"value": "[parameters('AdventureWorksDW_connectionString')]"
 					},
 					"AdventureWorksLT2019_connectionString": {
 						"value": "[parameters('AdventureWorksLT2019_connectionString')]"
