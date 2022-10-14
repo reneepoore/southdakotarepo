@@ -28,7 +28,8 @@
 						"referenceName": "targetSalesOrderHeader",
 						"type": "DatasetReference"
 					},
-					"name": "targetSalesOrders"
+					"name": "targetSalesOrders",
+					"description": "update/insert  data to targetSalesOrderHeader"
 				}
 			],
 			"transformations": [
@@ -39,7 +40,8 @@
 					"name": "LkpShipToAddress"
 				},
 				{
-					"name": "Upsert"
+					"name": "Upsert",
+					"description": "Update/Insert DimCustomer_Target"
 				}
 			],
 			"scriptLines": [

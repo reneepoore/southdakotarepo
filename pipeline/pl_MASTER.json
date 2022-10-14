@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Execute Pipelines",
+				"name": "Execute pl_Testing",
 				"type": "ExecutePipeline",
 				"dependsOn": [],
 				"userProperties": [],
@@ -20,7 +20,7 @@
 				"type": "WebActivity",
 				"dependsOn": [
 					{
-						"activity": "Execute Pipelines",
+						"activity": "Execute pl_Testing",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -48,7 +48,7 @@
 				"type": "WebActivity",
 				"dependsOn": [
 					{
-						"activity": "Execute Pipelines",
+						"activity": "Execute pl_Testing",
 						"dependencyConditions": [
 							"Failed"
 						]
