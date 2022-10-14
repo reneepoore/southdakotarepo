@@ -1,0 +1,19 @@
+{
+	"name": "AzureSqlTable11",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AdventureWorksLT2019",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "POCWork"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "errorlogging"
+		}
+	}
+}
