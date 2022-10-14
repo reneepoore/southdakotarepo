@@ -1,12 +1,12 @@
 {
-	"name": "DimCustomer1",
+	"name": "DimCustomerAWDW",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AdventureWorksLT2019",
+			"referenceName": "AdventureWorksDW",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "Source"
+			"name": "Testing/Source"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",

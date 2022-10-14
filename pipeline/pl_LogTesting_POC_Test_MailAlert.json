@@ -78,7 +78,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "AzureSqlTable1",
+						"referenceName": "ErrorLogging",
 						"type": "DatasetReference"
 					}
 				],
@@ -91,7 +91,7 @@
 			}
 		],
 		"folder": {
-			"name": "Mail Alert"
+			"name": "Testing/Mail Alert"
 		},
 		"annotations": [],
 		"lastPublishTime": "2022-10-04T20:18:01Z"

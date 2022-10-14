@@ -1,12 +1,12 @@
 {
-	"name": "AzureSqlTable1",
+	"name": "ErrorLogging",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AdventureWorksLT2019",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "POCWork"
+			"name": "Testing/POCWork"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",

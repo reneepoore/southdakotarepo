@@ -9,7 +9,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "pl_LogTesting_POC_Test_MailAlert1",
+						"referenceName": "pl_Testing",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
@@ -72,6 +72,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "Testing"
+		},
 		"annotations": [],
 		"lastPublishTime": "2022-10-04T20:04:46Z"
 	}
