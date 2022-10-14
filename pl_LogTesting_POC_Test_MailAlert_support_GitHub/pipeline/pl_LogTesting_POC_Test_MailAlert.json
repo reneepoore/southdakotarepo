@@ -1,0 +1,100 @@
+{
+    "name": "pl_LogTesting_POC_Test_MailAlert",
+    "properties": {
+        "activities": [
+            {
+                "name": "df_Logging_Src_Test",
+                "type": "ExecuteDataFlow",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataflow": {
+                        "referenceName": "df_Logging_Src_Test",
+                        "type": "DataFlowReference"
+                    },
+                    "compute": {
+                        "coreCount": 8,
+                        "computeType": "General"
+                    },
+                    "traceLevel": "Fine"
+                }
+            },
+            {
+                "name": "Create Error Output File",
+                "type": "Copy",
+                "dependsOn": [
+                    {
+                        "activity": "df_Logging_Src_Test",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "AzureSqlSource",
+                        "sqlReaderQuery": {
+                            "value": "SELECT \n'@{activity('df_Logging_Src_Test').output.runStatus.metrics.tgtDimCustomerTarget.rowsWritten}' as rowswritten,\n'@{activity('df_Logging_Src_Test').output.runStatus.metrics.tgtDimCustomerTarget.progressState}' as status\n",
+                            "type": "Expression"
+                        },
+                        "queryTimeout": "02:00:00",
+                        "partitionOption": "None"
+                    },
+                    "sink": {
+                        "type": "DelimitedTextSink",
+                        "storeSettings": {
+                            "type": "AzureBlobStorageWriteSettings"
+                        },
+                        "formatSettings": {
+                            "type": "DelimitedTextWriteSettings",
+                            "quoteAllText": true,
+                            "fileExtension": ".txt"
+                        }
+                    },
+                    "enableStaging": false,
+                    "translator": {
+                        "type": "TabularTranslator",
+                        "typeConversion": true,
+                        "typeConversionSettings": {
+                            "allowDataTruncation": true,
+                            "treatBooleanAsNumber": false
+                        }
+                    }
+                },
+                "inputs": [
+                    {
+                        "referenceName": "AzureSqlTable1",
+                        "type": "DatasetReference"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "referenceName": "rowswritten",
+                        "type": "DatasetReference"
+                    }
+                ]
+            }
+        ],
+        "folder": {
+            "name": "Mail Alert"
+        },
+        "annotations": [],
+        "lastPublishTime": "2022-10-04T20:18:01Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}

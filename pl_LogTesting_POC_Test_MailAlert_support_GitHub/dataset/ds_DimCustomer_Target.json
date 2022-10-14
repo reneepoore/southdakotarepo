@@ -1,0 +1,144 @@
+{
+    "name": "ds_DimCustomer_Target",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "AzureSqlDatabaseAdventureWorks",
+            "type": "LinkedServiceReference"
+        },
+        "folder": {
+            "name": "POCWork/Target AdWrks"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [
+            {
+                "name": "CustomerKey",
+                "type": "int",
+                "precision": 10
+            },
+            {
+                "name": "GeographyKey",
+                "type": "int",
+                "precision": 10
+            },
+            {
+                "name": "CustomerAlternateKey",
+                "type": "nvarchar"
+            },
+            {
+                "name": "Title",
+                "type": "nvarchar"
+            },
+            {
+                "name": "FirstName",
+                "type": "nvarchar"
+            },
+            {
+                "name": "MiddleName",
+                "type": "nvarchar"
+            },
+            {
+                "name": "LastName",
+                "type": "nvarchar"
+            },
+            {
+                "name": "NameStyle",
+                "type": "bit"
+            },
+            {
+                "name": "BirthDate",
+                "type": "date"
+            },
+            {
+                "name": "MaritalStatus",
+                "type": "nvarchar"
+            },
+            {
+                "name": "Suffix",
+                "type": "nvarchar"
+            },
+            {
+                "name": "Gender",
+                "type": "nvarchar"
+            },
+            {
+                "name": "EmailAddress",
+                "type": "nvarchar"
+            },
+            {
+                "name": "YearlyIncome",
+                "type": "decimal",
+                "precision": 19,
+                "scale": 4
+            },
+            {
+                "name": "TotalChildren",
+                "type": "int",
+                "precision": 10
+            },
+            {
+                "name": "NumberChildrenAtHome",
+                "type": "int",
+                "precision": 10
+            },
+            {
+                "name": "EnglishEducation",
+                "type": "nvarchar"
+            },
+            {
+                "name": "SpanishEducation",
+                "type": "nvarchar"
+            },
+            {
+                "name": "FrenchEducation",
+                "type": "nvarchar"
+            },
+            {
+                "name": "EnglishOccupation",
+                "type": "nvarchar"
+            },
+            {
+                "name": "SpanishOccupation",
+                "type": "nvarchar"
+            },
+            {
+                "name": "FrenchOccupation",
+                "type": "nvarchar"
+            },
+            {
+                "name": "HouseOwnerFlag",
+                "type": "nvarchar"
+            },
+            {
+                "name": "NumberCarsOwned",
+                "type": "int",
+                "precision": 10
+            },
+            {
+                "name": "AddressLine1",
+                "type": "nvarchar"
+            },
+            {
+                "name": "AddressLine2",
+                "type": "nvarchar"
+            },
+            {
+                "name": "Phone",
+                "type": "nvarchar"
+            },
+            {
+                "name": "DateFirstPurchase",
+                "type": "date"
+            },
+            {
+                "name": "CommuteDistance",
+                "type": "nvarchar"
+            }
+        ],
+        "typeProperties": {
+            "schema": "dbo",
+            "table": "DimCustomer_Target"
+        }
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}

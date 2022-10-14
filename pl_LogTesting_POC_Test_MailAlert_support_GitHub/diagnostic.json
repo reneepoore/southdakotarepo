@@ -1,0 +1,22 @@
+{
+    "now": "2022-10-14T16:13:02.436Z",
+    "perfNow": 31618.20000000298,
+    "diagnosticCorrelation": "89e1f358-905a-47ee-8eb6-4137fe60e9d3",
+    "source": "DownloadSupportFiles",
+    "environment": {
+        "productName": "adf",
+        "buildVersion": "1.0.100722.17",
+        "environmentType": 3,
+        "resourceName": "RPoore-Data-Factory",
+        "resourceRegion": "centralus",
+        "resourceGroup": "Mark_Test",
+        "subscriptionId": "ab6fcfb9-1e31-4d89-9140-9ba85651f8e0",
+        "sessionId": "EOY9K",
+        "operationId": "Lgo/e",
+        "gitType": "GitHub"
+    },
+    "additionalInfo": {
+        "selectedResource": "pl_LogTesting_POC_Test_MailAlert",
+        "selectedResourceType": "pipeline"
+    }
+}

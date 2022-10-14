@@ -1,0 +1,6 @@
+selected resource name:		pl_LogTesting_POC_Test_MailAlert
+selected resource type:		pipeline
+factory name:			RPoore-Data-Factory
+factory location:		centralus
+subscription id:		ab6fcfb9-1e31-4d89-9140-9ba85651f8e0
+time of download (UTC):		Fri, 14 Oct 2022 16:13:02 GMT

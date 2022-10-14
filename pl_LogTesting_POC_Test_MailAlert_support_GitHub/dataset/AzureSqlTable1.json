@@ -1,0 +1,20 @@
+{
+    "name": "AzureSqlTable1",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "AzureSqlDatabaseAdventureWorks",
+            "type": "LinkedServiceReference"
+        },
+        "folder": {
+            "name": "POCWork"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [],
+        "typeProperties": {
+            "schema": "dbo",
+            "table": "errorlogging"
+        }
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}
