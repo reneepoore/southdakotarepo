@@ -1,0 +1,38 @@
+{
+	"name": "pl_Main",
+	"properties": {
+		"description": "This is the Main pipeline that will execute all pipelines.",
+		"activities": [
+			{
+				"name": "Execute_pl_Test_Orders_Phase3",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_Test_Orders_Phase3",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "pl_SP_Logging",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_SP_Logging_Failure",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "Facts"
+		},
+		"annotations": []
+	}
+}
