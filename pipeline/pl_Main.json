@@ -125,7 +125,7 @@
 						},
 						"errordescription": {
 							"value": {
-								"value": "@string(activity('Execute Pipeline Master Facts').output.runStatus.metrics.tgtDimCustomerTarget.progressState)",
+								"value": "'Pipeline Completed Successfully'",
 								"type": "Expression"
 							},
 							"type": "String"
