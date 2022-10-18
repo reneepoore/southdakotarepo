@@ -335,14 +335,14 @@
 									},
 									"type": "DateTime"
 								},
-								"errorcodeloggedtime": {
+								"logtime": {
 									"value": {
 										"value": "@{utcnow()}",
 										"type": "Expression"
 									},
 									"type": "Datetime"
 								},
-								"errordescription": {
+								"pipelinerunmessage": {
 									"value": {
 										"value": "'Pipeline Completed Successfully'",
 										"type": "Expression"
@@ -413,14 +413,14 @@
 									},
 									"type": "DateTime"
 								},
-								"errorcodeloggedtime": {
+								"logtime": {
 									"value": {
 										"value": "@{utcnow()}",
 										"type": "Expression"
 									},
 									"type": "Datetime"
 								},
-								"errordescription": {
+								"pipelinerunmessage": {
 									"value": {
 										"value": "@activity('Execute Pipeline Master Dimensions').error.message",
 										"type": "Expression"
@@ -430,7 +430,7 @@
 							}
 						},
 						"linkedServiceName": {
-							"referenceName": "AdventureWorksLT2019",
+							"referenceName": "CURAPD01",
 							"type": "LinkedServiceReference"
 						}
 					},
@@ -491,14 +491,14 @@
 									},
 									"type": "DateTime"
 								},
-								"errorcodeloggedtime": {
+								"logtime": {
 									"value": {
 										"value": "@{utcnow()}",
 										"type": "Expression"
 									},
 									"type": "Datetime"
 								},
-								"errordescription": {
+								"pipelinerunmessage": {
 									"value": {
 										"value": "@activity('Execute Pipeline Master Facts').error.message",
 										"type": "Expression"
@@ -508,7 +508,7 @@
 							}
 						},
 						"linkedServiceName": {
-							"referenceName": "AdventureWorksLT2019",
+							"referenceName": "CURAPD01",
 							"type": "LinkedServiceReference"
 						}
 					},
@@ -569,14 +569,14 @@
 									},
 									"type": "DateTime"
 								},
-								"errorcodeloggedtime": {
+								"logtime": {
 									"value": {
 										"value": "@{utcnow()}",
 										"type": "Expression"
 									},
 									"type": "Datetime"
 								},
-								"errordescription": {
+								"pipelinerunmessage": {
 									"value": {
 										"value": "@activity('Execute Pipeline Master Staging').error.message",
 										"type": "Expression"
@@ -586,7 +586,7 @@
 							}
 						},
 						"linkedServiceName": {
-							"referenceName": "AdventureWorksLT2019",
+							"referenceName": "CURAPD01",
 							"type": "LinkedServiceReference"
 						}
 					},
@@ -720,8 +720,7 @@
 				"[concat(variables('factoryId'), '/pipelines/pl_MasterStaging')]",
 				"[concat(variables('factoryId'), '/pipelines/pl_MasterDimension')]",
 				"[concat(variables('factoryId'), '/pipelines/pl_MasterFact')]",
-				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]",
-				"[concat(variables('factoryId'), '/linkedServices/AdventureWorksLT2019')]"
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
 			]
 		},
 		{
