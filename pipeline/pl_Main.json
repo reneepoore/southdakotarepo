@@ -14,22 +14,6 @@
 					},
 					"waitOnCompletion": true
 				}
-			},
-			{
-				"name": "pl_SendSuccessEmail",
-				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "pl_Main_withoutLogExecution",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"waitOnCompletion": true
-				}
 			}
 		],
 		"folder": {
