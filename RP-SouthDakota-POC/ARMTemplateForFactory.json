@@ -290,7 +290,7 @@
 							}
 						],
 						"policy": {
-							"timeout": "7.00:00:00",
+							"timeout": "0.00:15:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -352,7 +352,7 @@
 							}
 						},
 						"linkedServiceName": {
-							"referenceName": "AdventureWorksLT2019",
+							"referenceName": "CURAPD01",
 							"type": "LinkedServiceReference"
 						}
 					},
@@ -720,6 +720,7 @@
 				"[concat(variables('factoryId'), '/pipelines/pl_MasterStaging')]",
 				"[concat(variables('factoryId'), '/pipelines/pl_MasterDimension')]",
 				"[concat(variables('factoryId'), '/pipelines/pl_MasterFact')]",
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]",
 				"[concat(variables('factoryId'), '/linkedServices/AdventureWorksLT2019')]"
 			]
 		},
