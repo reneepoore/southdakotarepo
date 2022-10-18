@@ -344,7 +344,7 @@
 								},
 								"errordescription": {
 									"value": {
-										"value": "\"Pipeline Completed Successfully\"",
+										"value": "'Pipeline Completed Successfully'",
 										"type": "Expression"
 									},
 									"type": "String"
