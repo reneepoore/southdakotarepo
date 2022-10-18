@@ -19,6 +19,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
 		},
+		"CURAPD01_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'CURAPD01'"
+		},
 		"textSinkTest_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'textSinkTest'"
@@ -63,6 +67,9 @@
 					"AzureBlobStorage1_connectionString": {
 						"value": "[parameters('AzureBlobStorage1_connectionString')]"
 					},
+					"CURAPD01_connectionString": {
+						"value": "[parameters('CURAPD01_connectionString')]"
+					},
 					"textSinkTest_accountKey": {
 						"value": "[parameters('textSinkTest_accountKey')]"
 					},
@@ -91,6 +98,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'RP-SouthDakota-POC_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "RP-SouthDakota-POC_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'RP-SouthDakota-POC_ArmTemplate_1')]"
 			]
 		}
 	]

@@ -19,6 +19,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
 		},
+		"CURAPD01_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'CURAPD01'"
+		},
 		"textSinkTest_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'textSinkTest'"
@@ -223,7 +227,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "pl_SendEmails",
+								"referenceName": "pl_MasterStaging",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -340,7 +344,7 @@
 								},
 								"errordescription": {
 									"value": {
-										"value": "@string(activity('Execute Pipeline Master Facts').output.runStatus.metrics.tgtDimCustomerTarget.progressState)",
+										"value": "'Pipeline Completed Successfully'",
 										"type": "Expression"
 									},
 									"type": "String"
@@ -713,7 +717,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pl_SendEmails')]",
+				"[concat(variables('factoryId'), '/pipelines/pl_MasterStaging')]",
 				"[concat(variables('factoryId'), '/pipelines/pl_MasterDimension')]",
 				"[concat(variables('factoryId'), '/pipelines/pl_MasterFact')]",
 				"[concat(variables('factoryId'), '/linkedServices/AdventureWorksLT2019')]"
@@ -726,7 +730,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "df_PlaceHolder",
+						"name": "df_Application_POCTesting",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -739,12 +743,12 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_DimPlaceHolder",
+								"referenceName": "df_Application_POCTesting",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"source1": {},
-									"sink1": {}
+									"stgApplication": {},
+									"Dummy": {}
 								}
 							},
 							"staging": {},
@@ -766,7 +770,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_DimPlaceHolder')]"
+				"[concat(variables('factoryId'), '/dataflows/df_Application_POCTesting')]"
 			]
 		},
 		{
@@ -775,45 +779,6 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"description": "This is the Main pipeline that will execute all pipelines.",
-				"activities": [
-					{
-						"name": "Execute_pl_Test_Orders_Phase3",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "pl_Test_Orders_Phase3",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"variables": {
-					"failure": {
-						"type": "String"
-					}
-				},
-				"folder": {
-					"name": "Facts"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pl_Test_Orders_Phase3')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_MasterStaging')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
 				"activities": [
 					{
 						"name": "df_StagePlaceHolder",
@@ -850,13 +815,68 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"variables": {
+					"failure": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Facts"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_StagePlaceHolder')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_MasterStaging')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "df_Application_POCTesting",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_Application_POCTesting",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"stgApplication": {},
+									"Dummy": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "Staging"
 				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_StagePlaceHolder')]"
+				"[concat(variables('factoryId'), '/dataflows/df_Application_POCTesting')]"
 			]
 		},
 		{
@@ -2379,6 +2399,127 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/stgApplication')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Pulling data from Curam Stage ",
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Staging"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "APPLICATIONID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "SUBMITTEDDATETIME",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "FILINGDATE",
+						"type": "date"
+					},
+					{
+						"name": "REFERENCE",
+						"type": "char"
+					},
+					{
+						"name": "APPLICATIONMETHOD",
+						"type": "char"
+					},
+					{
+						"name": "ROOTENTITYID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ASSIGNEE",
+						"type": "varchar"
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "CURRENTAPPLICATIONSTATUSID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "PDFID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CASEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "REFERENCEADDENDUM",
+						"type": "char"
+					},
+					{
+						"name": "IEGEXECUTIONID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "RECORDSTATUS",
+						"type": "char"
+					},
+					{
+						"name": "SCHEMANAME",
+						"type": "char"
+					},
+					{
+						"name": "INTERPRETERREQIND",
+						"type": "char"
+					},
+					{
+						"name": "INTERPRETERLANGUAGECODE",
+						"type": "char"
+					},
+					{
+						"name": "SPECIALASSISTANCEIND",
+						"type": "char"
+					},
+					{
+						"name": "SPECIALASSISTANCEREQUIREMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "APPLICATIONTYPE",
+						"type": "char"
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "APPLICATION"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/targetSalesOrderHeader')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2623,6 +2764,20 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/CURAPD01')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Curam SQL Server Staging Environment",
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('CURAPD01_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/textSinkTest')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -2638,6 +2793,84 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_Application_POCTesting')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "This is to be used for testing the entire POC flow",
+				"folder": {
+					"name": "Staging"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "stgApplication",
+								"type": "DatasetReference"
+							},
+							"name": "stgApplication"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Dummy",
+								"type": "DatasetReference"
+							},
+							"name": "Dummy"
+						}
+					],
+					"transformations": [
+						{
+							"name": "CountApplicationID"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          APPLICATIONID as long,",
+						"          SUBMITTEDDATETIME as timestamp,",
+						"          FILINGDATE as date,",
+						"          REFERENCE as string,",
+						"          APPLICATIONMETHOD as string,",
+						"          ROOTENTITYID as long,",
+						"          ASSIGNEE as string,",
+						"          VERSIONNO as integer,",
+						"          LASTWRITTEN as timestamp,",
+						"          CURRENTAPPLICATIONSTATUSID as long,",
+						"          PDFID as long,",
+						"          CASEID as long,",
+						"          REFERENCEADDENDUM as string,",
+						"          IEGEXECUTIONID as long,",
+						"          RECORDSTATUS as string,",
+						"          SCHEMANAME as string,",
+						"          INTERPRETERREQIND as string,",
+						"          INTERPRETERLANGUAGECODE as string,",
+						"          SPECIALASSISTANCEIND as string,",
+						"          SPECIALASSISTANCEREQUIREMENTS as string,",
+						"          APPLICATIONTYPE as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> stgApplication",
+						"stgApplication aggregate(APPLICATIONID = count(APPLICATIONID)) ~> CountApplicationID",
+						"CountApplicationID sink(allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> Dummy"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/stgApplication')]",
+				"[concat(variables('factoryId'), '/datasets/Dummy')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_DimPlaceHolder')]",
