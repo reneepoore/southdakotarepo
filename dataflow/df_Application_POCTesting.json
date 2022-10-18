@@ -1,0 +1,72 @@
+{
+	"name": "df_Application_POCTesting",
+	"properties": {
+		"description": "This is to be used for testing the entire POC flow",
+		"folder": {
+			"name": "Staging"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "stgApplication",
+						"type": "DatasetReference"
+					},
+					"name": "stgApplication"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Dummy",
+						"type": "DatasetReference"
+					},
+					"name": "Dummy"
+				}
+			],
+			"transformations": [
+				{
+					"name": "CountApplicationID"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          APPLICATIONID as long,",
+				"          SUBMITTEDDATETIME as timestamp,",
+				"          FILINGDATE as date,",
+				"          REFERENCE as string,",
+				"          APPLICATIONMETHOD as string,",
+				"          ROOTENTITYID as long,",
+				"          ASSIGNEE as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp,",
+				"          CURRENTAPPLICATIONSTATUSID as long,",
+				"          PDFID as long,",
+				"          CASEID as long,",
+				"          REFERENCEADDENDUM as string,",
+				"          IEGEXECUTIONID as long,",
+				"          RECORDSTATUS as string,",
+				"          SCHEMANAME as string,",
+				"          INTERPRETERREQIND as string,",
+				"          INTERPRETERLANGUAGECODE as string,",
+				"          SPECIALASSISTANCEIND as string,",
+				"          SPECIALASSISTANCEREQUIREMENTS as string,",
+				"          APPLICATIONTYPE as string",
+				"     ),",
+				"     allowSchemaDrift: false,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> stgApplication",
+				"stgApplication aggregate(APPLICATIONID = count(APPLICATIONID)) ~> CountApplicationID",
+				"CountApplicationID sink(allowSchemaDrift: false,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> Dummy"
+			]
+		}
+	}
+}
