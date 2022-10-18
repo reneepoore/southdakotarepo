@@ -79,6 +79,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"storedProcedureName": "[dbo].[usp_adfPipelineExecutions]",
 					"storedProcedureParameters": {
 						"adfName": {
 							"value": {
