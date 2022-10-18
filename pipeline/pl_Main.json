@@ -18,7 +18,7 @@
 				}
 			},
 			{
-				"name": "Execute Pipeline Master Dimension",
+				"name": "Execute Pipeline Master Dimensions",
 				"description": "This pipeline will run the pipelines to execute the data flows for the Dimensions",
 				"type": "ExecutePipeline",
 				"dependsOn": [
@@ -44,7 +44,7 @@
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "Execute Pipeline Master Dimension",
+						"activity": "Execute Pipeline Master Dimensions",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -142,7 +142,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "Execute Pipeline Master Dimension",
+						"activity": "Execute Pipeline Master Dimensions",
 						"dependencyConditions": [
 							"Failed"
 						]
@@ -203,7 +203,7 @@
 						},
 						"errordescription": {
 							"value": {
-								"value": "@activity('Execute Pipeline Master Dimension').error.message",
+								"value": "@activity('Execute Pipeline Master Dimensions').error.message",
 								"type": "Expression"
 							},
 							"type": "String"
@@ -411,7 +411,7 @@
 					}
 				],
 				"policy": {
-					"timeout": "0.12:00:00",
+					"timeout": "0.00:15:00",
 					"retry": 0,
 					"retryIntervalInSeconds": 30,
 					"secureOutput": false,
@@ -422,7 +422,7 @@
 					"url": "https://rpsendemail.azurewebsites.net:443/api/SendEmail/triggers/manual/invoke?api-version=2022-05-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xnVuhU0n2whYlNHCyiFNMdnY9iALouTQvHkkEcY5Hnc",
 					"method": "POST",
 					"body": {
-						"value": "{\n    \"title\": \"@{activity('Execute pl_Testing').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute pl_Testing').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute pl_Testing').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute pl_Testing').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
+						"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Staging').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Staging').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Staging').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Staging').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
 						"type": "Expression"
 					}
 				}
@@ -432,14 +432,14 @@
 				"type": "WebActivity",
 				"dependsOn": [
 					{
-						"activity": "Execute Pipeline Master Dimension",
+						"activity": "Execute Pipeline Master Dimensions",
 						"dependencyConditions": [
 							"Failed"
 						]
 					}
 				],
 				"policy": {
-					"timeout": "0.12:00:00",
+					"timeout": "0.00:15:00",
 					"retry": 0,
 					"retryIntervalInSeconds": 30,
 					"secureOutput": false,
@@ -450,7 +450,7 @@
 					"url": "https://rpsendemail.azurewebsites.net:443/api/SendEmail/triggers/manual/invoke?api-version=2022-05-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xnVuhU0n2whYlNHCyiFNMdnY9iALouTQvHkkEcY5Hnc",
 					"method": "POST",
 					"body": {
-						"value": "{\n    \"title\": \"@{activity('Execute pl_Testing').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute pl_Testing').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute pl_Testing').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute pl_Testing').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
+						"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Dimensions').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Dimensions').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Dimensions').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Dimensions').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
 						"type": "Expression"
 					}
 				}
@@ -467,7 +467,7 @@
 					}
 				],
 				"policy": {
-					"timeout": "0.12:00:00",
+					"timeout": "0.00:15:00",
 					"retry": 0,
 					"retryIntervalInSeconds": 30,
 					"secureOutput": false,
@@ -478,7 +478,7 @@
 					"url": "https://rpsendemail.azurewebsites.net:443/api/SendEmail/triggers/manual/invoke?api-version=2022-05-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xnVuhU0n2whYlNHCyiFNMdnY9iALouTQvHkkEcY5Hnc",
 					"method": "POST",
 					"body": {
-						"value": "{\n    \"title\": \"@{activity('Execute pl_Testing').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute pl_Testing').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute pl_Testing').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute pl_Testing').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
+						"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Facts').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Facts').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Facts').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Facts').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
 						"type": "Expression"
 					}
 				}
