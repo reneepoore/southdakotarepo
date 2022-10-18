@@ -1,55 +1,76 @@
 {
 	"name": "pl_Main",
 	"properties": {
-		"description": "This is the Main pipeline that will execute all pipelines.",
+		"description": "This is the Main pipeline which will contain sub pipelines",
 		"activities": [
 			{
-				"name": "Execute_pl_Test_Orders_Phase3",
+				"name": "Execute Pipeline Master Staging",
+				"description": "This pipeline will run the pipelines to execute the data flows for Staging\n",
 				"type": "ExecutePipeline",
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "pl_Test_Orders_Phase3",
+						"referenceName": "pl_Main_Staging",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
 				}
 			},
 			{
-				"name": "pl_SP_Logging_Success",
+				"name": "Execute Pipeline Master Dimension",
+				"description": "This pipeline will run the pipelines to execute the data flows for the Dimensions",
 				"type": "ExecutePipeline",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline Master Staging",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
-					"pipeline": {
-						"referenceName": "pl_SP_Logging_Success",
-						"type": "PipelineReference"
-					},
 					"waitOnCompletion": true
 				}
 			},
 			{
-				"name": "pl_SP_Logging_Failure",
+				"name": "Execute Pipeline Master Facts",
+				"description": "This pipeline will run the pipelines to execute the data flows for the Facts\n",
 				"type": "ExecutePipeline",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline Master Dimension",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
-					"pipeline": {
-						"referenceName": "pl_SP_Logging_Failure",
-						"type": "PipelineReference"
-					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Execute Pipeline on Success",
+				"description": "This will run logging for a successful run",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline Master Facts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
 					"waitOnCompletion": true
 				}
 			}
 		],
-		"variables": {
-			"failure": {
-				"type": "String"
-			}
-		},
 		"folder": {
-			"name": "Facts"
+			"name": "Administration"
 		},
 		"annotations": []
 	}
