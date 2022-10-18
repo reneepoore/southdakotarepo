@@ -4,16 +4,27 @@
 		"description": "This is the Main pipeline that will execute all pipelines.",
 		"activities": [
 			{
-				"name": "Execute_pl_Test_Orders_Phase3",
-				"type": "ExecutePipeline",
+				"name": "df_StagePlaceHolder",
+				"type": "ExecuteDataFlow",
 				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
 				"userProperties": [],
 				"typeProperties": {
-					"pipeline": {
-						"referenceName": "pl_Test_Orders_Phase3",
-						"type": "PipelineReference"
+					"dataflow": {
+						"referenceName": "df_StagePlaceHolder",
+						"type": "DataFlowReference"
 					},
-					"waitOnCompletion": true
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
 				}
 			}
 		],

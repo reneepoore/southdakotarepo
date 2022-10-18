@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_PlaceHolder",
+				"name": "df_Application_POCTesting",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_DimPlaceHolder",
+						"referenceName": "df_Application_POCTesting",
 						"type": "DataFlowReference"
 					},
 					"compute": {

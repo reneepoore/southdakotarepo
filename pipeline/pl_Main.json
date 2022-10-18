@@ -11,7 +11,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "pl_SendEmails",
+						"referenceName": "pl_MasterStaging",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
