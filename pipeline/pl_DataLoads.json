@@ -1,5 +1,5 @@
 {
-	"name": "pl_Main",
+	"name": "pl_DataLoads",
 	"properties": {
 		"description": "This is the Main pipeline which will contain sub pipelines",
 		"activities": [

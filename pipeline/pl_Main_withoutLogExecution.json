@@ -60,34 +60,6 @@
 				}
 			},
 			{
-				"name": "Send Success Email",
-				"type": "WebActivity",
-				"dependsOn": [
-					{
-						"activity": "Execute Pipeline Master Facts",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"url": "https://rpsendemail.azurewebsites.net:443/api/SendEmail/triggers/manual/invoke?api-version=2022-05-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xnVuhU0n2whYlNHCyiFNMdnY9iALouTQvHkkEcY5Hnc",
-					"method": "POST",
-					"body": {
-						"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Staging').output.pipelineName} SUCCEEDED!\",\n    \"message\": \"Pipeline run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Staging').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Staging').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
-						"type": "Expression"
-					}
-				}
-			},
-			{
 				"name": "Send Failed Email Stage",
 				"type": "WebActivity",
 				"dependsOn": [
@@ -167,6 +139,34 @@
 					"method": "POST",
 					"body": {
 						"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Facts').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Facts').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Facts').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Facts').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send Success Email",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline Master Facts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.00:15:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://rpsendemail.azurewebsites.net:443/api/SendEmail/triggers/manual/invoke?api-version=2022-05-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xnVuhU0n2whYlNHCyiFNMdnY9iALouTQvHkkEcY5Hnc",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Facts').output.pipelineName} Completed!\",\n    \"message\": \"Pipeline run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Facts').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Facts').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
 						"type": "Expression"
 					}
 				}

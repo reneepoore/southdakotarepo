@@ -1,0 +1,40 @@
+{
+	"name": "pl_Main",
+	"properties": {
+		"activities": [
+			{
+				"name": "pl_Main_withoutLogExecution",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_Main_withoutLogExecution",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "pl_SendSuccessEmail",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "pl_Main_withoutLogExecution",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "Main"
+		},
+		"annotations": []
+	}
+}
