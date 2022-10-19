@@ -1338,69 +1338,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pl_Main')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "pl_Main_withoutLogExecution",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "pl_Main_Load",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "Send Success Email",
-						"type": "WebActivity",
-						"dependsOn": [
-							{
-								"activity": "pl_Main_withoutLogExecution",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.00:15:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://rpsendemail.azurewebsites.net:443/api/SendEmail/triggers/manual/invoke?api-version=2022-05-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xnVuhU0n2whYlNHCyiFNMdnY9iALouTQvHkkEcY5Hnc",
-							"method": "POST",
-							"headers": {},
-							"body": {
-								"value": "{\n    \"title\": \"@{activity('pl_Main_withoutLogExecution').output.pipelineName} Completed!\",\n    \"message\": \"Pipeline run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('pl_Main_withoutLogExecution').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('pl_Main_withoutLogExecution').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
-								"type": "Expression"
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Main"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pl_Main_Load')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/pl_Main_Load')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1545,7 +1482,7 @@
 								},
 								"pipelinerunmessage": {
 									"value": {
-										"value": "Pipeline Completed Successfully",
+										"value": "@concat('Pipeline completed successfully: ',activity('Execute Data Loads').output.pipelineName)",
 										"type": "Expression"
 									},
 									"type": "String"
