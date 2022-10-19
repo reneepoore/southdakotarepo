@@ -9,7 +9,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "pl_Main_withoutLogExecution",
+						"referenceName": "pl_Main_Load",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
@@ -45,7 +45,7 @@
 			}
 		],
 		"folder": {
-			"name": "Testing"
+			"name": "Main"
 		},
 		"annotations": []
 	}
