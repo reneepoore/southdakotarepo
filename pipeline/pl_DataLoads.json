@@ -60,7 +60,7 @@
 				}
 			},
 			{
-				"name": "LogExecutionFailurey_Staging",
+				"name": "LogExecutionFailure_Staging",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
