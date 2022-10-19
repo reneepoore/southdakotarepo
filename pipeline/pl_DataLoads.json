@@ -138,84 +138,6 @@
 				}
 			},
 			{
-				"name": "LogExecutionFailure_Facts",
-				"type": "SqlServerStoredProcedure",
-				"dependsOn": [
-					{
-						"activity": "Execute Pipeline Master Facts",
-						"dependencyConditions": [
-							"Failed"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.00:15:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"storedProcedureName": "[dbo].[usp_adfPipelineExecutions]",
-					"storedProcedureParameters": {
-						"adfName": {
-							"value": {
-								"value": "@pipeline().DataFactory",
-								"type": "Expression"
-							},
-							"type": "String"
-						},
-						"pipelineName": {
-							"value": {
-								"value": "@pipeline().Pipeline",
-								"type": "Expression"
-							},
-							"type": "String"
-						},
-						"runID": {
-							"value": {
-								"value": "@pipeline().RunId",
-								"type": "Expression"
-							},
-							"type": "String"
-						},
-						"triggerName": {
-							"value": {
-								"value": "@pipeline().TriggerName",
-								"type": "Expression"
-							},
-							"type": "String"
-						},
-						"triggerTime": {
-							"value": {
-								"value": "@pipeline().TriggerTime",
-								"type": "Expression"
-							},
-							"type": "DateTime"
-						},
-						"logtime": {
-							"value": {
-								"value": "@{utcnow()}",
-								"type": "Expression"
-							},
-							"type": "Datetime"
-						},
-						"pipelinerunmessage": {
-							"value": {
-								"value": "@activity('Execute Pipeline Master Facts').error.message",
-								"type": "Expression"
-							},
-							"type": "String"
-						}
-					}
-				},
-				"linkedServiceName": {
-					"referenceName": "CURAPD01",
-					"type": "LinkedServiceReference"
-				}
-			},
-			{
 				"name": "LogExecutionFailurey_Staging",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
@@ -300,7 +222,7 @@
 					{
 						"activity": "Execute Pipeline Master Staging",
 						"dependencyConditions": [
-							"Succeeded"
+							"Failed"
 						]
 					}
 				],
@@ -443,7 +365,85 @@
 						},
 						"pipelinerunmessage": {
 							"value": {
-								"value": "@concat('Failure on: ',activity('Execute Pipeline Master Dimensions').output.pipelineName,' Error: ', activity('Execute Pipeline Master Staging').error.message)\n",
+								"value": "@concat('Failure on: ',activity('Execute Pipeline Master Dimensions').output.pipelineName,' Error: ', activity('Execute Pipeline Master Dimensions').error.message)\n",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "LogExecutionFailure_Dimensions_copy1",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline Master Facts",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.00:15:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[usp_adfPipelineExecutions]",
+					"storedProcedureParameters": {
+						"adfName": {
+							"value": {
+								"value": "@pipeline().DataFactory",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"pipelineName": {
+							"value": {
+								"value": "@{activity('Execute Pipeline Master Facts').output.pipelineName}",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"runID": {
+							"value": {
+								"value": "@{activity('Execute Pipeline Master Facts').output.pipelineRunId}\n",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"triggerName": {
+							"value": {
+								"value": "@pipeline().TriggerName\n\n",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"triggerTime": {
+							"value": {
+								"value": "@pipeline().TriggerTime",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						},
+						"logtime": {
+							"value": {
+								"value": "@{utcnow()}",
+								"type": "Expression"
+							},
+							"type": "Datetime"
+						},
+						"pipelinerunmessage": {
+							"value": {
+								"value": "@concat('Failure on: ',activity('Execute Pipeline Master Facts').output.pipelineName,' Error: ', activity('Execute Pipeline Master Facts').error.message)\n",
 								"type": "Expression"
 							},
 							"type": "String"
