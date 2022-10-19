@@ -269,7 +269,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "Source"
+					"name": "Testing/Source"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -805,7 +805,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "POCWork/Target AdWrks"
+					"name": "Testing/POCWork/Target AdWrks"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
