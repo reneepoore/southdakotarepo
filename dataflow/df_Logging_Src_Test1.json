@@ -2,6 +2,9 @@
 	"name": "df_Logging_Src_Test1",
 	"properties": {
 		"description": "This is to test logging for a dataflow\n",
+		"folder": {
+			"name": "Testing"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
