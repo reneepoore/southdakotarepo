@@ -204,7 +204,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Staging').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Staging').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Staging').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Staging').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
+								"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Staging').output.pipelineName} Failed!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Staging').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Staging').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Staging').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
 								"type": "Expression"
 							}
 						}
@@ -233,7 +233,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Dimensions').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Dimensions').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Dimensions').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Dimensions').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
+								"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Dimensions').output.pipelineName} Failed!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Dimensions').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Dimensions').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Dimensions').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
 								"type": "Expression"
 							}
 						}
@@ -262,7 +262,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Facts').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Facts').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Facts').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Facts').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
+								"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Facts').output.pipelineName} Failed!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Facts').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Facts').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Facts').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
 								"type": "Expression"
 							}
 						}
@@ -647,7 +647,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"@{activity('Execute Data Loads').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute Data Loads').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Data Loads').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Data Loads').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
+								"value": "{\n    \"title\": \"@{activity('Execute Data Loads').output.pipelineName} Failed!\",\n    \"message\": \"Error: @{activity('Execute Data Loads').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Data Loads').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Data Loads').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
 								"type": "Expression"
 							}
 						}
@@ -676,7 +676,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"@{activity('Execute Data Loads').output.pipelineName} Completed!\",\n    \"message\": \"Pipeline run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Data Loads').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Data Loads').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
+								"value": "{\n    \"title\": \"@{activity('Execute Data Loads').output.pipelineName} Completed Successfully\",\n    \"message\": \"Pipeline run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Data Loads').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Data Loads').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
 								"type": "Expression"
 							}
 						}
@@ -846,11 +846,11 @@
 				"description": "This is the Main pipeline that will execute all pipelines.",
 				"activities": [
 					{
-						"name": "df_StagePlaceHolder",
+						"name": "df_Application_POCTesting",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
-							"timeout": "0.12:00:00",
+							"timeout": "0.00:15:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -859,12 +859,12 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_StagePlaceHolder",
+								"referenceName": "df_Application_POCTesting",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"source1": {},
-									"sink1": {}
+									"stgApplication": {},
+									"Dummy": {}
 								}
 							},
 							"staging": {},
@@ -891,7 +891,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_StagePlaceHolder')]"
+				"[concat(variables('factoryId'), '/dataflows/df_Application_POCTesting')]"
 			]
 		},
 		{

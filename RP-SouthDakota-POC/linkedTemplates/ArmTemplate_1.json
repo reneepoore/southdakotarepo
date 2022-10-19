@@ -1902,11 +1902,11 @@
 				"description": "This is the Main pipeline that will execute all pipelines.",
 				"activities": [
 					{
-						"name": "df_StagePlaceHolder",
+						"name": "df_Application_POCTesting",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
-							"timeout": "0.12:00:00",
+							"timeout": "0.00:15:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -1915,12 +1915,12 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_StagePlaceHolder",
+								"referenceName": "df_Application_POCTesting",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"source1": {},
-									"sink1": {}
+									"stgApplication": {},
+									"Dummy": {}
 								}
 							},
 							"staging": {},
@@ -1946,9 +1946,7 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_StagePlaceHolder')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pl_MasterStaging')]",

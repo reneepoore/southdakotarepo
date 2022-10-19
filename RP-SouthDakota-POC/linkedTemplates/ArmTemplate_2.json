@@ -180,7 +180,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Staging').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Staging').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Staging').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Staging').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
+								"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Staging').output.pipelineName} Failed!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Staging').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Staging').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Staging').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
 								"type": "Expression"
 							}
 						}
@@ -209,7 +209,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Dimensions').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Dimensions').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Dimensions').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Dimensions').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
+								"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Dimensions').output.pipelineName} Failed!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Dimensions').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Dimensions').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Dimensions').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
 								"type": "Expression"
 							}
 						}
@@ -238,7 +238,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Facts').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Facts').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Facts').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Facts').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
+								"value": "{\n    \"title\": \"@{activity('Execute Pipeline Master Facts').output.pipelineName} Failed!\",\n    \"message\": \"Error: @{activity('Execute Pipeline Master Facts').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Pipeline Master Facts').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Pipeline Master Facts').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
 								"type": "Expression"
 							}
 						}
@@ -533,7 +533,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"@{activity('Execute Data Loads').output.pipelineName} FAILED!\",\n    \"message\": \"Error: @{activity('Execute Data Loads').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Data Loads').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Data Loads').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
+								"value": "{\n    \"title\": \"@{activity('Execute Data Loads').output.pipelineName} Failed!\",\n    \"message\": \"Error: @{activity('Execute Data Loads').error.message}\",\n    \"color\": \"Red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Data Loads').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Data Loads').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n    }",
 								"type": "Expression"
 							}
 						}
@@ -562,7 +562,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"@{activity('Execute Data Loads').output.pipelineName} Completed!\",\n    \"message\": \"Pipeline run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Data Loads').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Data Loads').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
+								"value": "{\n    \"title\": \"@{activity('Execute Data Loads').output.pipelineName} Completed Successfully\",\n    \"message\": \"Pipeline run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{activity('Execute Data Loads').output.pipelineName}\",\n    \"pipelineRunId\": \"@{activity('Execute Data Loads').output.pipelineRunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
 								"type": "Expression"
 							}
 						}
