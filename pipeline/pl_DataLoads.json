@@ -300,7 +300,7 @@
 				}
 			},
 			{
-				"name": "LogExecutionFailure_Dimensions_copy1",
+				"name": "LogExecutionFailure_Facts",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
