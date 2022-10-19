@@ -103,7 +103,7 @@
 						}
 					},
 					{
-						"name": "LogExecutionFailurey_Staging",
+						"name": "LogExecutionFailure_Staging",
 						"type": "SqlServerStoredProcedure",
 						"dependsOn": [
 							{
@@ -346,7 +346,7 @@
 						}
 					},
 					{
-						"name": "LogExecutionFailure_Dimensions_copy1",
+						"name": "LogExecutionFailure_Facts",
 						"type": "SqlServerStoredProcedure",
 						"dependsOn": [
 							{
