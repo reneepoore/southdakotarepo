@@ -1927,6 +1927,23 @@
 							},
 							"traceLevel": "Fine"
 						}
+					},
+					{
+						"name": "Fail1",
+						"type": "Fail",
+						"dependsOn": [
+							{
+								"activity": "df_StagePlaceHolder",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"message": "This is a testing failure",
+							"errorCode": "500"
+						}
 					}
 				],
 				"policy": {
@@ -1981,23 +1998,6 @@
 								"computeType": "General"
 							},
 							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "Fail1",
-						"type": "Fail",
-						"dependsOn": [
-							{
-								"activity": "df_Application_POCTesting",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"message": "This is a testing failure",
-							"errorCode": "500"
 						}
 					}
 				],
