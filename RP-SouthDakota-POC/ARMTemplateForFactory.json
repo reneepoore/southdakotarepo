@@ -367,21 +367,21 @@
 								},
 								"pipelineName": {
 									"value": {
-										"value": "@pipeline().Pipeline",
+										"value": "@{activity('Execute Pipeline Master Staging').output.pipelineName}",
 										"type": "Expression"
 									},
 									"type": "String"
 								},
 								"runID": {
 									"value": {
-										"value": "@pipeline().RunId",
+										"value": "@{activity('Execute Pipeline Master Staging').output.pipelineRunId}\n",
 										"type": "Expression"
 									},
 									"type": "String"
 								},
 								"triggerName": {
 									"value": {
-										"value": "@pipeline().TriggerName",
+										"value": "@pipeline().TriggerName\n\n",
 										"type": "Expression"
 									},
 									"type": "String"
@@ -402,7 +402,7 @@
 								},
 								"pipelinerunmessage": {
 									"value": {
-										"value": "@activity('Execute Pipeline Master Staging').error.message",
+										"value": "@concat(activity('Execute Pipeline Master Staging').error.message,activity('Execute Pipeline Master Staging').output.pipelineName)\n",
 										"type": "Expression"
 									},
 									"type": "String"
@@ -421,7 +421,7 @@
 							{
 								"activity": "Execute Pipeline Master Staging",
 								"dependencyConditions": [
-									"Failed"
+									"Succeeded"
 								]
 							}
 						],
