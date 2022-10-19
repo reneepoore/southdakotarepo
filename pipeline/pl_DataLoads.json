@@ -324,7 +324,7 @@
 						},
 						"pipelineName": {
 							"value": {
-								"value": "@pipeline().Pipeline",
+								"value": "@{activity('Execute Pipeline Master Staging').output.pipelineName}",
 								"type": "Expression"
 							},
 							"type": "String"
@@ -359,7 +359,7 @@
 						},
 						"pipelinerunmessage": {
 							"value": {
-								"value": "@activity('Execute Pipeline Master Staging').error.message",
+								"value": "@concat(activity('Execute Pipeline Master Staging').error.message,activity('Execute Pipeline Master Staging').output.pipelineName)\n",
 								"type": "Expression"
 							},
 							"type": "String"
