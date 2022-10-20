@@ -1109,6 +1109,177 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/stgAddress')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "DB2"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ADDRESSID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "COUNTRYCODE",
+						"type": "char"
+					},
+					{
+						"name": "MODIFIABLEIND",
+						"type": "char"
+					},
+					{
+						"name": "ADDRESSDATA",
+						"type": "varchar"
+					},
+					{
+						"name": "ADDRESSLAYOUTTYPE",
+						"type": "char"
+					},
+					{
+						"name": "GEOCODE",
+						"type": "varchar"
+					},
+					{
+						"name": "LATITUDE",
+						"type": "decimal",
+						"precision": 12,
+						"scale": 9
+					},
+					{
+						"name": "LONGITUDE",
+						"type": "decimal",
+						"precision": 12,
+						"scale": 9
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "ADDRESS"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/stgAlternateName')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "DB2"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ALTERNATENAMEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CONCERNROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "TITLE",
+						"type": "char"
+					},
+					{
+						"name": "FIRSTFORENAME",
+						"type": "varchar"
+					},
+					{
+						"name": "OTHERFORENAME",
+						"type": "varchar"
+					},
+					{
+						"name": "SURNAME",
+						"type": "varchar"
+					},
+					{
+						"name": "UPPERFIRSTFORENAME",
+						"type": "varchar"
+					},
+					{
+						"name": "UPPERSURNAME",
+						"type": "varchar"
+					},
+					{
+						"name": "PHONETICENCODING",
+						"type": "char"
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "NAMESUFFIX",
+						"type": "char"
+					},
+					{
+						"name": "NAMETYPE",
+						"type": "char"
+					},
+					{
+						"name": "NAMESTATUS",
+						"type": "char"
+					},
+					{
+						"name": "FULLNAME",
+						"type": "varchar"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "INITIALS",
+						"type": "char"
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "ALTERNATENAME"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/stgApplication')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1230,285 +1401,56 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/targetSalesOrderHeader')]",
+			"name": "[concat(parameters('factoryName'), '/stgConcern')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "AdventureWorksLT2019",
+					"referenceName": "CURAPD01",
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "Fact"
+					"name": "DB2"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [
 					{
-						"name": "SalesOrderID",
+						"name": "CONCERNID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CREATIONDATE",
+						"type": "date"
+					},
+					{
+						"name": "NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "VERSIONNO",
 						"type": "int",
 						"precision": 10
 					},
 					{
-						"name": "OrderDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "Status",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "SalesOrderNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PurchaseOrderNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "AccountNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CustomerDescription",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ShipToAddressDescription",
-						"type": "nvarchar"
-					},
-					{
-						"name": "BillToAddressDesciption",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ShipMethod",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SubTotal",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "TaxAmt",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "Freight",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "TotalDue",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "ModifiedDate",
+						"name": "LASTWRITTEN",
 						"type": "datetime",
 						"precision": 23,
 						"scale": 3
 					}
 				],
 				"typeProperties": {
-					"schema": "SalesLT",
-					"table": "target_SalesOrderHeader"
+					"schema": "CURAPD01",
+					"table": "CONCERN"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AdventureWorksLT2019')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/target_SalesOrderHeader_wDate')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AdventureWorksLT2019",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "SalesOrderID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "OrderDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "Status",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "SalesOrderNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PurchaseOrderNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "AccountNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CustomerDescription",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ShipToAddressDescription",
-						"type": "nvarchar"
-					},
-					{
-						"name": "BillToAddressDesciption",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ShipMethod",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SubTotal",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "TaxAmt",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "Freight",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "TotalDue",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "ModifiedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "CreatedDate",
-						"type": "smalldatetime",
-						"precision": 16,
-						"scale": 0
-					}
-				],
-				"typeProperties": {
-					"schema": "SalesLT",
-					"table": "target_SalesOrderHeader_wDate"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AdventureWorksLT2019')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_Application_POCTesting')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "This is to be used for testing the entire POC flow",
-				"folder": {
-					"name": "Staging"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "stgApplication",
-								"type": "DatasetReference"
-							},
-							"name": "stgApplication"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "Dummy",
-								"type": "DatasetReference"
-							},
-							"name": "Dummy"
-						}
-					],
-					"transformations": [
-						{
-							"name": "CountApplicationID"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          APPLICATIONID as long,",
-						"          SUBMITTEDDATETIME as timestamp,",
-						"          FILINGDATE as date,",
-						"          REFERENCE as string,",
-						"          APPLICATIONMETHOD as string,",
-						"          ROOTENTITYID as long,",
-						"          ASSIGNEE as string,",
-						"          VERSIONNO as integer,",
-						"          LASTWRITTEN as timestamp,",
-						"          CURRENTAPPLICATIONSTATUSID as long,",
-						"          PDFID as long,",
-						"          CASEID as long,",
-						"          REFERENCEADDENDUM as string,",
-						"          IEGEXECUTIONID as long,",
-						"          RECORDSTATUS as string,",
-						"          SCHEMANAME as string,",
-						"          INTERPRETERREQIND as string,",
-						"          INTERPRETERLANGUAGECODE as string,",
-						"          SPECIALASSISTANCEIND as string,",
-						"          SPECIALASSISTANCEREQUIREMENTS as string,",
-						"          APPLICATIONTYPE as string",
-						"     ),",
-						"     allowSchemaDrift: false,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> stgApplication",
-						"stgApplication aggregate(APPLICATIONID = count(APPLICATIONID)) ~> CountApplicationID",
-						"CountApplicationID sink(allowSchemaDrift: false,",
-						"     validateSchema: false,",
-						"     input(",
-						"          Column_1 as string",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> Dummy"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/stgApplication')]",
-				"[concat(variables('factoryId'), '/datasets/Dummy')]"
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
 			]
 		}
 	]

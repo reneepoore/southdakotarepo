@@ -2464,6 +2464,177 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/stgAddress')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "DB2"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ADDRESSID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "COUNTRYCODE",
+						"type": "char"
+					},
+					{
+						"name": "MODIFIABLEIND",
+						"type": "char"
+					},
+					{
+						"name": "ADDRESSDATA",
+						"type": "varchar"
+					},
+					{
+						"name": "ADDRESSLAYOUTTYPE",
+						"type": "char"
+					},
+					{
+						"name": "GEOCODE",
+						"type": "varchar"
+					},
+					{
+						"name": "LATITUDE",
+						"type": "decimal",
+						"precision": 12,
+						"scale": 9
+					},
+					{
+						"name": "LONGITUDE",
+						"type": "decimal",
+						"precision": 12,
+						"scale": 9
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "ADDRESS"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/stgAlternateName')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "DB2"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ALTERNATENAMEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CONCERNROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "TITLE",
+						"type": "char"
+					},
+					{
+						"name": "FIRSTFORENAME",
+						"type": "varchar"
+					},
+					{
+						"name": "OTHERFORENAME",
+						"type": "varchar"
+					},
+					{
+						"name": "SURNAME",
+						"type": "varchar"
+					},
+					{
+						"name": "UPPERFIRSTFORENAME",
+						"type": "varchar"
+					},
+					{
+						"name": "UPPERSURNAME",
+						"type": "varchar"
+					},
+					{
+						"name": "PHONETICENCODING",
+						"type": "char"
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "NAMESUFFIX",
+						"type": "char"
+					},
+					{
+						"name": "NAMETYPE",
+						"type": "char"
+					},
+					{
+						"name": "NAMESTATUS",
+						"type": "char"
+					},
+					{
+						"name": "FULLNAME",
+						"type": "varchar"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "INITIALS",
+						"type": "char"
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "ALTERNATENAME"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/stgApplication')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2578,6 +2749,59 @@
 				"typeProperties": {
 					"schema": "CURAPD01",
 					"table": "APPLICATION"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/stgConcern')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "DB2"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CONCERNID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CREATIONDATE",
+						"type": "date"
+					},
+					{
+						"name": "NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "CONCERN"
 				}
 			},
 			"dependsOn": [

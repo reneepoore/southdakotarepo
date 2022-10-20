@@ -13,6 +13,281 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/targetSalesOrderHeader')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AdventureWorksLT2019",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Fact"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "SalesOrderID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "OrderDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Status",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "SalesOrderNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PurchaseOrderNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AccountNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CustomerDescription",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ShipToAddressDescription",
+						"type": "nvarchar"
+					},
+					{
+						"name": "BillToAddressDesciption",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ShipMethod",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SubTotal",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "TaxAmt",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "Freight",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "TotalDue",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "SalesLT",
+					"table": "target_SalesOrderHeader"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/target_SalesOrderHeader_wDate')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AdventureWorksLT2019",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "SalesOrderID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "OrderDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Status",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "SalesOrderNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PurchaseOrderNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AccountNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CustomerDescription",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ShipToAddressDescription",
+						"type": "nvarchar"
+					},
+					{
+						"name": "BillToAddressDesciption",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ShipMethod",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SubTotal",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "TaxAmt",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "Freight",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "TotalDue",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "CreatedDate",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "SalesLT",
+					"table": "target_SalesOrderHeader_wDate"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_Application_POCTesting')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "This is to be used for testing the entire POC flow",
+				"folder": {
+					"name": "Staging"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "stgApplication",
+								"type": "DatasetReference"
+							},
+							"name": "stgApplication"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Dummy",
+								"type": "DatasetReference"
+							},
+							"name": "Dummy"
+						}
+					],
+					"transformations": [
+						{
+							"name": "CountApplicationID"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          APPLICATIONID as long,",
+						"          SUBMITTEDDATETIME as timestamp,",
+						"          FILINGDATE as date,",
+						"          REFERENCE as string,",
+						"          APPLICATIONMETHOD as string,",
+						"          ROOTENTITYID as long,",
+						"          ASSIGNEE as string,",
+						"          VERSIONNO as integer,",
+						"          LASTWRITTEN as timestamp,",
+						"          CURRENTAPPLICATIONSTATUSID as long,",
+						"          PDFID as long,",
+						"          CASEID as long,",
+						"          REFERENCEADDENDUM as string,",
+						"          IEGEXECUTIONID as long,",
+						"          RECORDSTATUS as string,",
+						"          SCHEMANAME as string,",
+						"          INTERPRETERREQIND as string,",
+						"          INTERPRETERLANGUAGECODE as string,",
+						"          SPECIALASSISTANCEIND as string,",
+						"          SPECIALASSISTANCEREQUIREMENTS as string,",
+						"          APPLICATIONTYPE as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> stgApplication",
+						"stgApplication aggregate(APPLICATIONID = count(APPLICATIONID)) ~> CountApplicationID",
+						"CountApplicationID sink(allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> Dummy"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/df_DimPlaceHolder')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -345,7 +620,9 @@
 					]
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/targetSalesOrderHeader')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_FactSalesOrderHeader_Backup')]",
@@ -610,7 +887,9 @@
 					]
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/targetSalesOrderHeader')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_FactSalesOrderHeader_Backup_Phase1')]",
@@ -776,7 +1055,9 @@
 					]
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/targetSalesOrderHeader')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_FactSalesOrderHeader_Backup_Phase2')]",
@@ -1031,7 +1312,9 @@
 					]
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/targetSalesOrderHeader')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_FactSalesOrderHeader_Backup_Phase3')]",
@@ -1287,7 +1570,9 @@
 					]
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/target_SalesOrderHeader_wDate')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_Logging_Src_Test')]",
@@ -1892,7 +2177,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_Application_POCTesting')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pl_MasterFact')]",
@@ -1946,7 +2233,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_Application_POCTesting')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pl_MasterStaging')]",
@@ -1994,7 +2283,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_Application_POCTesting')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pl_Test_Logging_w_SP_Copy_Table')]",
@@ -2258,166 +2549,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/df_FactSalesOrderHeader_Backup_Phase1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_Test_Orders_Phase2')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "df_FactSalesOrderHeader_Backup_Phase2",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:05:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_FactSalesOrderHeader_Backup_Phase2",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"reportingSalesOrderHeader": {},
-									"DimAddress": {},
-									"DimCustomer": {},
-									"targetSalesOrders": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine",
-							"continuationSettings": {
-								"customizedCheckpointKey": "3de86dab-4aee-4c8a-997a-f18d3a39c48c"
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_FactSalesOrderHeader_Backup_Phase2')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_Test_Orders_Phase3')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "df_FactSalesOrderHeader_Backup_Phase3",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:05:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_FactSalesOrderHeader_Backup_Phase3",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"reportingSalesOrderHeader": {},
-									"DimAddress": {},
-									"DimCustomer": {},
-									"targetSalesOrders": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine",
-							"continuationSettings": {
-								"customizedCheckpointKey": "b646b04b-86c5-49a5-a9a4-c5073a53bc78"
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_FactSalesOrderHeader_Backup_Phase3')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_Testing')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "df_Testing",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:05:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_Testing",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_Testing')]"
 			]
 		}
 	]
