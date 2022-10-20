@@ -1118,7 +1118,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "DB2"
+					"name": "Staging"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -1191,7 +1191,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "DB2"
+					"name": "Staging"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -1410,7 +1410,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "DB2"
+					"name": "Staging"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
