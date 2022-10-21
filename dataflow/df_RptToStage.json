@@ -24,23 +24,14 @@
 					"name": "StgDB"
 				}
 			],
-			"transformations": [
-				{
-					"name": "Upsert"
-				}
-			],
+			"transformations": [],
 			"scriptLines": [
-				"parameters{",
-				"     TableName as string,",
-				"     Schema as string",
-				"}",
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     waterMarkColumn: 'LastWritten',",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> RptDB",
-				"RptDB alterRow(insertIf(true())) ~> Upsert",
-				"Upsert sink(allowSchemaDrift: true,",
+				"RptDB sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
