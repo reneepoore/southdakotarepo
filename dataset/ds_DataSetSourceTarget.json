@@ -2,7 +2,7 @@
 	"name": "ds_DataSetSourceTarget",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "CURAPD01",
+			"referenceName": "TargetSandbox",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
