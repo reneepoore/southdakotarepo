@@ -1,0 +1,100 @@
+{
+	"name": "pl_DynamicDataFlow",
+	"properties": {
+		"activities": [
+			{
+				"name": "LkupTableNames",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:15:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT table_name,\n       table_schema\nFROM   INFORMATION_SCHEMA.tables\nWHERE\n  table_type = 'BASE TABLE'\n  AND TABLE_SCHEMA = 'CURAPD01'\nORDER  BY table_name ASC; \n",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_AllTableNames",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "GetEachTableName",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "LkupTableNames",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LkupTableNames').output.value\n\n",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "df_RptToStage",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.00:05:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "df_RptToStage",
+									"type": "DataFlowReference",
+									"parameters": {
+										"TableName": "$TableName",
+										"SchemaName": "$SchemaName"
+									},
+									"datasetParameters": {
+										"RptDB": {
+											"Schema": "CURAM",
+											"TableName": "Person",
+											"ID": "ID"
+										},
+										"StgDB": {
+											"Schema": "stg",
+											"TableName": "Person"
+										}
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine",
+								"continuationSettings": {
+									"customizedCheckpointKey": "fba0c463-f65a-45ad-adcf-ab3d75532e22"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "Testing"
+		},
+		"annotations": []
+	}
+}

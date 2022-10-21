@@ -32,7 +32,9 @@
 			"scriptLines": [
 				"parameters{",
 				"     RptPrimaryID as string,",
-				"     StgPrimaryID as string",
+				"     StgPrimaryID as string,",
+				"     TableName as string ($TableName),",
+				"     SchemaName as string ($SchemaName)",
 				"}",
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",

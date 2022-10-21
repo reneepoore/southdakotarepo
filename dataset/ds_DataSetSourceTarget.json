@@ -16,6 +16,9 @@
 			},
 			"LastWritten": {
 				"type": "string"
+			},
+			"ID": {
+				"type": "string"
 			}
 		},
 		"folder": {

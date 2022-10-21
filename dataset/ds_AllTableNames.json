@@ -5,6 +5,14 @@
 			"referenceName": "CURAPD01",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"TableName": {
+				"type": "string"
+			},
+			"SchemaName": {
+				"type": "string"
+			}
+		},
 		"folder": {
 			"name": "Staging"
 		},
