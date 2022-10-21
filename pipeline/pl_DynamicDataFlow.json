@@ -63,11 +63,11 @@
 									"referenceName": "df_RptToStage",
 									"type": "DataFlowReference",
 									"parameters": {
-										"parameter1": {
+										"dfTableName": {
 											"value": "@item().table_name",
 											"type": "Expression"
 										},
-										"parameter2": {
+										"dfTableSchema": {
 											"value": "@item().table_schema",
 											"type": "Expression"
 										}
@@ -104,10 +104,10 @@
 			}
 		],
 		"parameters": {
-			"pipelinet": {
+			"plTableName": {
 				"type": "string"
 			},
-			"pipelines": {
+			"plTableSchema": {
 				"type": "string"
 			}
 		},

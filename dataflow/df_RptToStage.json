@@ -27,8 +27,8 @@
 			"transformations": [],
 			"scriptLines": [
 				"parameters{",
-				"     parameter1 as string,",
-				"     parameter2 as string",
+				"     dfTableName as string,",
+				"     dfTableSchema as string",
 				"}",
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
