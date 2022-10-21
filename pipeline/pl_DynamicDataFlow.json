@@ -47,8 +47,8 @@
 					},
 					"activities": [
 						{
-							"name": "df_RptToStage",
-							"type": "ExecuteDataFlow",
+							"name": "Copy data1",
+							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
 								"timeout": "0.00:05:00",
@@ -59,48 +59,52 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"dataflow": {
-									"referenceName": "df_RptToStage",
-									"type": "DataFlowReference",
+								"source": {
+									"type": "AzureSqlSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_DataSetSource",
+									"type": "DatasetReference",
 									"parameters": {
-										"TableName": {
-											"value": "'@{item()}.table_name'",
-											"type": "Expression"
-										},
 										"Schema": {
-											"value": "'@{item()}.table_schema'",
+											"value": "@item().table_schema",
 											"type": "Expression"
-										}
-									},
-									"datasetParameters": {
-										"RptDB": {
-											"Schema": {
-												"value": "@{item().table_schema}",
-												"type": "Expression"
-											},
-											"TableName": {
-												"value": "@{item().table_name}",
-												"type": "Expression"
-											}
 										},
-										"StgDB": {
-											"Schema": "STG",
-											"TableName": {
-												"value": "@{item().table_name}",
-												"type": "Expression"
-											}
+										"TableName": {
+											"value": "@item().table_name",
+											"type": "Expression"
 										}
 									}
-								},
-								"compute": {
-									"coreCount": 8,
-									"computeType": "General"
-								},
-								"traceLevel": "Fine",
-								"continuationSettings": {
-									"customizedCheckpointKey": "fa89b606-1e8b-4cb7-815a-79623cb851a3"
 								}
-							}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_DataSetSourceTarget",
+									"type": "DatasetReference",
+									"parameters": {
+										"Schema": "STG",
+										"TableName": "@item().table_name"
+									}
+								}
+							]
 						}
 					]
 				}
