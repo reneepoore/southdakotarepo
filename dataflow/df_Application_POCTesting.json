@@ -46,7 +46,7 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> stgApplication",
-				"stgApplication aggregate(APPLICATIONID = count(APPLICATIONID)) ~> CountApplicationID",
+				"stgApplication aggregate(APPLICATIONID = count(AddressID)) ~> CountApplicationID",
 				"CountApplicationID sink(allowSchemaDrift: false,",
 				"     validateSchema: false,",
 				"     input(",
