@@ -7,12 +7,10 @@
 		},
 		"parameters": {
 			"Schema": {
-				"type": "string",
-				"defaultValue": "stg"
+				"type": "string"
 			},
 			"TableName": {
-				"type": "string",
-				"defaultValue": "Person"
+				"type": "string"
 			}
 		},
 		"folder": {
