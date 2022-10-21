@@ -9,10 +9,6 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"dataset": {
-						"referenceName": "stgApplication",
-						"type": "DatasetReference"
-					},
 					"name": "stgApplication"
 				}
 			],
@@ -55,9 +51,7 @@
 				"          APPLICATIONTYPE as string",
 				"     ),",
 				"     allowSchemaDrift: false,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> stgApplication",
+				"     validateSchema: false) ~> stgApplication",
 				"stgApplication aggregate(APPLICATIONID = count(APPLICATIONID)) ~> CountApplicationID",
 				"CountApplicationID sink(allowSchemaDrift: false,",
 				"     validateSchema: false,",
