@@ -62,6 +62,16 @@
 								"dataflow": {
 									"referenceName": "df_RptToStage",
 									"type": "DataFlowReference",
+									"parameters": {
+										"parameter1": {
+											"value": "@item().table_name",
+											"type": "Expression"
+										},
+										"parameter2": {
+											"value": "@item().table_schema",
+											"type": "Expression"
+										}
+									},
 									"datasetParameters": {
 										"RptDB": {
 											"Schema": "@item().table_schema",
@@ -84,6 +94,14 @@
 				}
 			}
 		],
+		"parameters": {
+			"pipelinet": {
+				"type": "string"
+			},
+			"pipelines": {
+				"type": "string"
+			}
+		},
 		"folder": {
 			"name": "Testing"
 		},
