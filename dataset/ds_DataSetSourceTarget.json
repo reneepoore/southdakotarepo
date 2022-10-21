@@ -8,11 +8,14 @@
 		"parameters": {
 			"Schema": {
 				"type": "string",
-				"defaultValue": "Curam"
+				"defaultValue": "stg"
 			},
 			"TableName": {
 				"type": "string",
 				"defaultValue": "Person"
+			},
+			"LastWritten": {
+				"type": "string"
 			}
 		},
 		"folder": {

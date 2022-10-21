@@ -1,0 +1,60 @@
+{
+	"name": "df_RptToStage",
+	"properties": {
+		"folder": {
+			"name": "Staging"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_DataSetSource",
+						"type": "DatasetReference"
+					},
+					"name": "RptDB"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_DataSetSourceTarget",
+						"type": "DatasetReference"
+					},
+					"name": "StgDB"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Upsert"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     RptPrimaryID as string,",
+				"     StgPrimaryID as string",
+				"}",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     enableCdc: true,",
+				"     mode: 'read',",
+				"     skipInitialLoad: false,",
+				"     waterMarkColumn: 'LastWritten',",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> RptDB",
+				"RptDB alterRow(upsertIf($RptPrimaryID==$StgPrimaryID)) ~> Upsert",
+				"Upsert sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:false,",
+				"     upsertable:true,",
+				"     keys:[($StgPrimaryID)],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> StgDB"
+			]
+		}
+	}
+}

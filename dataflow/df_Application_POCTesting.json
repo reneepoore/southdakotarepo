@@ -9,6 +9,10 @@
 		"typeProperties": {
 			"sources": [
 				{
+					"dataset": {
+						"referenceName": "DimAddress",
+						"type": "DatasetReference"
+					},
 					"name": "stgApplication"
 				}
 			],
@@ -28,30 +32,20 @@
 			],
 			"scriptLines": [
 				"source(output(",
-				"          APPLICATIONID as long,",
-				"          SUBMITTEDDATETIME as timestamp,",
-				"          FILINGDATE as date,",
-				"          REFERENCE as string,",
-				"          APPLICATIONMETHOD as string,",
-				"          ROOTENTITYID as long,",
-				"          ASSIGNEE as string,",
-				"          VERSIONNO as integer,",
-				"          LASTWRITTEN as timestamp,",
-				"          CURRENTAPPLICATIONSTATUSID as long,",
-				"          PDFID as long,",
-				"          CASEID as long,",
-				"          REFERENCEADDENDUM as string,",
-				"          IEGEXECUTIONID as long,",
-				"          RECORDSTATUS as string,",
-				"          SCHEMANAME as string,",
-				"          INTERPRETERREQIND as string,",
-				"          INTERPRETERLANGUAGECODE as string,",
-				"          SPECIALASSISTANCEIND as string,",
-				"          SPECIALASSISTANCEREQUIREMENTS as string,",
-				"          APPLICATIONTYPE as string",
+				"          AddressID as integer,",
+				"          AddressLine1 as string,",
+				"          AddressLine2 as string,",
+				"          City as string,",
+				"          StateProvince as string,",
+				"          CountryRegion as string,",
+				"          PostalCode as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
 				"     ),",
 				"     allowSchemaDrift: false,",
-				"     validateSchema: false) ~> stgApplication",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> stgApplication",
 				"stgApplication aggregate(APPLICATIONID = count(APPLICATIONID)) ~> CountApplicationID",
 				"CountApplicationID sink(allowSchemaDrift: false,",
 				"     validateSchema: false,",
