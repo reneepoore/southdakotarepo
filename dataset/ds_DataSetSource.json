@@ -8,7 +8,7 @@
 		"parameters": {
 			"Schema": {
 				"type": "string",
-				"defaultValue": "CURAM"
+				"defaultValue": "CURAPD01"
 			},
 			"TableName": {
 				"type": "string",

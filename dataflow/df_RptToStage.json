@@ -34,7 +34,7 @@
 				"     RptPrimaryID as string,",
 				"     StgPrimaryID as string,",
 				"     TableName as string ($TableName),",
-				"     SchemaName as string ($SchemaName)",
+				"     Schema as string ($Schema)",
 				"}",
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",

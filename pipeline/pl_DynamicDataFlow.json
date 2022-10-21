@@ -63,18 +63,35 @@
 									"referenceName": "df_RptToStage",
 									"type": "DataFlowReference",
 									"parameters": {
-										"TableName": "$TableName",
-										"SchemaName": "$SchemaName"
+										"StgPrimaryID": {
+											"value": "'@{item()}.ID'",
+											"type": "Expression"
+										},
+										"TableName": {
+											"value": "'@{item()}.TableName'",
+											"type": "Expression"
+										},
+										"Schema": {
+											"value": "'@{activity('LkupTableNames').output.value}'",
+											"type": "Expression"
+										}
 									},
 									"datasetParameters": {
 										"RptDB": {
-											"Schema": "CURAM",
-											"TableName": "Person",
+											"Schema": {
+												"value": "@(item().Schema)",
+												"type": "Expression"
+											},
+											"TableName": {
+												"value": "@(item().TableName)",
+												"type": "Expression"
+											},
 											"ID": "ID"
 										},
 										"StgDB": {
 											"Schema": "stg",
-											"TableName": "Person"
+											"TableName": "Person",
+											"ID": "ID"
 										}
 									}
 								},
