@@ -1,0 +1,15 @@
+{
+	"name": "ds_AllTableNames",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Staging"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}
