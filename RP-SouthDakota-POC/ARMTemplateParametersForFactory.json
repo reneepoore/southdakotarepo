@@ -17,6 +17,9 @@
 		"CURAPD01_connectionString": {
 			"value": ""
 		},
+		"TargetSandbox_connectionString": {
+			"value": ""
+		},
 		"textSinkTest_accountKey": {
 			"value": ""
 		},

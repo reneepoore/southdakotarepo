@@ -23,6 +23,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'CURAPD01'"
 		},
+		"TargetSandbox_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'TargetSandbox'"
+		},
 		"textSinkTest_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'textSinkTest'"
@@ -86,6 +90,19 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('CURAPD01_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TargetSandbox')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('TargetSandbox_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -648,6 +665,103 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ds_AllTableNames')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Staging"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_DataSetSource')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Schema": {
+						"type": "string"
+					},
+					"TableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Staging"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().Schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().TableName",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_DataSetSourceTarget')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "TargetSandbox",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Schema": {
+						"type": "string"
+					},
+					"TableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Staging"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().Schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().TableName",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/TargetSandbox')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ds_DimCustomer_Target')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1106,322 +1220,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/stgAddress')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CURAPD01",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Staging"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "ADDRESSID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "COUNTRYCODE",
-						"type": "char"
-					},
-					{
-						"name": "MODIFIABLEIND",
-						"type": "char"
-					},
-					{
-						"name": "ADDRESSDATA",
-						"type": "varchar"
-					},
-					{
-						"name": "ADDRESSLAYOUTTYPE",
-						"type": "char"
-					},
-					{
-						"name": "GEOCODE",
-						"type": "varchar"
-					},
-					{
-						"name": "LATITUDE",
-						"type": "decimal",
-						"precision": 12,
-						"scale": 9
-					},
-					{
-						"name": "LONGITUDE",
-						"type": "decimal",
-						"precision": 12,
-						"scale": 9
-					},
-					{
-						"name": "VERSIONNO",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "LASTWRITTEN",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "CURAPD01",
-					"table": "ADDRESS"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/stgAlternateName')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CURAPD01",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Staging"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "ALTERNATENAMEID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "CONCERNROLEID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "TITLE",
-						"type": "char"
-					},
-					{
-						"name": "FIRSTFORENAME",
-						"type": "varchar"
-					},
-					{
-						"name": "OTHERFORENAME",
-						"type": "varchar"
-					},
-					{
-						"name": "SURNAME",
-						"type": "varchar"
-					},
-					{
-						"name": "UPPERFIRSTFORENAME",
-						"type": "varchar"
-					},
-					{
-						"name": "UPPERSURNAME",
-						"type": "varchar"
-					},
-					{
-						"name": "PHONETICENCODING",
-						"type": "char"
-					},
-					{
-						"name": "VERSIONNO",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "LASTWRITTEN",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "NAMESUFFIX",
-						"type": "char"
-					},
-					{
-						"name": "NAMETYPE",
-						"type": "char"
-					},
-					{
-						"name": "NAMESTATUS",
-						"type": "char"
-					},
-					{
-						"name": "FULLNAME",
-						"type": "varchar"
-					},
-					{
-						"name": "COMMENTS",
-						"type": "varchar"
-					},
-					{
-						"name": "INITIALS",
-						"type": "char"
-					}
-				],
-				"typeProperties": {
-					"schema": "CURAPD01",
-					"table": "ALTERNATENAME"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/stgApplication')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Pulling data from Curam Stage ",
-				"linkedServiceName": {
-					"referenceName": "CURAPD01",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Staging"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "APPLICATIONID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "SUBMITTEDDATETIME",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "FILINGDATE",
-						"type": "date"
-					},
-					{
-						"name": "REFERENCE",
-						"type": "char"
-					},
-					{
-						"name": "APPLICATIONMETHOD",
-						"type": "char"
-					},
-					{
-						"name": "ROOTENTITYID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "ASSIGNEE",
-						"type": "varchar"
-					},
-					{
-						"name": "VERSIONNO",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "LASTWRITTEN",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "CURRENTAPPLICATIONSTATUSID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "PDFID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "CASEID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "REFERENCEADDENDUM",
-						"type": "char"
-					},
-					{
-						"name": "IEGEXECUTIONID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "RECORDSTATUS",
-						"type": "char"
-					},
-					{
-						"name": "SCHEMANAME",
-						"type": "char"
-					},
-					{
-						"name": "INTERPRETERREQIND",
-						"type": "char"
-					},
-					{
-						"name": "INTERPRETERLANGUAGECODE",
-						"type": "char"
-					},
-					{
-						"name": "SPECIALASSISTANCEIND",
-						"type": "char"
-					},
-					{
-						"name": "SPECIALASSISTANCEREQUIREMENTS",
-						"type": "varchar"
-					},
-					{
-						"name": "APPLICATIONTYPE",
-						"type": "char"
-					}
-				],
-				"typeProperties": {
-					"schema": "CURAPD01",
-					"table": "APPLICATION"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/stgConcern')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CURAPD01",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Staging"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "CURAPD01",
-					"table": "CONCERN"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
 			]
 		}
 	]

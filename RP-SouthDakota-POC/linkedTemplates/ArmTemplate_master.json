@@ -23,6 +23,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'CURAPD01'"
 		},
+		"TargetSandbox_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'TargetSandbox'"
+		},
 		"textSinkTest_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'textSinkTest'"
@@ -69,6 +73,9 @@
 					},
 					"CURAPD01_connectionString": {
 						"value": "[parameters('CURAPD01_connectionString')]"
+					},
+					"TargetSandbox_connectionString": {
+						"value": "[parameters('TargetSandbox_connectionString')]"
 					},
 					"textSinkTest_accountKey": {
 						"value": "[parameters('textSinkTest_accountKey')]"

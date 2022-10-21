@@ -213,6 +213,132 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/pl_DynamicCopyData')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkupTableNames",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT table_name,\n       table_schema\nFROM   INFORMATION_SCHEMA.tables\nWHERE\n  table_type = 'BASE TABLE'\n  AND TABLE_SCHEMA = 'CURAPD01'\n  and Left(table_name,1 )= 'A'\nORDER  BY table_name ASC; ",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "ds_AllTableNames",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "GetEachTableName",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LkupTableNames",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkupTableNames').output.value\n\n",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.00:05:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBehavior": "insert",
+											"sqlWriterUseTableLock": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "ds_DataSetSource",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": {
+													"value": "@item().table_schema",
+													"type": "Expression"
+												},
+												"TableName": {
+													"value": "@item().table_name",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ds_DataSetSourceTarget",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": "STG",
+												"TableName": "@item().table_name"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/df_Application_POCTesting')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -226,7 +352,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "stgApplication",
+								"referenceName": "DimAddress",
 								"type": "DatasetReference"
 							},
 							"name": "stgApplication"
@@ -248,33 +374,21 @@
 					],
 					"scriptLines": [
 						"source(output(",
-						"          APPLICATIONID as long,",
-						"          SUBMITTEDDATETIME as timestamp,",
-						"          FILINGDATE as date,",
-						"          REFERENCE as string,",
-						"          APPLICATIONMETHOD as string,",
-						"          ROOTENTITYID as long,",
-						"          ASSIGNEE as string,",
-						"          VERSIONNO as integer,",
-						"          LASTWRITTEN as timestamp,",
-						"          CURRENTAPPLICATIONSTATUSID as long,",
-						"          PDFID as long,",
-						"          CASEID as long,",
-						"          REFERENCEADDENDUM as string,",
-						"          IEGEXECUTIONID as long,",
-						"          RECORDSTATUS as string,",
-						"          SCHEMANAME as string,",
-						"          INTERPRETERREQIND as string,",
-						"          INTERPRETERLANGUAGECODE as string,",
-						"          SPECIALASSISTANCEIND as string,",
-						"          SPECIALASSISTANCEREQUIREMENTS as string,",
-						"          APPLICATIONTYPE as string",
+						"          AddressID as integer,",
+						"          AddressLine1 as string,",
+						"          AddressLine2 as string,",
+						"          City as string,",
+						"          StateProvince as string,",
+						"          CountryRegion as string,",
+						"          PostalCode as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
 						"     ),",
 						"     allowSchemaDrift: false,",
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> stgApplication",
-						"stgApplication aggregate(APPLICATIONID = count(APPLICATIONID)) ~> CountApplicationID",
+						"stgApplication aggregate(APPLICATIONID = count(AddressID)) ~> CountApplicationID",
 						"CountApplicationID sink(allowSchemaDrift: false,",
 						"     validateSchema: false,",
 						"     input(",
@@ -1818,6 +1932,56 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/df_RptToStage')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Staging"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ds_DataSetSource",
+								"type": "DatasetReference"
+							},
+							"name": "RptDB"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ds_DataSetSourceTarget",
+								"type": "DatasetReference"
+							},
+							"name": "StgDB"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     waterMarkColumn: 'LastWritten',",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> RptDB",
+						"RptDB sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> StgDB"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/df_StagePlaceHolder')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -1956,6 +2120,110 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_DynamicDataFlow')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkupTableNames",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT table_name,\n       table_schema\nFROM   INFORMATION_SCHEMA.tables\nWHERE\n  table_type = 'BASE TABLE'\n  AND TABLE_SCHEMA = 'CURAPD01'\n  and Left(table_name,1 )= 'A'\nORDER  BY table_name ASC; ",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "ds_AllTableNames",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "GetEachTableName",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LkupTableNames",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkupTableNames').output.value\n\n",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "df_RptToStage",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.00:03:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "df_RptToStage",
+											"type": "DataFlowReference",
+											"parameters": {},
+											"datasetParameters": {
+												"RptDB": {
+													"Schema": "@item().table_schema",
+													"TableName": "@item().table_name"
+												},
+												"StgDB": {
+													"Schema": "STG",
+													"TableName": "@item().table_name"
+												}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_RptToStage')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pl_FactSalesOrder')]",
@@ -2235,320 +2503,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/df_Application_POCTesting')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_MasterStaging')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "df_Application_POCTesting",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:15:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_Application_POCTesting",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"stgApplication": {},
-									"Dummy": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Staging"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_Application_POCTesting')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_Test_Logging_w_SP_Copy_Table')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Test Logging\n",
-				"activities": [
-					{
-						"name": "LogExecutionSuccess",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "df_Logging_Src_Test",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[dbo].[usp_adfPipelineExecutions]",
-							"storedProcedureParameters": {
-								"adfName": {
-									"value": {
-										"value": "@pipeline().DataFactory",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"pipelineName": {
-									"value": {
-										"value": "@pipeline().Pipeline",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"runID": {
-									"value": {
-										"value": "@pipeline().RunId",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"triggerName": {
-									"value": {
-										"value": "@pipeline().TriggerName",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"triggerTime": {
-									"value": {
-										"value": "@pipeline().TriggerTime",
-										"type": "Expression"
-									},
-									"type": "DateTime"
-								},
-								"errorcodeloggedtime": {
-									"value": {
-										"value": "@{utcnow()}",
-										"type": "Expression"
-									},
-									"type": "Datetime"
-								},
-								"errordescription": {
-									"value": {
-										"value": "@string(activity('df_Logging_Src_Test').output.runStatus.metrics.tgtDimCustomerTarget.progressState)",
-										"type": "Expression"
-									},
-									"type": "String"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AdventureWorksLT2019",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "df_Logging_Src_Test",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_Logging_Src_Test1",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"srcDimCustomer": {},
-									"tgtDimCustomerTarget": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "LogExecutionFailure",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "df_Logging_Src_Test",
-								"dependencyConditions": [
-									"Failed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[dbo].[usp_adfPipelineExecutions]",
-							"storedProcedureParameters": {
-								"adfName": {
-									"value": {
-										"value": "@pipeline().DataFactory",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"pipelineName": {
-									"value": {
-										"value": "@pipeline().Pipeline",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"runID": {
-									"value": {
-										"value": "@pipeline().RunId",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"triggerName": {
-									"value": {
-										"value": "@pipeline().TriggerName",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"triggerTime": {
-									"value": {
-										"value": "@pipeline().TriggerTime",
-										"type": "Expression"
-									},
-									"type": "DateTime"
-								},
-								"errorcodeloggedtime": {
-									"value": {
-										"value": "@{utcnow()}",
-										"type": "Expression"
-									},
-									"type": "Datetime"
-								},
-								"errordescription": {
-									"value": {
-										"value": "@activity('df_Logging_Src_Test').error.message",
-										"type": "Expression"
-									},
-									"type": "String"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AdventureWorksLT2019",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"variables": {
-					"test": {
-						"type": "Boolean"
-					}
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": [],
-				"lastPublishTime": "2022-10-04T20:04:46Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_Logging_Src_Test1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_Test_Orders_Phase1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "df_FactSalesOrderHeader_Backup_Phase1",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:05:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_FactSalesOrderHeader_Backup_Phase1",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"reportingSalesOrderHeader": {},
-									"DimAddress": {},
-									"targetSalesOrders": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_FactSalesOrderHeader_Backup_Phase1')]"
 			]
 		}
 	]
