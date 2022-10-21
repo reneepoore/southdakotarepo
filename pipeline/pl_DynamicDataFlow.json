@@ -64,11 +64,11 @@
 									"type": "DataFlowReference",
 									"parameters": {
 										"TableName": {
-											"value": "@{item()}.TableName",
+											"value": "'@{item()}.table_name'",
 											"type": "Expression"
 										},
 										"Schema": {
-											"value": "@{item()}.Schema",
+											"value": "'@{item()}.table_schema'",
 											"type": "Expression"
 										}
 									},
