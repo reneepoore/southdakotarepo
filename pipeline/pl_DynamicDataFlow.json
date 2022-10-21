@@ -75,18 +75,18 @@
 									"datasetParameters": {
 										"RptDB": {
 											"Schema": {
-												"value": "@pipeline().parameters.pipelines",
+												"value": "@item().table_schema",
 												"type": "Expression"
 											},
 											"TableName": {
-												"value": "@pipeline().parameters.pipelinet",
+												"value": "@item().table_name",
 												"type": "Expression"
 											}
 										},
 										"StgDB": {
 											"Schema": "STG",
 											"TableName": {
-												"value": "@pipeline().parameters.pipelinet",
+												"value": "@item().table_name",
 												"type": "Expression"
 											}
 										}
