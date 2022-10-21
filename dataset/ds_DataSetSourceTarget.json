@@ -13,12 +13,6 @@
 			"TableName": {
 				"type": "string",
 				"defaultValue": "Person"
-			},
-			"LastWritten": {
-				"type": "string"
-			},
-			"ID": {
-				"type": "string"
 			}
 		},
 		"folder": {
