@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT table_name,\n       table_schema\nFROM   INFORMATION_SCHEMA.tables\nWHERE\n  table_type = 'BASE TABLE'\n  AND TABLE_SCHEMA = 'CURAPD01'\n  and Left(table_name,1 )= 'A'\nORDER  BY table_name ASC; \n",
+						"sqlReaderQuery": "SELECT table_name,\n       table_schema\nFROM   INFORMATION_SCHEMA.tables\nWHERE\n  table_type = 'BASE TABLE'\n  AND TABLE_SCHEMA = 'CURAPD01'\n  and table_name = 'ADDRESS'\nORDER  BY table_name ASC; \n",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -63,8 +63,6 @@
 									"referenceName": "df_RptToStage",
 									"type": "DataFlowReference",
 									"parameters": {
-										"RptPrimaryID": "$StgPrimaryID",
-										"StgPrimaryID": "$RptPrimaryID",
 										"TableName": {
 											"value": "@{item()}.TableName",
 											"type": "Expression"
@@ -83,18 +81,14 @@
 											"TableName": {
 												"value": "@{item().table_name}",
 												"type": "Expression"
-											},
-											"LastWritten": "LastWritten",
-											"ID": "ID"
+											}
 										},
 										"StgDB": {
-											"Schema": "stg",
+											"Schema": "STG",
 											"TableName": {
 												"value": "@{item().table_name}",
 												"type": "Expression"
-											},
-											"LastWritten": "LastWritten",
-											"ID": "ID"
+											}
 										}
 									}
 								},
@@ -104,7 +98,7 @@
 								},
 								"traceLevel": "Fine",
 								"continuationSettings": {
-									"customizedCheckpointKey": "fba0c463-f65a-45ad-adcf-ab3d75532e22"
+									"customizedCheckpointKey": "fa89b606-1e8b-4cb7-815a-79623cb851a3"
 								}
 							}
 						}
