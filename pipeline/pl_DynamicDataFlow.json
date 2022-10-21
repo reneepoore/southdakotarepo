@@ -77,11 +77,11 @@
 									"datasetParameters": {
 										"RptDB": {
 											"Schema": {
-												"value": "@(item().Schema)",
+												"value": "@{item().table_schema}",
 												"type": "Expression"
 											},
 											"TableName": {
-												"value": "@(item().TableName)",
+												"value": "@{item().table_name}",
 												"type": "Expression"
 											},
 											"LastWritten": "LastWritten",
@@ -89,7 +89,10 @@
 										},
 										"StgDB": {
 											"Schema": "stg",
-											"TableName": "Person",
+											"TableName": {
+												"value": "@{item().table_name}",
+												"type": "Expression"
+											},
 											"LastWritten": "LastWritten",
 											"ID": "ID"
 										}
