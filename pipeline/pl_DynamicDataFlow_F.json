@@ -1,0 +1,92 @@
+{
+	"name": "pl_DynamicDataFlow_F",
+	"properties": {
+		"activities": [
+			{
+				"name": "LkupTableNames",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:15:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT table_name,\n       table_schema\nFROM   INFORMATION_SCHEMA.tables\nWHERE\n  table_type = 'BASE TABLE'\n  AND TABLE_SCHEMA = 'CURAPD01'\n  and Left(table_name,1 )= 'A'\nORDER  BY table_name ASC; ",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_AllTableNames",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "GetEachTableName",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "LkupTableNames",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LkupTableNames').output.value\n\n",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "df_RptToStage",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.00:03:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "df_RptToStage",
+									"type": "DataFlowReference",
+									"datasetParameters": {
+										"RptDB": {
+											"Schema": "@item().table_schema",
+											"TableName": "@item().table_name"
+										},
+										"StgDB": {
+											"Schema": "STG",
+											"TableName": "@item().table_name"
+										}
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "Testing"
+		},
+		"annotations": []
+	}
+}
