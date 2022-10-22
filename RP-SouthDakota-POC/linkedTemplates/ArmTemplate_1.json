@@ -2108,60 +2108,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_RptToStage_copy1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "Staging"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "ds_DataSetSource",
-								"type": "DatasetReference"
-							},
-							"name": "RptDB"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "ds_DataSetSourceTarget",
-								"type": "DatasetReference"
-							},
-							"name": "StgDB"
-						}
-					],
-					"transformations": [],
-					"scriptLines": [
-						"parameters{",
-						"     parameter1 as string,",
-						"     parameter2 as string",
-						"}",
-						"source(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     waterMarkColumn: 'LastWritten',",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> RptDB",
-						"RptDB sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     deletable:false,",
-						"     insertable:true,",
-						"     updateable:false,",
-						"     upsertable:false,",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> StgDB"
-					]
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/df_StagePlaceHolder')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -2586,6 +2532,56 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/df_Logging_Src_Test')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_MasterDimension')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "df_Application_POCTesting",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_Application_POCTesting",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"stgApplication": {},
+									"Dummy": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Dimensions"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_Application_POCTesting')]"
 			]
 		}
 	]
