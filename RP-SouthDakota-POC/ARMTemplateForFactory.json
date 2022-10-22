@@ -644,12 +644,21 @@
 											"parameters": {},
 											"datasetParameters": {
 												"RptDB": {
-													"Schema": "@item().table_schema",
-													"TableName": "@item().table_name"
+													"Schema": {
+														"value": "@item().table_schema",
+														"type": "Expression"
+													},
+													"TableName": {
+														"value": "@item().table_name",
+														"type": "Expression"
+													}
 												},
 												"StgDB": {
 													"Schema": "STG",
-													"TableName": "@item().table_name"
+													"TableName": {
+														"value": "@item().table_name",
+														"type": "Expression"
+													}
 												}
 											}
 										},
@@ -677,6 +686,136 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ds_AllTableNames')]",
 				"[concat(variables('factoryId'), '/dataflows/df_RptToStage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_DynamicVariables')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkupTableNames",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT table_name,\n       table_schema\nFROM   INFORMATION_SCHEMA.tables\nWHERE\n  table_type = 'BASE TABLE'\n  AND TABLE_SCHEMA = 'CURAPD01'\n  and Left(table_name,1 )= 'A'\nORDER  BY table_name ASC; ",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "ds_AllTableNames",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "GetEachTableName",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LkupTableNames",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkupTableNames').output.value\n\n",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.00:05:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBehavior": "insert",
+											"sqlWriterUseTableLock": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "ds_DataSetSource",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": {
+													"value": "@item().table_schema",
+													"type": "Expression"
+												},
+												"TableName": {
+													"value": "@item().table_name",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ds_DataSetSourceTarget",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": "STG",
+												"TableName": "@item().table_name"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_AllTableNames')]",
+				"[concat(variables('factoryId'), '/datasets/ds_DataSetSource')]",
+				"[concat(variables('factoryId'), '/datasets/ds_DataSetSourceTarget')]"
 			]
 		},
 		{
@@ -4736,6 +4875,63 @@
 					],
 					"transformations": [],
 					"scriptLines": [
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     waterMarkColumn: 'LastWritten',",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> RptDB",
+						"RptDB sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> StgDB"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_DataSetSource')]",
+				"[concat(variables('factoryId'), '/datasets/ds_DataSetSourceTarget')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_RptToStage_copy1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Staging"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ds_DataSetSource",
+								"type": "DatasetReference"
+							},
+							"name": "RptDB"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ds_DataSetSourceTarget",
+								"type": "DatasetReference"
+							},
+							"name": "StgDB"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"parameters{",
+						"     parameter1 as string,",
+						"     parameter2 as string",
+						"}",
 						"source(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     waterMarkColumn: 'LastWritten',",
