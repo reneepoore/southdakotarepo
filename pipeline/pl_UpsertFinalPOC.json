@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_FactSalesOrderHeader_Backup_Phase3",
+				"name": "df_FactSalesOrderHeader_UpsertFinalPOC",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_FactSalesOrderHeader_Backup_Phase3",
+						"referenceName": "df_FactSalesOrderHeader_UpsertFinalPOC",
 						"type": "DataFlowReference"
 					},
 					"compute": {

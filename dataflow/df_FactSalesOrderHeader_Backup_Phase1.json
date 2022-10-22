@@ -2,7 +2,7 @@
 	"name": "df_FactSalesOrderHeader_Backup_Phase1",
 	"properties": {
 		"folder": {
-			"name": "Facts"
+			"name": "Testing"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
