@@ -680,6 +680,121 @@
 					"cancelAfter": {}
 				},
 				"folder": {
+					"name": "Staging"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_AllTableNames')]",
+				"[concat(variables('factoryId'), '/dataflows/df_RptToStage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_DynamicDataFlow_Backup')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkupTableNames",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT table_name,\n       table_schema\nFROM   INFORMATION_SCHEMA.tables\nWHERE\n  table_type = 'BASE TABLE'\n  AND TABLE_SCHEMA = 'CURAPD01'\n  and Left(table_name,1 )= 'A'\nORDER  BY table_name ASC; ",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "ds_AllTableNames",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "GetEachTableName",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LkupTableNames",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkupTableNames').output.value\n\n",
+								"type": "Expression"
+							},
+							"batchCount": 4,
+							"activities": [
+								{
+									"name": "df_RptToStage",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.00:03:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "df_RptToStage",
+											"type": "DataFlowReference",
+											"parameters": {},
+											"datasetParameters": {
+												"RptDB": {
+													"Schema": {
+														"value": "@item().table_schema",
+														"type": "Expression"
+													},
+													"TableName": {
+														"value": "@item().table_name",
+														"type": "Expression"
+													}
+												},
+												"StgDB": {
+													"Schema": "STG",
+													"TableName": {
+														"value": "@item().table_name",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
 					"name": "Testing"
 				},
 				"annotations": []
@@ -1607,7 +1722,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pl_Test_Orders_Phase3')]",
+			"name": "[concat(parameters('factoryName'), '/pl_UpsertFinalPOC')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1653,7 +1768,7 @@
 					"cancelAfter": {}
 				},
 				"folder": {
-					"name": "Testing"
+					"name": "Staging"
 				},
 				"annotations": []
 			},
@@ -4913,121 +5028,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]",
 				"[concat(variables('factoryId'), '/datasets/Dummy')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_DynamicDataFlow_Backup')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "LkupTableNames",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:15:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT table_name,\n       table_schema\nFROM   INFORMATION_SCHEMA.tables\nWHERE\n  table_type = 'BASE TABLE'\n  AND TABLE_SCHEMA = 'CURAPD01'\n  and Left(table_name,1 )= 'A'\nORDER  BY table_name ASC; ",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "ds_AllTableNames",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "GetEachTableName",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "LkupTableNames",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('LkupTableNames').output.value\n\n",
-								"type": "Expression"
-							},
-							"batchCount": 4,
-							"activities": [
-								{
-									"name": "df_RptToStage",
-									"type": "ExecuteDataFlow",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.00:03:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"dataflow": {
-											"referenceName": "df_RptToStage",
-											"type": "DataFlowReference",
-											"parameters": {},
-											"datasetParameters": {
-												"RptDB": {
-													"Schema": {
-														"value": "@item().table_schema",
-														"type": "Expression"
-													},
-													"TableName": {
-														"value": "@item().table_name",
-														"type": "Expression"
-													}
-												},
-												"StgDB": {
-													"Schema": "STG",
-													"TableName": {
-														"value": "@item().table_name",
-														"type": "Expression"
-													}
-												}
-											}
-										},
-										"staging": {},
-										"compute": {
-											"coreCount": 8,
-											"computeType": "General"
-										},
-										"traceLevel": "Fine"
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_AllTableNames')]",
-				"[concat(variables('factoryId'), '/dataflows/df_RptToStage')]"
 			]
 		}
 	]
