@@ -1,5 +1,5 @@
 {
-	"name": "pl_Test_Orders_Phase3",
+	"name": "pl_UpsertFinalPOC",
 	"properties": {
 		"activities": [
 			{
@@ -31,7 +31,7 @@
 			}
 		],
 		"folder": {
-			"name": "Testing"
+			"name": "Staging"
 		},
 		"annotations": []
 	}
