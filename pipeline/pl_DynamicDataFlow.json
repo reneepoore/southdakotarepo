@@ -65,7 +65,7 @@
 									"type": "DataFlowReference",
 									"parameters": {
 										"parameter1": {
-											"value": "'@{item().table_value}'",
+											"value": "'@{item().table_name}'",
 											"type": "Expression"
 										}
 									},
