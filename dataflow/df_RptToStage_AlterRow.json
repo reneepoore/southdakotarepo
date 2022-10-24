@@ -1,5 +1,5 @@
 {
-	"name": "df_RptToStage",
+	"name": "df_RptToStage_AlterRow",
 	"properties": {
 		"folder": {
 			"name": "Staging"
