@@ -63,6 +63,12 @@
 								"dataflow": {
 									"referenceName": "df_RptToStage",
 									"type": "DataFlowReference",
+									"parameters": {
+										"parameter1": {
+											"value": "'@{item().table_value}'",
+											"type": "Expression"
+										}
+									},
 									"datasetParameters": {
 										"RptDB": {
 											"Schema": {
@@ -87,7 +93,10 @@
 									"coreCount": 8,
 									"computeType": "General"
 								},
-								"traceLevel": "Fine"
+								"traceLevel": "Fine",
+								"continuationSettings": {
+									"customizedCheckpointKey": "fa117f36-8571-44e9-89ed-82928e38017e"
+								}
 							}
 						}
 					]
