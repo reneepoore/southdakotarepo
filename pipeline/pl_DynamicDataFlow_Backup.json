@@ -67,6 +67,10 @@
 										"parameter1": {
 											"value": "'@{item().table_name}'",
 											"type": "Expression"
+										},
+										"parameter2": {
+											"value": "'@{item().table_schema}'",
+											"type": "Expression"
 										}
 									},
 									"datasetParameters": {
