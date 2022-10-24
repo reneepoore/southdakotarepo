@@ -24,7 +24,11 @@
 					"name": "StgDB"
 				}
 			],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "Upsert"
+				}
+			],
 			"scriptLines": [
 				"parameters{",
 				"     parameter1 as string,",
@@ -36,7 +40,8 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table',",
 				"     mode: 'read') ~> RptDB",
-				"RptDB sink(allowSchemaDrift: true,",
+				"RptDB alterRow(upsertIf(true())) ~> Upsert",
+				"Upsert sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
