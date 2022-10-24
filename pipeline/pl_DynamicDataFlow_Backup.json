@@ -63,6 +63,12 @@
 								"dataflow": {
 									"referenceName": "df_RptToStage",
 									"type": "DataFlowReference",
+									"parameters": {
+										"parameter1": {
+											"value": "'@{item().table_name}'",
+											"type": "Expression"
+										}
+									},
 									"datasetParameters": {
 										"RptDB": {
 											"Schema": {
