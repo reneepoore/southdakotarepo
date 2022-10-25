@@ -1,0 +1,24 @@
+{
+	"name": "TablePrimaryKeys",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Staging"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "SYSCOLUMNS_202210251101",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "TablePrimaryKeys.xlsx",
+				"container": "newcontainer"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": []
+	}
+}
