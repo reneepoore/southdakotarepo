@@ -15,11 +15,7 @@
 					"name": "RptDB"
 				},
 				{
-					"dataset": {
-						"referenceName": "TablePrimaryKeys",
-						"type": "DatasetReference"
-					},
-					"name": "TablePrimaryKeys"
+					"name": "source1"
 				}
 			],
 			"sinks": [
@@ -34,12 +30,6 @@
 			"transformations": [
 				{
 					"name": "alterRow1"
-				},
-				{
-					"name": "CreateIDColumn"
-				},
-				{
-					"name": "JoinTableNames"
 				}
 			],
 			"scriptLines": [
@@ -53,16 +43,9 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table',",
 				"     mode: 'read') ~> RptDB",
-				"source(allowSchemaDrift: false,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> TablePrimaryKeys",
-				"CreateIDColumn alterRow(upsertIf(true())) ~> alterRow1",
-				"JoinTableNames derive(TableNameID = concat($TableName, 'ID')) ~> CreateIDColumn",
-				"RptDB, TablePrimaryKeys join(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
-				"     joinType:'left',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> JoinTableNames",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false) ~> source1",
+				"RptDB alterRow(upsertIf(true())) ~> alterRow1",
 				"alterRow1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
