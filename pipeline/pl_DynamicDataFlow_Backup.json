@@ -71,6 +71,10 @@
 										"SchemaName": {
 											"value": "'@{item().table_schema}'",
 											"type": "Expression"
+										},
+										"UniqueID": {
+											"value": "'@{item().unique_id}'",
+											"type": "Expression"
 										}
 									},
 									"datasetParameters": {
