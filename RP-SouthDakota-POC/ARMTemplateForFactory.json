@@ -595,7 +595,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT table_name,\n       table_schema\nFROM   INFORMATION_SCHEMA.tables\nWHERE\n  table_type = 'BASE TABLE'\n  AND TABLE_SCHEMA = 'CURAPD01'\n  and Left(table_name,1 )= 'A'\nORDER  BY table_name ASC; ",
+								"sqlReaderQuery": "SELECT a.TABLE_NAME,\n       a.TABLE_SCHEMA,\n       ISNULL(b.COLUMN_NAME, 'NA') UNIQUE_ID\nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01'\n         AND LEFT(TABLE_NAME, 1) = 'A') a\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n\t   CONSTRAINT_NAME,\n                               COLUMN_NAME\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) b\n                    ON a.TABLE_NAME = b.TABLE_NAME ",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -642,7 +642,20 @@
 										"dataflow": {
 											"referenceName": "df_RptToStage",
 											"type": "DataFlowReference",
-											"parameters": {},
+											"parameters": {
+												"TableName": {
+													"value": "'@{item().table_name}'",
+													"type": "Expression"
+												},
+												"SchemaName": {
+													"value": "'@{item().table_schema}'",
+													"type": "Expression"
+												},
+												"UniqueID": {
+													"value": "'@{item().unique_id}'",
+													"type": "Expression"
+												}
+											},
 											"datasetParameters": {
 												"RptDB": {
 													"Schema": {
@@ -661,7 +674,8 @@
 														"type": "Expression"
 													}
 												}
-											}
+											},
+											"linkedServiceParameters": {}
 										},
 										"staging": {},
 										"compute": {
@@ -757,7 +771,20 @@
 										"dataflow": {
 											"referenceName": "df_RptToStage",
 											"type": "DataFlowReference",
-											"parameters": {},
+											"parameters": {
+												"TableName": {
+													"value": "'@{item().table_name}'",
+													"type": "Expression"
+												},
+												"SchemaName": {
+													"value": "'@{item().table_schema}'",
+													"type": "Expression"
+												},
+												"UniqueID": {
+													"value": "'@{item().unique_id}'",
+													"type": "Expression"
+												}
+											},
 											"datasetParameters": {
 												"RptDB": {
 													"Schema": {
@@ -776,7 +803,8 @@
 														"type": "Expression"
 													}
 												}
-											}
+											},
+											"linkedServiceParameters": {}
 										},
 										"staging": {},
 										"compute": {
@@ -1660,6 +1688,30 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/df_FactSalesOrderHeader_UpsertFinalPOC')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AESSHARESET')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "AESSHARESET"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
 			]
 		},
 		{
@@ -3995,14 +4047,89 @@
 							"name": "StgDB"
 						}
 					],
-					"transformations": [],
+					"transformations": [
+						{
+							"name": "alterRow1"
+						}
+					],
 					"scriptLines": [
+						"parameters{",
+						"     TableName as string,",
+						"     SchemaName as string,",
+						"     UniqueID as string",
+						"}",
 						"source(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     waterMarkColumn: 'LastWritten',",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> RptDB",
-						"RptDB sink(allowSchemaDrift: true,",
+						"     format: 'table',",
+						"     mode: 'read') ~> RptDB",
+						"RptDB alterRow(upsertIf(true())) ~> alterRow1",
+						"alterRow1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:false,",
+						"     updateable:false,",
+						"     upsertable:true,",
+						"     keys:[($UniqueID)],",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> StgDB"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_DataSetSource')]",
+				"[concat(variables('factoryId'), '/datasets/ds_DataSetSourceTarget')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_RptToStage_AlterRow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Staging"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ds_DataSetSource",
+								"type": "DatasetReference"
+							},
+							"name": "RptDB"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ds_DataSetSourceTarget",
+								"type": "DatasetReference"
+							},
+							"name": "StgDB"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Upsert"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     parameter1 as string,",
+						"     parameter2 as string",
+						"}",
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     waterMarkColumn: 'LastWritten',",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table',",
+						"     mode: 'read') ~> RptDB",
+						"RptDB alterRow(upsertIf(true())) ~> Upsert",
+						"Upsert sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
 						"     insertable:true,",
