@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT table_name,\n       table_schema\nFROM   INFORMATION_SCHEMA.tables\nWHERE\n  table_type = 'BASE TABLE'\n  AND TABLE_SCHEMA = 'CURAPD01'\n  and Left(table_name,1 )= 'A'\nORDER  BY table_name ASC; ",
+						"sqlReaderQuery": "SELECT a.TABLE_NAME,\n       a.TABLE_SCHEMA,\n       ISNULL(b.COLUMN_NAME, 'NA') UNIQUE_ID\nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01'\n         AND LEFT(TABLE_NAME, 1) = 'A') a\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n\t   CONSTRAINT_NAME,\n                               COLUMN_NAME\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) b\n                    ON a.TABLE_NAME = b.TABLE_NAME ",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -71,6 +71,10 @@
 										"SchemaName": {
 											"value": "'@{item().table_schema}'",
 											"type": "Expression"
+										},
+										"UniqueID": {
+											"value": "'@{item().unique_id}'",
+											"type": "Expression"
 										}
 									},
 									"datasetParameters": {
@@ -97,10 +101,7 @@
 									"coreCount": 8,
 									"computeType": "General"
 								},
-								"traceLevel": "Fine",
-								"continuationSettings": {
-									"customizedCheckpointKey": "fa117f36-8571-44e9-89ed-82928e38017e"
-								}
+								"traceLevel": "Fine"
 							}
 						}
 					]
