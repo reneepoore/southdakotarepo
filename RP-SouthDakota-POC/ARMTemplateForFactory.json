@@ -595,7 +595,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT TblInfo.TABLE_NAME,\n       TblInfo.TABLE_SCHEMA,\n       ISNULL(TblID.COLUMN_NAME, 'NA') UNIQUE_ID\nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01'\n         AND LEFT(TABLE_NAME, 1) = 'A') TblInfo\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n\t   CONSTRAINT_NAME,\n                               COLUMN_NAME\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) TblID\n                    ON TblInfo.TABLE_NAME = TblID.TABLE_NAME ",
+								"sqlReaderQuery": "SELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID\nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT DISTINCT TABLE_NAME,\n                                        COLUMN_NAME\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n                    ON tblinfo.TABLE_NAME = tblid.TABLE_NAME \n                    WHERE tblinfo.TABLE_NAME <> 'CODETABLEITEM'\n",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -674,8 +674,7 @@
 														"type": "Expression"
 													}
 												}
-											},
-											"linkedServiceParameters": {}
+											}
 										},
 										"staging": {},
 										"compute": {
@@ -803,8 +802,7 @@
 														"type": "Expression"
 													}
 												}
-											},
-											"linkedServiceParameters": {}
+											}
 										},
 										"staging": {},
 										"compute": {
@@ -4049,7 +4047,7 @@
 					],
 					"transformations": [
 						{
-							"name": "alterRow1"
+							"name": "Upsert"
 						}
 					],
 					"scriptLines": [
@@ -4064,8 +4062,8 @@
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table',",
 						"     mode: 'read') ~> RptDB",
-						"RptDB alterRow(upsertIf(true())) ~> alterRow1",
-						"alterRow1 sink(allowSchemaDrift: true,",
+						"RptDB alterRow(upsertIf(true())) ~> Upsert",
+						"Upsert sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
 						"     insertable:false,",
