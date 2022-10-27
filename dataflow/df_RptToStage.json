@@ -26,7 +26,7 @@
 			],
 			"transformations": [
 				{
-					"name": "alterRow1"
+					"name": "Upsert"
 				}
 			],
 			"scriptLines": [
@@ -41,8 +41,8 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table',",
 				"     mode: 'read') ~> RptDB",
-				"RptDB alterRow(upsertIf(true())) ~> alterRow1",
-				"alterRow1 sink(allowSchemaDrift: true,",
+				"RptDB alterRow(upsertIf(true())) ~> Upsert",
+				"Upsert sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:false,",
