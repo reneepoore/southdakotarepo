@@ -595,7 +595,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID\nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT DISTINCT TABLE_NAME,\n                                        COLUMN_NAME\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n                    ON tblinfo.TABLE_NAME = tblid.TABLE_NAME \n                    WHERE tblinfo.TABLE_NAME <> 'CODETABLEITEM'\n",
+								"sqlReaderQuery": "/*\n********************************************************************************************************\nThe first sql select will get the table names.\nthe second sql will get the max ordinal. This is to check if there are multiple columns that make up\na unique row. In the case of CODETABLEITEM there are 3. I only want to process on row. If there is\none row the column is use in as the Key Identifier in the data flow.\nIf the Ordinal Position is greater than 1 it is the CODETABLEITEM. Then that data is processed \ndifferently in the data flow via Conditional split.\nThe third sql gets the columns used in the Primary Key\n\nCode by: Renee Poore\n  \n\n*******************************************************************************************************\n*/\n\nSELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID,\n       mop.ORDINAL_POSITION \nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n                               MAX(ORDINAL_POSITION) AS ORDINAL_POSITION\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1\n                        GROUP  BY TABLE_NAME) mop\n                    ON tblinfo.TABLE_NAME = mop.TABLE_NAME\n\n       INNER JOIN (SELECT DISTINCT TABLE_NAME,\n                                   COLUMN_NAME,\n                                   ORDINAL_POSITION\n                   FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                   WHERE\n                    OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                             + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n               ON mop.TABLE_NAME = tblid.TABLE_NAME\n                  AND mop.ORDINAL_POSITION = tblid.ORDINAL_POSITION \n\n\n\t\t\t\tWHERE MOP.ORDINAL_POSITION = 1",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -686,6 +686,40 @@
 								}
 							]
 						}
+					},
+					{
+						"name": "df_CodeTableItem",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_CodeTableItem",
+								"type": "DataFlowReference",
+								"parameters": {
+									"TableName": "'CODETABLEITEM'",
+									"SchemaName": "'CURAPD01'",
+									"UniqueID": "'na'"
+								},
+								"datasetParameters": {
+									"RptDB": {},
+									"StgDB": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
 					}
 				],
 				"policy": {
@@ -699,6 +733,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ds_AllTableNames')]",
+				"[concat(variables('factoryId'), '/dataflows/df_CodeTableItem')]",
 				"[concat(variables('factoryId'), '/dataflows/df_RptToStage')]"
 			]
 		},
@@ -723,7 +758,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "\n/*\n********************************************************************************************************\nThe first sql select will get the table names.\nthe second sql will get the max ordinal. This is to check if there are multiple columns that make up\na unique row. In the case of CODETABLEITEM there are 3. I only want to process on row. If there is\none row the column is use in as the Key Identifier in the data flow.\nIf the Ordinal Position is greater than 1 it is the CODETABLEITEM. Then that data is processed \ndifferently in the data flow via Conditional split.\nThe third sql gets the columns used in the Primary Key\n\nCode by: Renee Poore\n  \n\n*******************************************************************************************************\n*/\n\nSELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID,\n       mop.ORDINAL_POSITION\nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n                               MAX(ORDINAL_POSITION) AS ORDINAL_POSITION\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1\n                        GROUP  BY TABLE_NAME) mop\n                    ON tblinfo.TABLE_NAME = mop.TABLE_NAME\n\n       INNER JOIN (SELECT DISTINCT TABLE_NAME,\n                                   COLUMN_NAME,\n                                   ORDINAL_POSITION\n                   FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                   WHERE\n                    OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                             + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n               ON mop.TABLE_NAME = tblid.TABLE_NAME\n                  AND mop.ORDINAL_POSITION = tblid.ORDINAL_POSITION ",
+								"sqlReaderQuery": "\n/*\n********************************************************************************************************\nThe first sql select will get the table names.\nthe second sql will get the max ordinal. This is to check if there are multiple columns that make up\na unique row. In the case of CODETABLEITEM there are 3. I only want to process on row. If there is\none row the column is use in as the Key Identifier in the data flow.\nIf the Ordinal Position is greater than 1 it is the CODETABLEITEM. Then that data is processed \ndifferently in the data flow via Conditional split.\nThe third sql gets the columns used in the Primary Key\n\nCode by: Renee Poore\n  \n\n*******************************************************************************************************\n*/\n\nSELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID,\n       CAST(mop.ORDINAL_POSITION as varchar(1) ) as ORDINAL_POSITION\nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n                               MAX(ORDINAL_POSITION) AS ORDINAL_POSITION\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1\n                        GROUP  BY TABLE_NAME) mop\n                    ON tblinfo.TABLE_NAME = mop.TABLE_NAME\n\n       INNER JOIN (SELECT DISTINCT TABLE_NAME,\n                                   COLUMN_NAME,\n                                   ORDINAL_POSITION\n                   FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                   WHERE\n                    OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                             + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n               ON mop.TABLE_NAME = tblid.TABLE_NAME\n                  AND mop.ORDINAL_POSITION = tblid.ORDINAL_POSITION \n\n\n\t\t\t\t  where tblinfo.TABLE_NAME in ('ADDRESS','CODETABLEITEM')",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -755,69 +790,197 @@
 							"batchCount": 4,
 							"activities": [
 								{
-									"name": "df_RptToStage_copy1",
-									"type": "ExecuteDataFlow",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.00:15:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
+									"name": "If Condition1_copy1",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "table",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "schema",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "column",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "ordpos",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"userProperties": [],
 									"typeProperties": {
-										"dataflow": {
-											"referenceName": "df_RptToStage_copy1",
-											"type": "DataFlowReference",
-											"parameters": {
-												"TableName": {
-													"value": "'@{item().TABLE_NAME}'",
-													"type": "Expression"
+										"expression": {
+											"value": "@lessOrEquals(int(variables('ordpos')),1)",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "df_CodeItem_copy1",
+												"type": "ExecuteDataFlow",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.00:15:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
 												},
-												"SchemaName": {
-													"value": "'@{item().TABLE_SCHEMA}'",
-													"type": "Expression"
-												},
-												"UniqueID": {
-													"value": "'@{item().UNIQUE_ID}'",
-													"type": "Expression"
-												},
-												"ORDPosition": {
-													"value": "@item().ORDINAL_POSITION",
-													"type": "Expression"
+												"userProperties": [],
+												"typeProperties": {
+													"dataflow": {
+														"referenceName": "df_CodeTableItem",
+														"type": "DataFlowReference",
+														"parameters": {
+															"TableName": {
+																"value": "'@{variables('table')}'",
+																"type": "Expression"
+															},
+															"SchemaName": {
+																"value": "'@{variables('schema')}'",
+																"type": "Expression"
+															},
+															"UniqueID": {
+																"value": "'@{variables('column')}'",
+																"type": "Expression"
+															}
+														},
+														"datasetParameters": {
+															"RptDB": {},
+															"StgDB": {}
+														}
+													},
+													"staging": {},
+													"compute": {
+														"coreCount": 8,
+														"computeType": "General"
+													},
+													"traceLevel": "Fine"
 												}
-											},
-											"datasetParameters": {
-												"RptDB": {
-													"Schema": {
-														"value": "@item().table_schema",
-														"type": "Expression"
-													},
-													"TableName": {
-														"value": "@item().table_name",
-														"type": "Expression"
-													}
-												},
-												"StgDB": {
-													"Schema": {
-														"value": "STG",
-														"type": "Expression"
-													},
-													"TableName": {
-														"value": "@item().table_name",
-														"type": "Expression"
-													}
-												},
-												"StgCodeTableItem": {}
 											}
-										},
-										"staging": {},
-										"compute": {
-											"coreCount": 8,
-											"computeType": "General"
-										},
-										"traceLevel": "Fine"
+										],
+										"ifTrueActivities": [
+											{
+												"name": "df_RptToStage_copy1",
+												"type": "ExecuteDataFlow",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.00:15:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"dataflow": {
+														"referenceName": "df_RptToStage_copy1",
+														"type": "DataFlowReference",
+														"parameters": {
+															"TableName": {
+																"value": "'@{variables('table')}'",
+																"type": "Expression"
+															},
+															"SchemaName": {
+																"value": "'@{variables('schema')}'",
+																"type": "Expression"
+															},
+															"UniqueID": {
+																"value": "'@{variables('column')}'",
+																"type": "Expression"
+															}
+														},
+														"datasetParameters": {
+															"RptDB": {
+																"Schema": {
+																	"value": "@variables('schema')",
+																	"type": "Expression"
+																},
+																"TableName": {
+																	"value": "@variables('table')",
+																	"type": "Expression"
+																}
+															},
+															"StgDB": {
+																"Schema": "STG",
+																"TableName": {
+																	"value": "@variables('table')",
+																	"type": "Expression"
+																}
+															}
+														}
+													},
+													"staging": {},
+													"compute": {
+														"coreCount": 8,
+														"computeType": "General"
+													},
+													"traceLevel": "Fine"
+												}
+											}
+										]
+									}
+								},
+								{
+									"name": "table",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "table",
+										"value": {
+											"value": "@item().TABLE_NAME",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "schema",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "schema",
+										"value": {
+											"value": "@item().TABLE_SCHEMA",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "column",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "column",
+										"value": {
+											"value": "@item().UNIQUE_ID",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "ordpos",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "ordpos",
+										"value": {
+											"value": "@item().ORDINAL_POSITION",
+											"type": "Expression"
+										}
 									}
 								}
 							]
@@ -828,6 +991,20 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"variables": {
+					"table": {
+						"type": "String"
+					},
+					"schema": {
+						"type": "String"
+					},
+					"column": {
+						"type": "String"
+					},
+					"ordpos": {
+						"type": "String"
+					}
+				},
 				"folder": {
 					"name": "Testing"
 				},
@@ -835,6 +1012,209 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ds_AllTableNames')]",
+				"[concat(variables('factoryId'), '/dataflows/df_CodeTableItem')]",
+				"[concat(variables('factoryId'), '/dataflows/df_RptToStage_copy1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_DynamicDataFlow_Backup_copy1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkupTableNames",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "\n/*\n********************************************************************************************************\nThe first sql select will get the table names.\nthe second sql will get the max ordinal. This is to check if there are multiple columns that make up\na unique row. In the case of CODETABLEITEM there are 3. I only want to process on row. If there is\none row the column is use in as the Key Identifier in the data flow.\nIf the Ordinal Position is greater than 1 it is the CODETABLEITEM. Then that data is processed \ndifferently in the data flow via Conditional split.\nThe third sql gets the columns used in the Primary Key\n\nCode by: Renee Poore\n  \n\n*******************************************************************************************************\n*/\n\nSELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID,\n       CAST(mop.ORDINAL_POSITION as varchar(1) ) as ORDINAL_POSITION\nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n                               MAX(ORDINAL_POSITION) AS ORDINAL_POSITION\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1\n                        GROUP  BY TABLE_NAME) mop\n                    ON tblinfo.TABLE_NAME = mop.TABLE_NAME\n\n       INNER JOIN (SELECT DISTINCT TABLE_NAME,\n                                   COLUMN_NAME,\n                                   ORDINAL_POSITION\n                   FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                   WHERE\n                    OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                             + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n               ON mop.TABLE_NAME = tblid.TABLE_NAME\n                  AND mop.ORDINAL_POSITION = tblid.ORDINAL_POSITION \n\n\n\t\t\t\t  where tblinfo.TABLE_NAME in ('ADDRESS','CODETABLEITEM')",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "ds_AllTableNames",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "GetEachTableName",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LkupTableNames",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkupTableNames').output.value\n\n",
+								"type": "Expression"
+							},
+							"batchCount": 4,
+							"activities": [
+								{
+									"name": "If Condition1_copy1",
+									"type": "IfCondition",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@lessOrEquals(int(variables('ordpos')),1)",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "df_CodeItem_copy1",
+												"type": "ExecuteDataFlow",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.00:15:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"dataflow": {
+														"referenceName": "df_CodeTableItem",
+														"type": "DataFlowReference",
+														"parameters": {
+															"TableName": {
+																"value": "'@{variables('table')}'",
+																"type": "Expression"
+															},
+															"SchemaName": {
+																"value": "'@{variables('schema')}'",
+																"type": "Expression"
+															},
+															"UniqueID": {
+																"value": "'@{variables('column')}'",
+																"type": "Expression"
+															}
+														},
+														"datasetParameters": {
+															"RptDB": {},
+															"StgDB": {}
+														}
+													},
+													"staging": {},
+													"compute": {
+														"coreCount": 8,
+														"computeType": "General"
+													},
+													"traceLevel": "Fine"
+												}
+											}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "df_RptToStage_copy1",
+												"type": "ExecuteDataFlow",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.00:15:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"dataflow": {
+														"referenceName": "df_RptToStage_copy1",
+														"type": "DataFlowReference",
+														"parameters": {
+															"TableName": {
+																"value": "'@{variables('table')}'",
+																"type": "Expression"
+															},
+															"SchemaName": {
+																"value": "'@{variables('schema')}'",
+																"type": "Expression"
+															},
+															"UniqueID": {
+																"value": "'@{variables('column')}'",
+																"type": "Expression"
+															}
+														},
+														"datasetParameters": {
+															"RptDB": {
+																"Schema": {
+																	"value": "@variables('schema')",
+																	"type": "Expression"
+																},
+																"TableName": {
+																	"value": "@variables('table')",
+																	"type": "Expression"
+																}
+															},
+															"StgDB": {
+																"Schema": "STG",
+																"TableName": {
+																	"value": "@variables('table')",
+																	"type": "Expression"
+																}
+															}
+														}
+													},
+													"staging": {},
+													"compute": {
+														"coreCount": 8,
+														"computeType": "General"
+													},
+													"traceLevel": "Fine"
+												}
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"table": {
+						"type": "String"
+					},
+					"schema": {
+						"type": "String"
+					},
+					"column": {
+						"type": "String"
+					},
+					"ordpos": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_AllTableNames')]",
+				"[concat(variables('factoryId'), '/dataflows/df_CodeTableItem')]",
 				"[concat(variables('factoryId'), '/dataflows/df_RptToStage_copy1')]"
 			]
 		},
@@ -1703,7 +2083,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "df_CodeItem",
+						"name": "df_CodeTableItem",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -1716,17 +2096,16 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_CodeItem",
+								"referenceName": "df_CodeTableItem",
 								"type": "DataFlowReference",
 								"parameters": {
 									"TableName": "'CODETABLEITEM'",
 									"SchemaName": "'CURAPD01'",
-									"UniqueID": "'CURAPD01'"
+									"UniqueID": "'na'"
 								},
 								"datasetParameters": {
 									"RptDB": {},
-									"StgDB": {},
-									"sink1": {}
+									"StgDB": {}
 								}
 							},
 							"staging": {},
@@ -1748,7 +2127,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_CodeItem')]"
+				"[concat(variables('factoryId'), '/dataflows/df_CodeTableItem')]"
 			]
 		},
 		{
@@ -3252,7 +3631,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_CodeItem')]",
+			"name": "[concat(parameters('factoryName'), '/df_CodeTableItem')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -3277,24 +3656,11 @@
 								"type": "DatasetReference"
 							},
 							"name": "StgDB"
-						},
-						{
-							"dataset": {
-								"referenceName": "CODETABLEITEM",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
 						}
 					],
 					"transformations": [
 						{
-							"name": "alterRow1"
-						},
-						{
-							"name": "split1"
-						},
-						{
-							"name": "alterRow2"
+							"name": "Upsert"
 						}
 					],
 					"scriptLines": [
@@ -3322,11 +3688,8 @@
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table',",
 						"     mode: 'read') ~> RptDB",
-						"split1@OnePKColumn alterRow(upsertIf(true())) ~> alterRow1",
-						"RptDB split($TableName != 'CODETABLEITEM',",
-						"     disjoint: true) ~> split1@(OnePKColumn, MultiPKColumns)",
-						"split1@MultiPKColumns alterRow(upsertIf(true())) ~> alterRow2",
-						"alterRow1 sink(allowSchemaDrift: true,",
+						"RptDB alterRow(upsertIf(true())) ~> Upsert",
+						"Upsert sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
 						"     insertable:false,",
@@ -3336,18 +3699,7 @@
 						"     format: 'table',",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> StgDB",
-						"alterRow2 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     deletable:false,",
-						"     insertable:false,",
-						"     updateable:false,",
-						"     upsertable:true,",
-						"     keys:['TABLENAME','CODE','LOCALEIDENTIFIER'],",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+						"     errorHandlingOption: 'stopOnFirstError') ~> StgDB"
 					]
 				}
 			},
@@ -4362,32 +4714,18 @@
 								"type": "DatasetReference"
 							},
 							"name": "StgDB"
-						},
-						{
-							"dataset": {
-								"referenceName": "CODETABLEITEM",
-								"type": "DatasetReference"
-							},
-							"name": "StgCodeTableItem"
 						}
 					],
 					"transformations": [
 						{
 							"name": "Upsert"
-						},
-						{
-							"name": "CheckTableNameforCodeTableItem"
-						},
-						{
-							"name": "UpsertCodeTableItem"
 						}
 					],
 					"scriptLines": [
 						"parameters{",
 						"     TableName as string,",
 						"     SchemaName as string,",
-						"     UniqueID as string,",
-						"     ORDPosition as integer",
+						"     UniqueID as string",
 						"}",
 						"source(allowSchemaDrift: true,",
 						"     validateSchema: false,",
@@ -4395,10 +4733,7 @@
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table',",
 						"     mode: 'read') ~> RptDB",
-						"CheckTableNameforCodeTableItem@NotCodeTableItem alterRow(upsertIf(true())) ~> Upsert",
-						"RptDB split($ORDPosition<=1,",
-						"     disjoint: false) ~> CheckTableNameforCodeTableItem@(NotCodeTableItem, CodeTableItemTable)",
-						"CheckTableNameforCodeTableItem@CodeTableItemTable alterRow(upsertIf(true())) ~> UpsertCodeTableItem",
+						"RptDB alterRow(upsertIf(true())) ~> Upsert",
 						"Upsert sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
@@ -4409,25 +4744,13 @@
 						"     format: 'table',",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> StgDB",
-						"UpsertCodeTableItem sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     deletable:false,",
-						"     insertable:false,",
-						"     updateable:false,",
-						"     upsertable:true,",
-						"     keys:[('TABLENAME'),('CODE'),('LOCALEIDENTIFIER')],",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> StgCodeTableItem"
+						"     errorHandlingOption: 'stopOnFirstError') ~> StgDB"
 					]
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ds_DataSetSource')]",
-				"[concat(variables('factoryId'), '/datasets/ds_DataSetSourceTarget')]",
-				"[concat(variables('factoryId'), '/datasets/CODETABLEITEM')]"
+				"[concat(variables('factoryId'), '/datasets/ds_DataSetSourceTarget')]"
 			]
 		},
 		{
