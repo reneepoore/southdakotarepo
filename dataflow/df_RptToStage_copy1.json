@@ -75,7 +75,7 @@
 				"     insertable:false,",
 				"     updateable:false,",
 				"     upsertable:true,",
-				"     keys:['TABLENAME','CODE'],",
+				"     keys:[('TABLENAME'),('CODE'),('LOCALEIDENTIFIER')],",
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",

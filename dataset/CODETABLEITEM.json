@@ -2,7 +2,7 @@
 	"name": "CODETABLEITEM",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "CURAPD01",
+			"referenceName": "TargetSandbox",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
@@ -12,7 +12,7 @@
 		"type": "AzureSqlTable",
 		"schema": [],
 		"typeProperties": {
-			"schema": "CURAPD01",
+			"schema": "STG",
 			"table": "CODETABLEITEM"
 		}
 	}
