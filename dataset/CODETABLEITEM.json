@@ -1,0 +1,19 @@
+{
+	"name": "CODETABLEITEM",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Testing"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "CODETABLEITEM"
+		}
+	}
+}

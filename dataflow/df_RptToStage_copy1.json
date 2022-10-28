@@ -1,0 +1,99 @@
+{
+	"name": "df_RptToStage_copy1",
+	"properties": {
+		"folder": {
+			"name": "Staging"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CODETABLEITEM",
+						"type": "DatasetReference"
+					},
+					"name": "RptDB"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "CODETABLEITEM",
+						"type": "DatasetReference"
+					},
+					"name": "StgDB"
+				},
+				{
+					"dataset": {
+						"referenceName": "CODETABLEITEM",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "alterRow1"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "alterRow2"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     TableName as string ('CODETABLEITEM'),",
+				"     SchemaName as string ('CURAPD01'),",
+				"     UniqueID as string",
+				"}",
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string,",
+				"          ANNOTATION as string,",
+				"          ISENABLED as string,",
+				"          SORTORDER as integer,",
+				"          LOCALEIDENTIFIER as string,",
+				"          PARENTCODE as string,",
+				"          COMMENTS as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: false,",
+				"     validateSchema: false,",
+				"     waterMarkColumn: 'LastWritten',",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table',",
+				"     mode: 'read') ~> RptDB",
+				"split1@OnePKColumn alterRow(upsertIf(true())) ~> alterRow1",
+				"RptDB split($TableName != 'CODETABLEITEM',",
+				"     disjoint: true) ~> split1@(OnePKColumn, MultiPKColumns)",
+				"split1@MultiPKColumns alterRow(upsertIf(true())) ~> alterRow2",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:false,",
+				"     upsertable:true,",
+				"     keys:['TABLENAME','CODE','LOCALEIDENTIFIER'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> StgDB",
+				"alterRow2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:false,",
+				"     upsertable:true,",
+				"     keys:['TABLENAME','CODE','LOCALEIDENTIFIER'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}
