@@ -1,5 +1,5 @@
 {
-	"name": "pl_DynamicDataFlow_Backup",
+	"name": "pl_DynamicDataFlow_Backup_copy1",
 	"properties": {
 		"activities": [
 			{
@@ -50,32 +50,7 @@
 						{
 							"name": "If Condition1_copy1",
 							"type": "IfCondition",
-							"dependsOn": [
-								{
-									"activity": "table",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								},
-								{
-									"activity": "schema",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								},
-								{
-									"activity": "column",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								},
-								{
-									"activity": "ordpos",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
+							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
@@ -181,58 +156,6 @@
 										}
 									}
 								]
-							}
-						},
-						{
-							"name": "table",
-							"type": "SetVariable",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "table",
-								"value": {
-									"value": "@item().TABLE_NAME",
-									"type": "Expression"
-								}
-							}
-						},
-						{
-							"name": "schema",
-							"type": "SetVariable",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "schema",
-								"value": {
-									"value": "@item().TABLE_SCHEMA",
-									"type": "Expression"
-								}
-							}
-						},
-						{
-							"name": "column",
-							"type": "SetVariable",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "column",
-								"value": {
-									"value": "@item().UNIQUE_ID",
-									"type": "Expression"
-								}
-							}
-						},
-						{
-							"name": "ordpos",
-							"type": "SetVariable",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "ordpos",
-								"value": {
-									"value": "@item().ORDINAL_POSITION",
-									"type": "Expression"
-								}
 							}
 						}
 					]

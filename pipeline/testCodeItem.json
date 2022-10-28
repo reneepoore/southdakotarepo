@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_CodeItem",
+						"referenceName": "df_CodeTableItem",
 						"type": "DataFlowReference",
 						"parameters": {
 							"TableName": "'CODETABLEITEM'",
