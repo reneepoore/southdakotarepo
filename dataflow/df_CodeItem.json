@@ -22,24 +22,11 @@
 						"type": "DatasetReference"
 					},
 					"name": "StgDB"
-				},
-				{
-					"dataset": {
-						"referenceName": "CODETABLEITEM",
-						"type": "DatasetReference"
-					},
-					"name": "sink1"
 				}
 			],
 			"transformations": [
 				{
-					"name": "alterRow1"
-				},
-				{
-					"name": "split1"
-				},
-				{
-					"name": "alterRow2"
+					"name": "Upsert"
 				}
 			],
 			"scriptLines": [
@@ -67,11 +54,8 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table',",
 				"     mode: 'read') ~> RptDB",
-				"split1@OnePKColumn alterRow(upsertIf(true())) ~> alterRow1",
-				"RptDB split($TableName != 'CODETABLEITEM',",
-				"     disjoint: true) ~> split1@(OnePKColumn, MultiPKColumns)",
-				"split1@MultiPKColumns alterRow(upsertIf(true())) ~> alterRow2",
-				"alterRow1 sink(allowSchemaDrift: true,",
+				"RptDB alterRow(upsertIf(true())) ~> Upsert",
+				"Upsert sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:false,",
@@ -81,18 +65,7 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> StgDB",
-				"alterRow2 sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     deletable:false,",
-				"     insertable:false,",
-				"     updateable:false,",
-				"     upsertable:true,",
-				"     keys:['TABLENAME','CODE','LOCALEIDENTIFIER'],",
-				"     format: 'table',",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+				"     errorHandlingOption: 'stopOnFirstError') ~> StgDB"
 			]
 		}
 	}
