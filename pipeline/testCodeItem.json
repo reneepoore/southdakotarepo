@@ -20,7 +20,8 @@
 						"type": "DataFlowReference",
 						"parameters": {
 							"TableName": "'CODETABLEITEM'",
-							"SchemaName": "'CURAPD01'"
+							"SchemaName": "'CURAPD01'",
+							"UniqueID": "'CURAPD01'"
 						}
 					},
 					"compute": {

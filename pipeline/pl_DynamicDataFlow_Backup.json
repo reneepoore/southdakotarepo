@@ -65,7 +65,7 @@
 									"type": "DataFlowReference",
 									"parameters": {
 										"TableName": {
-											"value": "'@{item().table_name}'",
+											"value": "'@{item().TABLE_NAME}'",
 											"type": "Expression"
 										},
 										"SchemaName": {
@@ -73,7 +73,11 @@
 											"type": "Expression"
 										},
 										"UniqueID": {
-											"value": "'@{item().unique_id}'",
+											"value": "'@{item().UNIQUE_ID}'",
+											"type": "Expression"
+										},
+										"ORDPosition": {
+											"value": "@item().ORDINAL_POSITION",
 											"type": "Expression"
 										}
 									},

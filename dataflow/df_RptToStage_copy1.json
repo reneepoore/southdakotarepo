@@ -57,7 +57,7 @@
 				"     mode: 'read') ~> RptDB",
 				"CheckTableNameforCodeTableItem@NotCodeTableItem alterRow(upsertIf(true())) ~> Upsert",
 				"RptDB split($ORDPosition<=1,",
-				"     disjoint: true) ~> CheckTableNameforCodeTableItem@(NotCodeTableItem, CodeTableItemTable)",
+				"     disjoint: false) ~> CheckTableNameforCodeTableItem@(NotCodeTableItem, CodeTableItemTable)",
 				"CheckTableNameforCodeTableItem@CodeTableItemTable alterRow(upsertIf(true())) ~> UpsertCodeTableItem",
 				"Upsert sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
