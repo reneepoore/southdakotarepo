@@ -144,7 +144,7 @@
 														"type": "Expression"
 													},
 													"ORDPosition": {
-														"value": "@variables('ordpos')",
+														"value": "'@{variables('ordpos')}'",
 														"type": "Expression"
 													}
 												},
