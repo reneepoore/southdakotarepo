@@ -31,85 +31,6 @@
 			{
 				"name": "GetEachTableName",
 				"type": "ForEach",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"items": {
-						"value": "@activity('LkupTableNames').output.value\n\n",
-						"type": "Expression"
-					},
-					"batchCount": 4,
-					"activities": [
-						{
-							"name": "df_RptToStage_copy1",
-							"type": "ExecuteDataFlow",
-							"dependsOn": [],
-							"policy": {
-								"timeout": "0.00:15:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"dataflow": {
-									"referenceName": "df_RptToStage_copy1",
-									"type": "DataFlowReference",
-									"parameters": {
-										"TableName": {
-											"value": "'@{item().TABLE_NAME}'",
-											"type": "Expression"
-										},
-										"SchemaName": {
-											"value": "'@{item().TABLE_SCHEMA}'",
-											"type": "Expression"
-										},
-										"UniqueID": {
-											"value": "'@{item().UNIQUE_ID}'",
-											"type": "Expression"
-										},
-										"ORDPosition": {
-											"value": "@item().ORDINAL_POSITION",
-											"type": "Expression"
-										}
-									},
-									"datasetParameters": {
-										"RptDB": {
-											"Schema": {
-												"value": "@item().table_schema",
-												"type": "Expression"
-											},
-											"TableName": {
-												"value": "@item().table_name",
-												"type": "Expression"
-											}
-										},
-										"StgDB": {
-											"Schema": {
-												"value": "STG",
-												"type": "Expression"
-											},
-											"TableName": {
-												"value": "@item().table_name",
-												"type": "Expression"
-											}
-										}
-									}
-								},
-								"compute": {
-									"coreCount": 8,
-									"computeType": "General"
-								},
-								"traceLevel": "Fine"
-							}
-						}
-					]
-				}
-			},
-			{
-				"name": "If Condition1",
-				"type": "IfCondition",
 				"dependsOn": [
 					{
 						"activity": "LkupTableNames",
@@ -120,56 +41,56 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"expression": {
-						"value": "@lessOrEquals(activity('LkupTableNames').output.value[0].ORDINAL_POSITION ,1)",
+					"items": {
+						"value": "@activity('LkupTableNames').output.value\n\n",
 						"type": "Expression"
 					},
-					"ifFalseActivities": [
+					"batchCount": 4,
+					"activities": [
 						{
-							"name": "df_CodeItem",
-							"type": "ExecuteDataFlow",
-							"dependsOn": [],
-							"policy": {
-								"timeout": "0.00:15:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"dataflow": {
-									"referenceName": "df_CodeItem",
-									"type": "DataFlowReference",
-									"parameters": {
-										"TableName": "'CODETABLEITEM'",
-										"SchemaName": "'CURAPD01'",
-										"UniqueID": "'na'"
-									}
-								},
-								"compute": {
-									"coreCount": 8,
-									"computeType": "General"
-								},
-								"traceLevel": "Fine"
-							}
-						}
-					],
-					"ifTrueActivities": [
-						{
-							"name": "GetEachTableName_copy1",
-							"type": "ForEach",
+							"name": "If Condition1_copy1",
+							"type": "IfCondition",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
-								"items": {
-									"value": "@activity('LkupTableNames').output.value\n\n",
+								"expression": {
+									"value": "@lessOrEquals(activity('LkupTableNames').output.value[0].ORDINAL_POSITION ,1)",
 									"type": "Expression"
 								},
-								"batchCount": 4,
-								"activities": [
+								"ifFalseActivities": [
 									{
-										"name": "df_RptToStage_copy1_copy1",
+										"name": "df_CodeItem_copy1",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.00:15:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "df_CodeItem",
+												"type": "DataFlowReference",
+												"parameters": {
+													"TableName": "'CODETABLEITEM'",
+													"SchemaName": "'CURAPD01'",
+													"UniqueID": "'na'"
+												}
+											},
+											"compute": {
+												"coreCount": 8,
+												"computeType": "General"
+											},
+											"traceLevel": "Fine"
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "df_RptToStage_copy1",
 										"type": "ExecuteDataFlow",
 										"dependsOn": [],
 										"policy": {
@@ -186,40 +107,37 @@
 												"type": "DataFlowReference",
 												"parameters": {
 													"TableName": {
-														"value": "'@{item().TABLE_NAME}'",
+														"value": "'@{activity('LkupTableNames').output.value[0].table_name}'",
 														"type": "Expression"
 													},
 													"SchemaName": {
-														"value": "'@{item().TABLE_SCHEMA}'",
+														"value": "'@{activity('LkupTableNames').output.value[0].table_schema}'",
 														"type": "Expression"
 													},
 													"UniqueID": {
-														"value": "'@{item().UNIQUE_ID}'",
+														"value": "'@{activity('LkupTableNames').output.value[0].unique_id}'",
 														"type": "Expression"
 													},
 													"ORDPosition": {
-														"value": "@item().ORDINAL_POSITION",
+														"value": "@activity('LkupTableNames').output.value[0].ORDINAL_POSITION",
 														"type": "Expression"
 													}
 												},
 												"datasetParameters": {
 													"RptDB": {
 														"Schema": {
-															"value": "@item().table_schema",
+															"value": "@activity('LkupTableNames').output.value[0].TABLE_SCHEMA",
 															"type": "Expression"
 														},
 														"TableName": {
-															"value": "@item().table_name",
+															"value": "@activity('LkupTableNames').output.value[0].TABLE_NAME",
 															"type": "Expression"
 														}
 													},
 													"StgDB": {
-														"Schema": {
-															"value": "STG",
-															"type": "Expression"
-														},
+														"Schema": "STG",
 														"TableName": {
-															"value": "@item().table_name",
+															"value": "@activity('LkupTableNames').output.value[0].TABLE_NAME",
 															"type": "Expression"
 														}
 													}
