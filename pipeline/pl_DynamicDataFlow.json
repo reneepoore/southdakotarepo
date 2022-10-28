@@ -106,6 +106,35 @@
 						}
 					]
 				}
+			},
+			{
+				"name": "df_CodeTableItem",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:15:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_CodeTableItem",
+						"type": "DataFlowReference",
+						"parameters": {
+							"TableName": "'CODETABLEITEM'",
+							"SchemaName": "'CURAPD01'",
+							"UniqueID": "'na'"
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
 			}
 		],
 		"folder": {

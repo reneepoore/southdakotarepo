@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_CodeItem",
+				"name": "df_CodeTableItem",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -21,7 +21,7 @@
 						"parameters": {
 							"TableName": "'CODETABLEITEM'",
 							"SchemaName": "'CURAPD01'",
-							"UniqueID": "'CURAPD01'"
+							"UniqueID": "'na'"
 						}
 					},
 					"compute": {
