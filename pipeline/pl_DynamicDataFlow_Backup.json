@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "\n/*\n********************************************************************************************************\nThe first sql select will get the table names.\nthe second sql will get the max ordinal. This is to check if there are multiple columns that make up\na unique row. In the case of CODETABLEITEM there are 3. I only want to process on row. If there is\none row the column is use in as the Key Identifier in the data flow.\nIf the Ordinal Position is greater than 1 it is the CODETABLEITEM. Then that data is processed \ndifferently in the data flow via Conditional split.\nThe third sql gets the columns used in the Primary Key\n\nCode by: Renee Poore\n  \n\n*******************************************************************************************************\n*/\n\nSELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID,\n       mop.ORDINAL_POSITION\nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n                               MAX(ORDINAL_POSITION) AS ORDINAL_POSITION\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1\n                        GROUP  BY TABLE_NAME) mop\n                    ON tblinfo.TABLE_NAME = mop.TABLE_NAME\n\n       INNER JOIN (SELECT DISTINCT TABLE_NAME,\n                                   COLUMN_NAME,\n                                   ORDINAL_POSITION\n                   FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                   WHERE\n                    OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                             + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n               ON mop.TABLE_NAME = tblid.TABLE_NAME\n                  AND mop.ORDINAL_POSITION = tblid.ORDINAL_POSITION ",
+						"sqlReaderQuery": "\n/*\n********************************************************************************************************\nThe first sql select will get the table names.\nthe second sql will get the max ordinal. This is to check if there are multiple columns that make up\na unique row. In the case of CODETABLEITEM there are 3. I only want to process on row. If there is\none row the column is use in as the Key Identifier in the data flow.\nIf the Ordinal Position is greater than 1 it is the CODETABLEITEM. Then that data is processed \ndifferently in the data flow via Conditional split.\nThe third sql gets the columns used in the Primary Key\n\nCode by: Renee Poore\n  \n\n*******************************************************************************************************\n*/\n\nSELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID,\n       mop.ORDINAL_POSITION\nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n                               MAX(ORDINAL_POSITION) AS ORDINAL_POSITION\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1\n                        GROUP  BY TABLE_NAME) mop\n                    ON tblinfo.TABLE_NAME = mop.TABLE_NAME\n\n       INNER JOIN (SELECT DISTINCT TABLE_NAME,\n                                   COLUMN_NAME,\n                                   ORDINAL_POSITION\n                   FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                   WHERE\n                    OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                             + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n               ON mop.TABLE_NAME = tblid.TABLE_NAME\n                  AND mop.ORDINAL_POSITION = tblid.ORDINAL_POSITION \n\n\n\t\t\t\t  where tblinfo.TABLE_NAME in ('ADDRESS','CODETABLEITEM')",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -50,11 +50,36 @@
 						{
 							"name": "If Condition1_copy1",
 							"type": "IfCondition",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "table",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "schema",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "column",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "ordpos",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@lessOrEquals(activity('LkupTableNames').output.value[0].ORDINAL_POSITION ,1)",
+									"value": "@lessOrEquals(variables('ordpos'),1)",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
@@ -107,37 +132,37 @@
 												"type": "DataFlowReference",
 												"parameters": {
 													"TableName": {
-														"value": "'@{activity('LkupTableNames').output.value[0].table_name}'",
+														"value": "'@{variables('table')}'",
 														"type": "Expression"
 													},
 													"SchemaName": {
-														"value": "'@{activity('LkupTableNames').output.value[0].table_schema}'",
+														"value": "'@{variables('schema')}'",
 														"type": "Expression"
 													},
 													"UniqueID": {
-														"value": "'@{activity('LkupTableNames').output.value[0].unique_id}'",
+														"value": "'@{variables('column')}'",
 														"type": "Expression"
 													},
 													"ORDPosition": {
-														"value": "@activity('LkupTableNames').output.value[0].ORDINAL_POSITION",
+														"value": "@variables('ordpos')",
 														"type": "Expression"
 													}
 												},
 												"datasetParameters": {
 													"RptDB": {
 														"Schema": {
-															"value": "@activity('LkupTableNames').output.value[0].TABLE_SCHEMA",
+															"value": "@variables('schema')",
 															"type": "Expression"
 														},
 														"TableName": {
-															"value": "@activity('LkupTableNames').output.value[0].TABLE_NAME",
+															"value": "@variables('table')",
 															"type": "Expression"
 														}
 													},
 													"StgDB": {
 														"Schema": "STG",
 														"TableName": {
-															"value": "@activity('LkupTableNames').output.value[0].TABLE_NAME",
+															"value": "@variables('table')",
 															"type": "Expression"
 														}
 													}
@@ -152,11 +177,77 @@
 									}
 								]
 							}
+						},
+						{
+							"name": "table",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "table",
+								"value": {
+									"value": "@item().TABLE_NAME",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "schema",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "schema",
+								"value": {
+									"value": "@item().TABLE_SCHEMA",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "column",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "column",
+								"value": {
+									"value": "@item().UNIQUE_ID",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "ordpos",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "ordpos",
+								"value": {
+									"value": "@item().ORDINAL_POSITION",
+									"type": "Expression"
+								}
+							}
 						}
 					]
 				}
 			}
 		],
+		"variables": {
+			"table": {
+				"type": "String"
+			},
+			"schema": {
+				"type": "String"
+			},
+			"column": {
+				"type": "String"
+			},
+			"ordpos": {
+				"type": "String"
+			}
+		},
 		"folder": {
 			"name": "Testing"
 		},
