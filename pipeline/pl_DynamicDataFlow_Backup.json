@@ -121,9 +121,40 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@greater(activity('LkupTableNames').output.value[0].ORDINAL_POSITION ,1)\n\n\n",
+						"value": "@lessOrEquals(activity('LkupTableNames').output.value[0].ORDINAL_POSITION ,1)",
 						"type": "Expression"
 					},
+					"ifFalseActivities": [
+						{
+							"name": "df_CodeItem",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "df_CodeItem",
+									"type": "DataFlowReference",
+									"parameters": {
+										"TableName": "'CODETABLEITEM'",
+										"SchemaName": "'CURAPD01'",
+										"UniqueID": "'na'"
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						}
+					],
 					"ifTrueActivities": [
 						{
 							"name": "GetEachTableName_copy1",
