@@ -1,5 +1,5 @@
 {
-	"name": "df_RptToStage_copy1",
+	"name": "df_RptToStage_CodeItem",
 	"properties": {
 		"folder": {
 			"name": "Staging"
@@ -46,7 +46,7 @@
 				"parameters{",
 				"     TableName as string ('CODETABLEITEM'),",
 				"     SchemaName as string ('CURAPD01'),",
-				"     UniqueID as string",
+				"     UniqueID as string ('na')",
 				"}",
 				"source(output(",
 				"          TABLENAME as string,",
