@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "\n/*\n********************************************************************************************************\nThe first sql select will get the table names.\nthe second sql will get the max ordinal. This is to check if there are multiple columns that make up\na unique row. In the case of CODETABLEITEM there are 3. I only want to process on row. If there is\none row the column is use in as the Key Identifier in the data flow.\nIf the Ordinal Position is greater than 1 it is the CODETABLEITEM. Then that data is processed \ndifferently in the data flow via Conditional split.\nThe third sql gets the columns used in the Primary Key\n\nCode by: Renee Poore\n  \n\n*******************************************************************************************************\n*/\n\nSELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID,\n       mop.ORDINAL_POSITION\nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n                               MAX(ORDINAL_POSITION) AS ORDINAL_POSITION\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1\n                        GROUP  BY TABLE_NAME) mop\n                    ON tblinfo.TABLE_NAME = mop.TABLE_NAME\n\n       INNER JOIN (SELECT DISTINCT TABLE_NAME,\n                                   COLUMN_NAME,\n                                   ORDINAL_POSITION\n                   FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                   WHERE\n                    OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                             + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n               ON mop.TABLE_NAME = tblid.TABLE_NAME\n                  AND mop.ORDINAL_POSITION = tblid.ORDINAL_POSITION \n\n\n\t\t\t\t  where tblinfo.TABLE_NAME in ('ADDRESS','CODETABLEITEM')",
+						"sqlReaderQuery": "\n/*\n********************************************************************************************************\nThe first sql select will get the table names.\nthe second sql will get the max ordinal. This is to check if there are multiple columns that make up\na unique row. In the case of CODETABLEITEM there are 3. I only want to process on row. If there is\none row the column is use in as the Key Identifier in the data flow.\nIf the Ordinal Position is greater than 1 it is the CODETABLEITEM. Then that data is processed \ndifferently in the data flow via Conditional split.\nThe third sql gets the columns used in the Primary Key\n\nCode by: Renee Poore\n  \n\n*******************************************************************************************************\n*/\n\nSELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID,\n       CAST(mop.ORDINAL_POSITION as varchar(1) ) as ORDINAL_POSITION\nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n                               MAX(ORDINAL_POSITION) AS ORDINAL_POSITION\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1\n                        GROUP  BY TABLE_NAME) mop\n                    ON tblinfo.TABLE_NAME = mop.TABLE_NAME\n\n       INNER JOIN (SELECT DISTINCT TABLE_NAME,\n                                   COLUMN_NAME,\n                                   ORDINAL_POSITION\n                   FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                   WHERE\n                    OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                             + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n               ON mop.TABLE_NAME = tblid.TABLE_NAME\n                  AND mop.ORDINAL_POSITION = tblid.ORDINAL_POSITION \n\n\n\t\t\t\t  where tblinfo.TABLE_NAME in ('ADDRESS','CODETABLEITEM')",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -79,7 +79,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@lessOrEquals(variables('ordpos'),1)",
+									"value": "@lessOrEquals(int(variables('ordpos')),1)",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
@@ -100,9 +100,18 @@
 												"referenceName": "df_CodeItem",
 												"type": "DataFlowReference",
 												"parameters": {
-													"TableName": "'CODETABLEITEM'",
-													"SchemaName": "'CURAPD01'",
-													"UniqueID": "'na'"
+													"TableName": {
+														"value": "'@{variables('table')}'",
+														"type": "Expression"
+													},
+													"SchemaName": {
+														"value": "'@{variables('schema')}'",
+														"type": "Expression"
+													},
+													"UniqueID": {
+														"value": "'@{variables('column')}'",
+														"type": "Expression"
+													}
 												}
 											},
 											"compute": {
@@ -141,10 +150,6 @@
 													},
 													"UniqueID": {
 														"value": "'@{variables('column')}'",
-														"type": "Expression"
-													},
-													"ORDPosition": {
-														"value": "'@{variables('ordpos')}'",
 														"type": "Expression"
 													}
 												},
