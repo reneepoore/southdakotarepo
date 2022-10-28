@@ -31,14 +31,7 @@
 			{
 				"name": "GetEachTableName",
 				"type": "ForEach",
-				"dependsOn": [
-					{
-						"activity": "LkupTableNames",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
@@ -109,6 +102,106 @@
 									"computeType": "General"
 								},
 								"traceLevel": "Fine"
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "If Condition1",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "LkupTableNames",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greater(activity('LkupTableNames').output.value[0].ORDINAL_POSITION ,1)\n\n\n",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "GetEachTableName_copy1",
+							"type": "ForEach",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"items": {
+									"value": "@activity('LkupTableNames').output.value\n\n",
+									"type": "Expression"
+								},
+								"batchCount": 4,
+								"activities": [
+									{
+										"name": "df_RptToStage_copy1_copy1",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.00:15:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "df_RptToStage_copy1",
+												"type": "DataFlowReference",
+												"parameters": {
+													"TableName": {
+														"value": "'@{item().TABLE_NAME}'",
+														"type": "Expression"
+													},
+													"SchemaName": {
+														"value": "'@{item().TABLE_SCHEMA}'",
+														"type": "Expression"
+													},
+													"UniqueID": {
+														"value": "'@{item().UNIQUE_ID}'",
+														"type": "Expression"
+													},
+													"ORDPosition": {
+														"value": "@item().ORDINAL_POSITION",
+														"type": "Expression"
+													}
+												},
+												"datasetParameters": {
+													"RptDB": {
+														"Schema": {
+															"value": "@item().table_schema",
+															"type": "Expression"
+														},
+														"TableName": {
+															"value": "@item().table_name",
+															"type": "Expression"
+														}
+													},
+													"StgDB": {
+														"Schema": {
+															"value": "STG",
+															"type": "Expression"
+														},
+														"TableName": {
+															"value": "@item().table_name",
+															"type": "Expression"
+														}
+													}
+												}
+											},
+											"compute": {
+												"coreCount": 8,
+												"computeType": "General"
+											},
+											"traceLevel": "Fine"
+										}
+									}
+								]
 							}
 						}
 					]

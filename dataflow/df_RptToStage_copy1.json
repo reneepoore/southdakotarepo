@@ -22,24 +22,11 @@
 						"type": "DatasetReference"
 					},
 					"name": "StgDB"
-				},
-				{
-					"dataset": {
-						"referenceName": "CODETABLEITEM",
-						"type": "DatasetReference"
-					},
-					"name": "StgCodeTableItem"
 				}
 			],
 			"transformations": [
 				{
 					"name": "Upsert"
-				},
-				{
-					"name": "CheckTableNameforCodeTableItem"
-				},
-				{
-					"name": "UpsertCodeTableItem"
 				}
 			],
 			"scriptLines": [
@@ -55,10 +42,7 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table',",
 				"     mode: 'read') ~> RptDB",
-				"CheckTableNameforCodeTableItem@NotCodeTableItem alterRow(upsertIf(true())) ~> Upsert",
-				"RptDB split($ORDPosition<=1,",
-				"     disjoint: false) ~> CheckTableNameforCodeTableItem@(NotCodeTableItem, CodeTableItemTable)",
-				"CheckTableNameforCodeTableItem@CodeTableItemTable alterRow(upsertIf(true())) ~> UpsertCodeTableItem",
+				"RptDB alterRow(upsertIf(true())) ~> Upsert",
 				"Upsert sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
@@ -69,18 +53,7 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> StgDB",
-				"UpsertCodeTableItem sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     deletable:false,",
-				"     insertable:false,",
-				"     updateable:false,",
-				"     upsertable:true,",
-				"     keys:[('TABLENAME'),('CODE'),('LOCALEIDENTIFIER')],",
-				"     format: 'table',",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> StgCodeTableItem"
+				"     errorHandlingOption: 'stopOnFirstError') ~> StgDB"
 			]
 		}
 	}
