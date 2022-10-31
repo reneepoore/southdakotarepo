@@ -18,7 +18,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "ds_DataSetSourceTarget",
+						"referenceName": "ds_DataSetTarget",
 						"type": "DatasetReference"
 					},
 					"name": "StgDB"
