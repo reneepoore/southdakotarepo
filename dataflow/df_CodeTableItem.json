@@ -9,7 +9,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "CODETABLEITEM",
+						"referenceName": "db2_CODETABLEITEM",
 						"type": "DatasetReference"
 					},
 					"name": "RptDB"
@@ -18,7 +18,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "CODETABLEITEM",
+						"referenceName": "stg_CODETABLEITEM",
 						"type": "DatasetReference"
 					},
 					"name": "StgDB"
@@ -35,20 +35,7 @@
 				"     SchemaName as string ('CURAPD01'),",
 				"     UniqueID as string ('na')",
 				"}",
-				"source(output(",
-				"          TABLENAME as string,",
-				"          CODE as string,",
-				"          DESCRIPTION as string,",
-				"          ANNOTATION as string,",
-				"          ISENABLED as string,",
-				"          SORTORDER as integer,",
-				"          LOCALEIDENTIFIER as string,",
-				"          PARENTCODE as string,",
-				"          COMMENTS as string,",
-				"          VERSIONNO as integer,",
-				"          LASTWRITTEN as timestamp",
-				"     ),",
-				"     allowSchemaDrift: false,",
+				"source(allowSchemaDrift: false,",
 				"     validateSchema: false,",
 				"     waterMarkColumn: 'LastWritten',",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
