@@ -445,136 +445,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pl_DynamicCopyData')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "LkupTableNames",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:15:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT table_name,\n       table_schema\nFROM   INFORMATION_SCHEMA.tables\nWHERE\n  table_type = 'BASE TABLE'\n  AND TABLE_SCHEMA = 'CURAPD01'\n  and Left(table_name,1 )= 'A'\nORDER  BY table_name ASC; ",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "ds_AllTableNames",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "GetEachTableName",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "LkupTableNames",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('LkupTableNames').output.value\n\n",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "Copy data1",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.00:05:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "AzureSqlSource",
-											"queryTimeout": "02:00:00",
-											"partitionOption": "None"
-										},
-										"sink": {
-											"type": "AzureSqlSink",
-											"writeBehavior": "insert",
-											"sqlWriterUseTableLock": false
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "ds_DataSetSource",
-											"type": "DatasetReference",
-											"parameters": {
-												"Schema": {
-													"value": "@item().table_schema",
-													"type": "Expression"
-												},
-												"TableName": {
-													"value": "@item().table_name",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "ds_DataSetSourceTarget",
-											"type": "DatasetReference",
-											"parameters": {
-												"Schema": "STG",
-												"TableName": "@item().table_name"
-											}
-										}
-									]
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_AllTableNames')]",
-				"[concat(variables('factoryId'), '/datasets/ds_DataSetSource')]",
-				"[concat(variables('factoryId'), '/datasets/ds_DataSetSourceTarget')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/pl_DynamicDataFlow')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -735,487 +605,6 @@
 				"[concat(variables('factoryId'), '/datasets/ds_AllTableNames')]",
 				"[concat(variables('factoryId'), '/dataflows/df_CodeTableItem')]",
 				"[concat(variables('factoryId'), '/dataflows/df_RptToStage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_DynamicDataFlow_Backup')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "LkupTableNames",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:15:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "\n/*\n********************************************************************************************************\nThe first sql select will get the table names.\nthe second sql will get the max ordinal. This is to check if there are multiple columns that make up\na unique row. In the case of CODETABLEITEM there are 3. I only want to process on row. If there is\none row the column is use in as the Key Identifier in the data flow.\nIf the Ordinal Position is greater than 1 it is the CODETABLEITEM. Then that data is processed \ndifferently in the data flow via Conditional split.\nThe third sql gets the columns used in the Primary Key\n\nCode by: Renee Poore\n  \n\n*******************************************************************************************************\n*/\n\nSELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID,\n       CAST(mop.ORDINAL_POSITION as varchar(1) ) as ORDINAL_POSITION\nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n                               MAX(ORDINAL_POSITION) AS ORDINAL_POSITION\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1\n                        GROUP  BY TABLE_NAME) mop\n                    ON tblinfo.TABLE_NAME = mop.TABLE_NAME\n\n       INNER JOIN (SELECT DISTINCT TABLE_NAME,\n                                   COLUMN_NAME,\n                                   ORDINAL_POSITION\n                   FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                   WHERE\n                    OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                             + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n               ON mop.TABLE_NAME = tblid.TABLE_NAME\n                  AND mop.ORDINAL_POSITION = tblid.ORDINAL_POSITION \n\n\n\t\t\t\t  where tblinfo.TABLE_NAME in ('ADDRESS','CODETABLEITEM')",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "ds_AllTableNames",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "GetEachTableName",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "LkupTableNames",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('LkupTableNames').output.value\n\n",
-								"type": "Expression"
-							},
-							"batchCount": 4,
-							"activities": [
-								{
-									"name": "If Condition1_copy1",
-									"type": "IfCondition",
-									"dependsOn": [
-										{
-											"activity": "table",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										},
-										{
-											"activity": "schema",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										},
-										{
-											"activity": "column",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										},
-										{
-											"activity": "ordpos",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"userProperties": [],
-									"typeProperties": {
-										"expression": {
-											"value": "@lessOrEquals(int(variables('ordpos')),1)",
-											"type": "Expression"
-										},
-										"ifFalseActivities": [
-											{
-												"name": "df_CodeItem_copy1",
-												"type": "ExecuteDataFlow",
-												"dependsOn": [],
-												"policy": {
-													"timeout": "0.00:15:00",
-													"retry": 0,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"dataflow": {
-														"referenceName": "df_CodeTableItem",
-														"type": "DataFlowReference",
-														"parameters": {
-															"TableName": {
-																"value": "'@{variables('table')}'",
-																"type": "Expression"
-															},
-															"SchemaName": {
-																"value": "'@{variables('schema')}'",
-																"type": "Expression"
-															},
-															"UniqueID": {
-																"value": "'@{variables('column')}'",
-																"type": "Expression"
-															}
-														},
-														"datasetParameters": {
-															"RptDB": {},
-															"StgDB": {}
-														}
-													},
-													"staging": {},
-													"compute": {
-														"coreCount": 8,
-														"computeType": "General"
-													},
-													"traceLevel": "Fine"
-												}
-											}
-										],
-										"ifTrueActivities": [
-											{
-												"name": "df_RptToStage_copy1",
-												"type": "ExecuteDataFlow",
-												"dependsOn": [],
-												"policy": {
-													"timeout": "0.00:15:00",
-													"retry": 0,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"dataflow": {
-														"referenceName": "df_RptToStage_copy1",
-														"type": "DataFlowReference",
-														"parameters": {
-															"TableName": {
-																"value": "'@{variables('table')}'",
-																"type": "Expression"
-															},
-															"SchemaName": {
-																"value": "'@{variables('schema')}'",
-																"type": "Expression"
-															},
-															"UniqueID": {
-																"value": "'@{variables('column')}'",
-																"type": "Expression"
-															}
-														},
-														"datasetParameters": {
-															"RptDB": {
-																"Schema": {
-																	"value": "@variables('schema')",
-																	"type": "Expression"
-																},
-																"TableName": {
-																	"value": "@variables('table')",
-																	"type": "Expression"
-																}
-															},
-															"StgDB": {
-																"Schema": "STG",
-																"TableName": {
-																	"value": "@variables('table')",
-																	"type": "Expression"
-																}
-															}
-														}
-													},
-													"staging": {},
-													"compute": {
-														"coreCount": 8,
-														"computeType": "General"
-													},
-													"traceLevel": "Fine"
-												}
-											}
-										]
-									}
-								},
-								{
-									"name": "table",
-									"type": "SetVariable",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "table",
-										"value": {
-											"value": "@item().TABLE_NAME",
-											"type": "Expression"
-										}
-									}
-								},
-								{
-									"name": "schema",
-									"type": "SetVariable",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "schema",
-										"value": {
-											"value": "@item().TABLE_SCHEMA",
-											"type": "Expression"
-										}
-									}
-								},
-								{
-									"name": "column",
-									"type": "SetVariable",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "column",
-										"value": {
-											"value": "@item().UNIQUE_ID",
-											"type": "Expression"
-										}
-									}
-								},
-								{
-									"name": "ordpos",
-									"type": "SetVariable",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "ordpos",
-										"value": {
-											"value": "@item().ORDINAL_POSITION",
-											"type": "Expression"
-										}
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"variables": {
-					"table": {
-						"type": "String"
-					},
-					"schema": {
-						"type": "String"
-					},
-					"column": {
-						"type": "String"
-					},
-					"ordpos": {
-						"type": "String"
-					}
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_AllTableNames')]",
-				"[concat(variables('factoryId'), '/dataflows/df_CodeTableItem')]",
-				"[concat(variables('factoryId'), '/dataflows/df_RptToStage_copy1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_DynamicDataFlow_Backup_copy1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "LkupTableNames",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:15:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "\n/*\n********************************************************************************************************\nThe first sql select will get the table names.\nthe second sql will get the max ordinal. This is to check if there are multiple columns that make up\na unique row. In the case of CODETABLEITEM there are 3. I only want to process on row. If there is\none row the column is use in as the Key Identifier in the data flow.\nIf the Ordinal Position is greater than 1 it is the CODETABLEITEM. Then that data is processed \ndifferently in the data flow via Conditional split.\nThe third sql gets the columns used in the Primary Key\n\nCode by: Renee Poore\n  \n\n*******************************************************************************************************\n*/\n\nSELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID,\n       CAST(mop.ORDINAL_POSITION as varchar(1) ) as ORDINAL_POSITION\nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n                               MAX(ORDINAL_POSITION) AS ORDINAL_POSITION\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1\n                        GROUP  BY TABLE_NAME) mop\n                    ON tblinfo.TABLE_NAME = mop.TABLE_NAME\n\n       INNER JOIN (SELECT DISTINCT TABLE_NAME,\n                                   COLUMN_NAME,\n                                   ORDINAL_POSITION\n                   FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                   WHERE\n                    OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                             + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n               ON mop.TABLE_NAME = tblid.TABLE_NAME\n                  AND mop.ORDINAL_POSITION = tblid.ORDINAL_POSITION \n\n\n\t\t\t\t  where tblinfo.TABLE_NAME in ('ADDRESS','CODETABLEITEM')",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "ds_AllTableNames",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "GetEachTableName",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "LkupTableNames",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('LkupTableNames').output.value\n\n",
-								"type": "Expression"
-							},
-							"batchCount": 4,
-							"activities": [
-								{
-									"name": "If Condition1_copy1",
-									"type": "IfCondition",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"expression": {
-											"value": "@lessOrEquals(int(variables('ordpos')),1)",
-											"type": "Expression"
-										},
-										"ifFalseActivities": [
-											{
-												"name": "df_CodeItem_copy1",
-												"type": "ExecuteDataFlow",
-												"dependsOn": [],
-												"policy": {
-													"timeout": "0.00:15:00",
-													"retry": 0,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"dataflow": {
-														"referenceName": "df_CodeTableItem",
-														"type": "DataFlowReference",
-														"parameters": {
-															"TableName": {
-																"value": "'@{variables('table')}'",
-																"type": "Expression"
-															},
-															"SchemaName": {
-																"value": "'@{variables('schema')}'",
-																"type": "Expression"
-															},
-															"UniqueID": {
-																"value": "'@{variables('column')}'",
-																"type": "Expression"
-															}
-														},
-														"datasetParameters": {
-															"RptDB": {},
-															"StgDB": {}
-														}
-													},
-													"staging": {},
-													"compute": {
-														"coreCount": 8,
-														"computeType": "General"
-													},
-													"traceLevel": "Fine"
-												}
-											}
-										],
-										"ifTrueActivities": [
-											{
-												"name": "df_RptToStage_copy1",
-												"type": "ExecuteDataFlow",
-												"dependsOn": [],
-												"policy": {
-													"timeout": "0.00:15:00",
-													"retry": 0,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"dataflow": {
-														"referenceName": "df_RptToStage_copy1",
-														"type": "DataFlowReference",
-														"parameters": {
-															"TableName": {
-																"value": "'@{variables('table')}'",
-																"type": "Expression"
-															},
-															"SchemaName": {
-																"value": "'@{variables('schema')}'",
-																"type": "Expression"
-															},
-															"UniqueID": {
-																"value": "'@{variables('column')}'",
-																"type": "Expression"
-															}
-														},
-														"datasetParameters": {
-															"RptDB": {
-																"Schema": {
-																	"value": "@variables('schema')",
-																	"type": "Expression"
-																},
-																"TableName": {
-																	"value": "@variables('table')",
-																	"type": "Expression"
-																}
-															},
-															"StgDB": {
-																"Schema": "STG",
-																"TableName": {
-																	"value": "@variables('table')",
-																	"type": "Expression"
-																}
-															}
-														}
-													},
-													"staging": {},
-													"compute": {
-														"coreCount": 8,
-														"computeType": "General"
-													},
-													"traceLevel": "Fine"
-												}
-											}
-										]
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"variables": {
-					"table": {
-						"type": "String"
-					},
-					"schema": {
-						"type": "String"
-					},
-					"column": {
-						"type": "String"
-					},
-					"ordpos": {
-						"type": "String"
-					}
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_AllTableNames')]",
-				"[concat(variables('factoryId'), '/dataflows/df_CodeTableItem')]",
-				"[concat(variables('factoryId'), '/dataflows/df_RptToStage_copy1')]"
 			]
 		},
 		{
@@ -1515,7 +904,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "df_Application_POCTesting",
+						"name": "df_StagePlaceHolder",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -1528,12 +917,12 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_Application_POCTesting",
+								"referenceName": "df_StagePlaceHolder",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"stgApplication": {},
-									"Dummy": {}
+									"source1": {},
+									"sink1": {}
 								}
 							},
 							"staging": {},
@@ -1555,7 +944,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_Application_POCTesting')]"
+				"[concat(variables('factoryId'), '/dataflows/df_StagePlaceHolder')]"
 			]
 		},
 		{
@@ -1566,11 +955,11 @@
 				"description": "This is the Main pipeline that will execute all pipelines.",
 				"activities": [
 					{
-						"name": "df_Application_POCTesting",
+						"name": "df_StagePlaceHolder",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
-							"timeout": "0.00:15:00",
+							"timeout": "0.12:00:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -1579,12 +968,12 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_Application_POCTesting",
+								"referenceName": "df_StagePlaceHolder",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"stgApplication": {},
-									"Dummy": {}
+									"source1": {},
+									"sink1": {}
 								}
 							},
 							"staging": {},
@@ -1611,7 +1000,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_Application_POCTesting')]"
+				"[concat(variables('factoryId'), '/dataflows/df_StagePlaceHolder')]"
 			]
 		},
 		{
@@ -1621,33 +1010,17 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "df_Application_POCTesting",
-						"type": "ExecuteDataFlow",
+						"name": "pl_DynamicDataFlow",
+						"type": "ExecutePipeline",
 						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:15:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
 						"userProperties": [],
 						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_Application_POCTesting",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"stgApplication": {},
-									"Dummy": {}
-								}
+							"pipeline": {
+								"referenceName": "pl_DynamicDataFlow",
+								"type": "PipelineReference"
 							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
+							"waitOnCompletion": true,
+							"parameters": {}
 						}
 					}
 				],
@@ -1661,7 +1034,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_Application_POCTesting')]"
+				"[concat(variables('factoryId'), '/pipelines/pl_DynamicDataFlow')]"
 			]
 		},
 		{
@@ -3565,72 +2938,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_Application_POCTesting')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "This is to be used for testing the entire POC flow",
-				"folder": {
-					"name": "Staging"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "DimAddress",
-								"type": "DatasetReference"
-							},
-							"name": "stgApplication"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "Dummy",
-								"type": "DatasetReference"
-							},
-							"name": "Dummy"
-						}
-					],
-					"transformations": [
-						{
-							"name": "CountApplicationID"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          AddressID as integer,",
-						"          AddressLine1 as string,",
-						"          AddressLine2 as string,",
-						"          City as string,",
-						"          StateProvince as string,",
-						"          CountryRegion as string,",
-						"          PostalCode as string,",
-						"          rowguid as string,",
-						"          ModifiedDate as timestamp",
-						"     ),",
-						"     allowSchemaDrift: false,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> stgApplication",
-						"stgApplication aggregate(APPLICATIONID = count(AddressID)) ~> CountApplicationID",
-						"CountApplicationID sink(allowSchemaDrift: false,",
-						"     validateSchema: false,",
-						"     input(",
-						"          Column_1 as string",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> Dummy"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DimAddress')]",
-				"[concat(variables('factoryId'), '/datasets/Dummy')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/df_CodeTableItem')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -4562,134 +3869,6 @@
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_RptToStage')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "Staging"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "ds_DataSetSource",
-								"type": "DatasetReference"
-							},
-							"name": "RptDB"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "ds_DataSetSourceTarget",
-								"type": "DatasetReference"
-							},
-							"name": "StgDB"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Upsert"
-						}
-					],
-					"scriptLines": [
-						"parameters{",
-						"     TableName as string,",
-						"     SchemaName as string,",
-						"     UniqueID as string",
-						"}",
-						"source(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     waterMarkColumn: 'LastWritten',",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table',",
-						"     mode: 'read') ~> RptDB",
-						"RptDB alterRow(upsertIf(true())) ~> Upsert",
-						"Upsert sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     deletable:false,",
-						"     insertable:false,",
-						"     updateable:false,",
-						"     upsertable:true,",
-						"     keys:[($UniqueID)],",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> StgDB"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_DataSetSource')]",
-				"[concat(variables('factoryId'), '/datasets/ds_DataSetSourceTarget')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_RptToStage_AlterRow')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "Staging"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "ds_DataSetSource",
-								"type": "DatasetReference"
-							},
-							"name": "RptDB"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "ds_DataSetSourceTarget",
-								"type": "DatasetReference"
-							},
-							"name": "StgDB"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Upsert"
-						}
-					],
-					"scriptLines": [
-						"parameters{",
-						"     parameter1 as string,",
-						"     parameter2 as string",
-						"}",
-						"source(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     waterMarkColumn: 'LastWritten',",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table',",
-						"     mode: 'read') ~> RptDB",
-						"RptDB alterRow(upsertIf(true())) ~> Upsert",
-						"Upsert sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     deletable:false,",
-						"     insertable:true,",
-						"     updateable:false,",
-						"     upsertable:false,",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> StgDB"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_DataSetSource')]",
-				"[concat(variables('factoryId'), '/datasets/ds_DataSetSourceTarget')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_RptToStage_copy1')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
