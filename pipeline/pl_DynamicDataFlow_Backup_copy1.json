@@ -111,43 +111,6 @@
 										},
 										"userProperties": [],
 										"typeProperties": {
-											"dataflow": {
-												"referenceName": "df_RptToStage_copy1",
-												"type": "DataFlowReference",
-												"parameters": {
-													"TableName": {
-														"value": "'@{variables('table')}'",
-														"type": "Expression"
-													},
-													"SchemaName": {
-														"value": "'@{variables('schema')}'",
-														"type": "Expression"
-													},
-													"UniqueID": {
-														"value": "'@{variables('column')}'",
-														"type": "Expression"
-													}
-												},
-												"datasetParameters": {
-													"RptDB": {
-														"Schema": {
-															"value": "@variables('schema')",
-															"type": "Expression"
-														},
-														"TableName": {
-															"value": "@variables('table')",
-															"type": "Expression"
-														}
-													},
-													"StgDB": {
-														"Schema": "STG",
-														"TableName": {
-															"value": "@variables('table')",
-															"type": "Expression"
-														}
-													}
-												}
-											},
 											"compute": {
 												"coreCount": 8,
 												"computeType": "General"
