@@ -1284,6 +1284,10 @@
 									"ptblTableName": {
 										"value": "'@{pipeline().parameters.pplTableName}'",
 										"type": "Expression"
+									},
+									"ptblLastWritten": {
+										"value": "'@{pipeline().parameters.pplLastWritten}'",
+										"type": "Expression"
 									}
 								},
 								"datasetParameters": {
@@ -1314,7 +1318,11 @@
 				"parameters": {
 					"pplTableName": {
 						"type": "string",
-						"defaultValue": "Address"
+						"defaultValue": "ADMININTEGRATEDCASE"
+					},
+					"pplLastWritten": {
+						"type": "string",
+						"defaultValue": "2021-11-01 08:22:00"
 					}
 				},
 				"folder": {
@@ -3397,7 +3405,67 @@
 					"transformations": [],
 					"scriptLines": [
 						"parameters{",
-						"     ptblTableName as string",
+						"     ptblTableName as string,",
+						"     ptblLastWritten as string",
+						"}",
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     waterMarkColumn: 'LastWritten',",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: (concat('SELECT * FROM CURAPD01.',$ptblTableName)),",
+						"     format: 'query',",
+						"     mode: 'read') ~> RptDBTEST",
+						"RptDBTEST sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> StgDBTEST"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/dsTestSourceSelectTable')]",
+				"[concat(variables('factoryId'), '/datasets/dsTestTargetSelectTable')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_DynamicSelect_Backup')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Testing"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "dsTestSourceSelectTable",
+								"type": "DatasetReference"
+							},
+							"name": "RptDBTEST"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "dsTestTargetSelectTable",
+								"type": "DatasetReference"
+							},
+							"name": "StgDBTEST"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"parameters{",
+						"     ptblTableName as string,",
+						"     ptblLastWritten as string",
 						"}",
 						"source(allowSchemaDrift: true,",
 						"     validateSchema: false,",
