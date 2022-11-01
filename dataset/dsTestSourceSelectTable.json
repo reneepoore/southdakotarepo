@@ -1,9 +1,17 @@
 {
-	"name": "dsTestSourceSelectTable",
+	"name": "dsTestSelectTable",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "TargetSandbox",
+			"referenceName": "CURAPD01",
 			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"dspTableName": {
+				"type": "string"
+			},
+			"dspLastWritten": {
+				"type": "string"
+			}
 		},
 		"folder": {
 			"name": "Testing"
