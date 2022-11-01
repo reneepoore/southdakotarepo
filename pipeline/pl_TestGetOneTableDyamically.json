@@ -47,7 +47,7 @@
 		"parameters": {
 			"pplTableName": {
 				"type": "string",
-				"defaultValue": "Address"
+				"defaultValue": "ADMININTEGRATEDCASE"
 			}
 		},
 		"folder": {
