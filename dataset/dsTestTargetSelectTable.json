@@ -2,7 +2,7 @@
 	"name": "dsTestTargetSelectTable",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "CURAPD01",
+			"referenceName": "TargetSandbox",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
@@ -18,7 +18,10 @@
 		"schema": [],
 		"typeProperties": {
 			"schema": "STG",
-			"table": "@dataset().ptblTableName"
+			"table": {
+				"value": "@dataset().ptblTableName",
+				"type": "Expression"
+			}
 		}
 	}
 }
