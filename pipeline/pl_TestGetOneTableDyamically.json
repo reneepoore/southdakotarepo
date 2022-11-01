@@ -1,0 +1,47 @@
+{
+	"name": "pl_TestGetOneTableDyamically",
+	"properties": {
+		"activities": [
+			{
+				"name": "df_DynamicSelect",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:10:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_DynamicSelect",
+						"type": "DataFlowReference",
+						"parameters": {
+							"TableName": {
+								"value": "'@{pipeline().parameters.pplTableName}'",
+								"type": "Expression"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"pplTableName": {
+				"type": "string",
+				"defaultValue": "Address"
+			}
+		},
+		"folder": {
+			"name": "Testing"
+		},
+		"annotations": []
+	}
+}

@@ -1,0 +1,15 @@
+{
+	"name": "dsTestSourceSelectTable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "TargetSandbox",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Testing"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}

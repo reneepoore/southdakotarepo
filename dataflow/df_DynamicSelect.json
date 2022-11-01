@@ -1,0 +1,52 @@
+{
+	"name": "df_DynamicSelect",
+	"properties": {
+		"folder": {
+			"name": "Testing"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "dsTestSelectTable",
+						"type": "DatasetReference"
+					},
+					"name": "RptDB"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dsTestSourceSelectTable",
+						"type": "DatasetReference"
+					},
+					"name": "StgDB"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"parameters{",
+				"     TableName as string",
+				"}",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     waterMarkColumn: 'LastWritten',",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: '\"@concat(\\'select * from CURAPD01.\\', pipeline().parameters.pplTableName\"',",
+				"     format: 'query',",
+				"     mode: 'read') ~> RptDB",
+				"RptDB sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> StgDB"
+			]
+		}
+	}
+}
