@@ -470,7 +470,7 @@
 								"partitionOption": "None"
 							},
 							"dataset": {
-								"referenceName": "ds_AllTableNames",
+								"referenceName": "LookupDynamicAllTables",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -602,7 +602,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_AllTableNames')]",
+				"[concat(variables('factoryId'), '/datasets/LookupDynamicAllTables')]",
 				"[concat(variables('factoryId'), '/dataflows/df_CodeTableItem')]",
 				"[concat(variables('factoryId'), '/dataflows/df_RptToStage')]"
 			]
@@ -1069,7 +1069,7 @@
 							}
 						],
 						"policy": {
-							"timeout": "0.12:00:00",
+							"timeout": "0.00:10:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -1098,7 +1098,7 @@
 							}
 						],
 						"policy": {
-							"timeout": "0.12:00:00",
+							"timeout": "0.00:10:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -1149,7 +1149,7 @@
 							}
 						],
 						"policy": {
-							"timeout": "7.00:00:00",
+							"timeout": "0.00:15:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -1257,7 +1257,7 @@
 							}
 						],
 						"policy": {
-							"timeout": "7.00:00:00",
+							"timeout": "0.00:15:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -1525,30 +1525,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CODETABLEITEM')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "TargetSandbox",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "STG",
-					"table": "CODETABLEITEM"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/TargetSandbox')]"
 			]
 		},
 		{
@@ -2058,6 +2034,51 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LookupDynamicAllTables')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Staging"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/db2CODETABLEITEM')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "DB2"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "CODETABLEITEM"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/db2Dummy')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2092,28 +2113,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_AllTableNames')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CURAPD01",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Staging"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_DataSetSource')]",
+			"name": "[concat(parameters('factoryName'), '/db2DynamicSource')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -2130,7 +2130,7 @@
 					}
 				},
 				"folder": {
-					"name": "Staging"
+					"name": "DB2"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -2148,44 +2148,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_DataSetSourceTarget')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "TargetSandbox",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Schema": {
-						"type": "string"
-					},
-					"TableName": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Staging"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().Schema",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@dataset().TableName",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/TargetSandbox')]"
 			]
 		},
 		{
@@ -2650,6 +2612,68 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/stgCODETABLEITEM')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "TargetSandbox",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Staging"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "STG",
+					"table": "CODETABLEITEM"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/TargetSandbox')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/stgDynamicTarget')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "TargetSandbox",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Schema": {
+						"type": "string"
+					},
+					"TableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Staging"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().Schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().TableName",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/TargetSandbox')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/targetSalesOrderHeader')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2950,7 +2974,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CODETABLEITEM",
+								"referenceName": "db2CODETABLEITEM",
 								"type": "DatasetReference"
 							},
 							"name": "RptDB"
@@ -2959,7 +2983,7 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "CODETABLEITEM",
+								"referenceName": "stgCODETABLEITEM",
 								"type": "DatasetReference"
 							},
 							"name": "StgDB"
@@ -3011,7 +3035,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CODETABLEITEM')]"
+				"[concat(variables('factoryId'), '/datasets/db2CODETABLEITEM')]",
+				"[concat(variables('factoryId'), '/datasets/stgCODETABLEITEM')]"
 			]
 		},
 		{
@@ -3880,7 +3905,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "ds_DataSetSource",
+								"referenceName": "db2DynamicSource",
 								"type": "DatasetReference"
 							},
 							"name": "RptDB"
@@ -3889,7 +3914,7 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "ds_DataSetSourceTarget",
+								"referenceName": "stgDynamicTarget",
 								"type": "DatasetReference"
 							},
 							"name": "StgDB"
@@ -3928,8 +3953,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_DataSetSource')]",
-				"[concat(variables('factoryId'), '/datasets/ds_DataSetSourceTarget')]"
+				"[concat(variables('factoryId'), '/datasets/db2DynamicSource')]",
+				"[concat(variables('factoryId'), '/datasets/stgDynamicTarget')]"
 			]
 		},
 		{
