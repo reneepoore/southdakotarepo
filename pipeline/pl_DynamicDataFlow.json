@@ -22,7 +22,7 @@
 						"partitionOption": "None"
 					},
 					"dataset": {
-						"referenceName": "ds_AllTableNames",
+						"referenceName": "LookupDynamicAllTables",
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false

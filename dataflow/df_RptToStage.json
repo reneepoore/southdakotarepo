@@ -9,7 +9,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "ds_db2DataSetSource",
+						"referenceName": "db2DynamicSource",
 						"type": "DatasetReference"
 					},
 					"name": "RptDB"
@@ -18,7 +18,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "ds_stgDataSetTarget",
+						"referenceName": "stgDynamicTarget",
 						"type": "DatasetReference"
 					},
 					"name": "StgDB"

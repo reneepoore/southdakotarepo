@@ -1,5 +1,5 @@
 {
-	"name": "ds_AllTableNames",
+	"name": "LookupDynamicAllTables",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CURAPD01",

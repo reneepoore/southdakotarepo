@@ -1,5 +1,5 @@
 {
-	"name": "ds_db2DataSetSource",
+	"name": "db2DynamicSource",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CURAPD01",
@@ -14,7 +14,7 @@
 			}
 		},
 		"folder": {
-			"name": "Staging"
+			"name": "DB2"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",

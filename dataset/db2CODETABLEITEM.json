@@ -1,5 +1,5 @@
 {
-	"name": "db2_CODETABLEITEM",
+	"name": "db2CODETABLEITEM",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CURAPD01",
