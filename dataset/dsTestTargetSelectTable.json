@@ -18,10 +18,7 @@
 		"schema": [],
 		"typeProperties": {
 			"schema": "STG",
-			"table": {
-				"value": "@dataset().ptblTableName",
-				"type": "Expression"
-			}
+			"table": "@dataset().ptblTableName"
 		}
 	}
 }
