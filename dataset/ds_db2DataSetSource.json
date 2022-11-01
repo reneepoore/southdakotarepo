@@ -1,5 +1,5 @@
 {
-	"name": "db2_DataSetSource",
+	"name": "ds_db2DataSetSource",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CURAPD01",

@@ -1,5 +1,5 @@
 {
-	"name": "stg_DataSetTarget",
+	"name": "ds_stgDataSetTarget",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "TargetSandbox",
