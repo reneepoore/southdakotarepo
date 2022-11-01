@@ -19,7 +19,7 @@
 						"referenceName": "df_DynamicSelect",
 						"type": "DataFlowReference",
 						"parameters": {
-							"TableName": {
+							"ptblTableName": {
 								"value": "'@{pipeline().parameters.pplTableName}'",
 								"type": "Expression"
 							}
@@ -30,6 +30,9 @@
 									"value": "@pipeline().parameters.pplTableName",
 									"type": "Expression"
 								}
+							},
+							"StgDBTEST": {
+								"ptblTableName": "@pipeline().parameters.pplTableName"
 							}
 						}
 					},

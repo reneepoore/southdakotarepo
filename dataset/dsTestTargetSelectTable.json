@@ -5,6 +5,11 @@
 			"referenceName": "CURAPD01",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"ptblTableName": {
+				"type": "string"
+			}
+		},
 		"folder": {
 			"name": "Testing"
 		},
@@ -13,7 +18,7 @@
 		"schema": [],
 		"typeProperties": {
 			"schema": "STG",
-			"table": "@dataset().TableName"
+			"table": "@dataset().ptblTableName"
 		}
 	}
 }
