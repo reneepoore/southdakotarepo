@@ -20,7 +20,7 @@
 						"type": "DataFlowReference",
 						"parameters": {
 							"ptblTableName": {
-								"value": "'@{pipeline().parameters.pplTableName}'",
+								"value": "@pipeline().parameters.pplTableName",
 								"type": "Expression"
 							}
 						},
