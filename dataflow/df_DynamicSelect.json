@@ -9,34 +9,34 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "dsTestSelectTable",
+						"referenceName": "dsTestSourceSelectTable",
 						"type": "DatasetReference"
 					},
-					"name": "RptDB"
+					"name": "RptDBTEST"
 				}
 			],
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "dsTestSourceSelectTable",
+						"referenceName": "dsTestTargetSelectTable",
 						"type": "DatasetReference"
 					},
-					"name": "StgDB"
+					"name": "StgDBTEST"
 				}
 			],
 			"transformations": [],
 			"scriptLines": [
 				"parameters{",
-				"     TableName as string",
+				"     TableName as string ('ADDRESS')",
 				"}",
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     waterMarkColumn: 'LastWritten',",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     query: '\"@concat(\\'select * from CURAPD01.\\', pipeline().parameters.pplTableName\"',",
+				"     query: '@concat(\\'select * from CURAPD01.\\', pipeline().parameters.pplTableName)\",',",
 				"     format: 'query',",
-				"     mode: 'read') ~> RptDB",
-				"RptDB sink(allowSchemaDrift: true,",
+				"     mode: 'read') ~> RptDBTEST",
+				"RptDBTEST sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
@@ -45,7 +45,7 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> StgDB"
+				"     errorHandlingOption: 'stopOnFirstError') ~> StgDBTEST"
 			]
 		}
 	}

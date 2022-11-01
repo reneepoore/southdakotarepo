@@ -1,8 +1,8 @@
 {
-	"name": "dsTestSourceSelectTable",
+	"name": "dsTestTargetSelectTable",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "TargetSandbox",
+			"referenceName": "CURAPD01",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
@@ -10,6 +10,10 @@
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
-		"schema": []
+		"schema": [],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "@dataset().TableName"
+		}
 	}
 }

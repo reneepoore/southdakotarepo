@@ -1,5 +1,5 @@
 {
-	"name": "dsTestSelectTable",
+	"name": "dsTestSourceSelectTable",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CURAPD01",
@@ -7,9 +7,6 @@
 		},
 		"parameters": {
 			"dspTableName": {
-				"type": "string"
-			},
-			"dspLastWritten": {
 				"type": "string"
 			}
 		},
