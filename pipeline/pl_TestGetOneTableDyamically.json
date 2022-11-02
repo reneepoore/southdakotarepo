@@ -24,7 +24,7 @@
 								"type": "Expression"
 							},
 							"ptblLastWritten": {
-								"value": "'toTimestamp(left('@{pipeline().parameters.pplLastWritten}', 23), 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS')'",
+								"value": "'@{pipeline().parameters.pplLastWritten}'",
 								"type": "Expression"
 							}
 						},
@@ -51,11 +51,11 @@
 		"parameters": {
 			"pplTableName": {
 				"type": "string",
-				"defaultValue": "CONCERNROLESNAPSHOT"
+				"defaultValue": "APPLICATION"
 			},
 			"pplLastWritten": {
 				"type": "string",
-				"defaultValue": "2022-08-12 09:01:49.000"
+				"defaultValue": "2022-08-20 12:19:08"
 			}
 		},
 		"folder": {
