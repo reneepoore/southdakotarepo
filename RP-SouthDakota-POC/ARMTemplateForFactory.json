@@ -1318,11 +1318,11 @@
 				"parameters": {
 					"pplTableName": {
 						"type": "string",
-						"defaultValue": "ADMININTEGRATEDCASE"
+						"defaultValue": "APPLICATION"
 					},
 					"pplLastWritten": {
 						"type": "string",
-						"defaultValue": "2021-11-01 08:22:00"
+						"defaultValue": "2022-08-20 12:19:08"
 					}
 				},
 				"folder": {
@@ -3412,7 +3412,7 @@
 						"     validateSchema: false,",
 						"     waterMarkColumn: 'LastWritten',",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     query: (concat('SELECT * FROM CURAPD01.',$ptblTableName)),",
+						"     query: (\"SELECT * FROM CURAPD01.\"+$ptblTableName+\"where Lastwritten>='{$ptblLastWritten}'\"),",
 						"     format: 'query',",
 						"     mode: 'read') ~> RptDBTEST",
 						"RptDBTEST sink(allowSchemaDrift: true,",
