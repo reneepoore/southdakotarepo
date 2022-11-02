@@ -34,7 +34,7 @@
 				"     validateSchema: false,",
 				"     waterMarkColumn: 'LastWritten',",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     query: (\"SELECT * FROM CURAPD01.\"+$ptblTableName+\"where Lastwritten >= \"+$ptblLastWritten),",
+				"     query: (\"SELECT * FROM CURAPD01.\"+$ptblTableName+\"where Lastwritten>='{$ptblLastWritten}'\"),",
 				"     format: 'query',",
 				"     mode: 'read') ~> RptDBTEST",
 				"RptDBTEST sink(allowSchemaDrift: true,",
