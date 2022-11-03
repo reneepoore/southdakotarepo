@@ -9,7 +9,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "dsTestSourceSelectTable",
+						"referenceName": "stgDynamicTarget",
 						"type": "DatasetReference"
 					},
 					"name": "RptDBTEST"
@@ -18,7 +18,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "dsTestTargetSelectTable",
+						"referenceName": "stgDynamicTarget",
 						"type": "DatasetReference"
 					},
 					"name": "StgDBTEST"
@@ -46,7 +46,7 @@
 				"Upsert sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
-				"     insertable:true,",
+				"     insertable:false,",
 				"     updateable:false,",
 				"     upsertable:true,",
 				"     keys:[($ptblPrimaryKeyColumn)],",
