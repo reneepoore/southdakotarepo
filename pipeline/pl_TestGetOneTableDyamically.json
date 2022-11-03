@@ -23,8 +23,8 @@
 								"value": "'@{pipeline().parameters.pplTableName}'",
 								"type": "Expression"
 							},
-							"ptblLastWritten": {
-								"value": "@pipeline().parameters.pplLastWritten",
+							"parameter1": {
+								"value": "'@{pipeline().parameters.pplLastWritten}'",
 								"type": "Expression"
 							}
 						},
@@ -55,7 +55,7 @@
 			},
 			"pplLastWritten": {
 				"type": "string",
-				"defaultValue": "2022-08-20 12:19:08"
+				"defaultValue": "2022-07-12 09:17:13.000"
 			}
 		},
 		"folder": {
