@@ -5,7 +5,14 @@
 			{
 				"name": "df_DynamicSelect",
 				"type": "ExecuteDataFlow",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.00:10:00",
 					"retry": 0,
@@ -58,17 +65,33 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "blbDynamicTableReload",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
 			}
 		],
 		"parameters": {
 			"pplTableName": {
-				"type": "string",
-				"defaultValue": "APPLICATION"
+				"type": "string"
 			},
 			"pplLastWritten": {
-				"type": "string",
-				"defaultValue": "2022-07-12 09:17:13.000"
+				"type": "string"
 			}
 		},
 		"folder": {
