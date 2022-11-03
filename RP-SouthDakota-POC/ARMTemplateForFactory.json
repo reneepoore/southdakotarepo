@@ -1285,7 +1285,7 @@
 										"value": "'@{pipeline().parameters.pplTableName}'",
 										"type": "Expression"
 									},
-									"parameter1": {
+									"ptblLastWritten": {
 										"value": "'@{pipeline().parameters.pplLastWritten}'",
 										"type": "Expression"
 									}
@@ -1300,8 +1300,7 @@
 									"StgDBTEST": {
 										"ptblTableName": "@pipeline().parameters.pplTableName"
 									}
-								},
-								"linkedServiceParameters": {}
+								}
 							},
 							"staging": {},
 							"compute": {
@@ -3407,13 +3406,13 @@
 					"scriptLines": [
 						"parameters{",
 						"     ptblTableName as string,",
-						"     parameter1 as string",
+						"     ptblLastWritten as string",
 						"}",
 						"source(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     waterMarkColumn: 'LastWritten',",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     query: (\"SELECT * FROM CURAPD01.\"+$ptblTableName+\" where Lastwritten>='\"+$parameter1+\"'\"                    ),",
+						"     query: (\"SELECT * FROM CURAPD01.\"+$ptblTableName+\" where Lastwritten>='\"+$ptblLastWritten+\"'\"                    ),",
 						"     format: 'query',",
 						"     mode: 'read') ~> RptDBTEST",
 						"RptDBTEST sink(allowSchemaDrift: true,",

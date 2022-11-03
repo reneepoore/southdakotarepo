@@ -255,7 +255,7 @@
 										"value": "'@{pipeline().parameters.pplTableName}'",
 										"type": "Expression"
 									},
-									"parameter1": {
+									"ptblLastWritten": {
 										"value": "'@{pipeline().parameters.pplLastWritten}'",
 										"type": "Expression"
 									}
@@ -270,8 +270,7 @@
 									"StgDBTEST": {
 										"ptblTableName": "@pipeline().parameters.pplTableName"
 									}
-								},
-								"linkedServiceParameters": {}
+								}
 							},
 							"staging": {},
 							"compute": {
