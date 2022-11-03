@@ -33,7 +33,7 @@
 				"     validateSchema: false,",
 				"     waterMarkColumn: 'LastWritten',",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     query: (\"SELECT * FROM CURAPD01.\"+$ptblTableName\r\\n),",
+				"     query: (concat('SELECT * FROM CURAPD01.',$ptblTableName)),",
 				"     format: 'query',",
 				"     mode: 'read') ~> RptDBTEST",
 				"RptDBTEST sink(allowSchemaDrift: true,",
