@@ -24,7 +24,11 @@
 					"name": "StgDBTEST"
 				}
 			],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "Upsert"
+				}
+			],
 			"scriptLines": [
 				"parameters{",
 				"     ptblTableName as string,",
@@ -38,12 +42,14 @@
 				"     query: (\"SELECT * FROM CURAPD01.\"+$ptblTableName+\" where Lastwritten>='\"+$ptblLastWritten+\"'\"                    ),",
 				"     format: 'query',",
 				"     mode: 'read') ~> RptDBTEST",
-				"RptDBTEST sink(allowSchemaDrift: true,",
+				"RptDBTEST alterRow(upsertIf(true())) ~> Upsert",
+				"Upsert sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
 				"     updateable:false,",
-				"     upsertable:false,",
+				"     upsertable:true,",
+				"     keys:[($ptblPrimaryKeyColumn)],",
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",

@@ -16,13 +16,18 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "AzureSqlSource",
-						"sqlReaderQuery": "/*\n********************************************************************************************************\nThe first sql select will get the table names.\nthe second sql will get the max ordinal. This is to check if there are multiple columns that make up\na unique row. In the case of CODETABLEITEM there are 3. I only want to process on row. If there is\none row the column is use in as the Key Identifier in the data flow.\nIf the Ordinal Position is greater than 1 it is the CODETABLEITEM. Then that data is processed \ndifferently in the data flow via Conditional split.\nThe third sql gets the columns used in the Primary Key\n\nCode by: Renee Poore\n  \n\n*******************************************************************************************************\n*/\n\nSELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID,\n       mop.ORDINAL_POSITION \nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n                               MAX(ORDINAL_POSITION) AS ORDINAL_POSITION\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1\n                        GROUP  BY TABLE_NAME) mop\n                    ON tblinfo.TABLE_NAME = mop.TABLE_NAME\n\n       INNER JOIN (SELECT DISTINCT TABLE_NAME,\n                                   COLUMN_NAME,\n                                   ORDINAL_POSITION\n                   FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                   WHERE\n                    OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                             + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n               ON mop.TABLE_NAME = tblid.TABLE_NAME\n                  AND mop.ORDINAL_POSITION = tblid.ORDINAL_POSITION \n\n\n\t\t\t\tWHERE MOP.ORDINAL_POSITION = 1",
-						"queryTimeout": "02:00:00",
-						"partitionOption": "None"
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
 					},
 					"dataset": {
-						"referenceName": "LookupDynamicAllTables",
+						"referenceName": "blbDynamicTableReload",
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false
@@ -48,11 +53,11 @@
 					"batchCount": 4,
 					"activities": [
 						{
-							"name": "df_RptToStage",
+							"name": "df_DynamicSelect",
 							"type": "ExecuteDataFlow",
 							"dependsOn": [],
 							"policy": {
-								"timeout": "0.00:03:00",
+								"timeout": "0.12:00:00",
 								"retry": 0,
 								"retryIntervalInSeconds": 30,
 								"secureOutput": false,
@@ -61,39 +66,20 @@
 							"userProperties": [],
 							"typeProperties": {
 								"dataflow": {
-									"referenceName": "df_RptToStage",
+									"referenceName": "df_DynamicSelect",
 									"type": "DataFlowReference",
 									"parameters": {
-										"TableName": {
-											"value": "'@{item().table_name}'",
+										"ptblTableName": {
+											"value": "'@{item().Table}'",
 											"type": "Expression"
 										},
-										"SchemaName": {
-											"value": "'@{item().table_schema}'",
+										"ptblLastWritten": {
+											"value": "'@{item().DateTime}'",
 											"type": "Expression"
 										},
-										"UniqueID": {
-											"value": "'@{item().unique_id}'",
+										"ptblPrimaryKeyColumn": {
+											"value": "'@{item().PrimaryKeyColumn}'",
 											"type": "Expression"
-										}
-									},
-									"datasetParameters": {
-										"RptDB": {
-											"Schema": {
-												"value": "@item().table_schema",
-												"type": "Expression"
-											},
-											"TableName": {
-												"value": "@item().table_name",
-												"type": "Expression"
-											}
-										},
-										"StgDB": {
-											"Schema": "STG",
-											"TableName": {
-												"value": "@item().table_name",
-												"type": "Expression"
-											}
 										}
 									}
 								},
