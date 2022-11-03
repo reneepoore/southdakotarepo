@@ -27,8 +27,7 @@
 			"transformations": [],
 			"scriptLines": [
 				"parameters{",
-				"     ptblTableName as string,",
-				"     parameter1 as string",
+				"     ptblTableName as string",
 				"}",
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",

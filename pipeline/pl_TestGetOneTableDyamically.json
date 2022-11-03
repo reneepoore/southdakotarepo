@@ -22,10 +22,6 @@
 							"ptblTableName": {
 								"value": "'@{pipeline().parameters.pplTableName}'",
 								"type": "Expression"
-							},
-							"parameter1": {
-								"value": "'@{pipeline().parameters.pplLastWritten}'",
-								"type": "Expression"
 							}
 						},
 						"datasetParameters": {
