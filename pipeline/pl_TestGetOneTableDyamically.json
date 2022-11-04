@@ -34,17 +34,6 @@
 								"value": "'@{pipeline().parameters.pplLastWritten}'",
 								"type": "Expression"
 							}
-						},
-						"datasetParameters": {
-							"RptDBTEST": {
-								"dspTableName": {
-									"value": "@pipeline().parameters.pplTableName",
-									"type": "Expression"
-								}
-							},
-							"StgDBTEST": {
-								"ptblTableName": "@pipeline().parameters.pplTableName"
-							}
 						}
 					},
 					"compute": {

@@ -80,16 +80,13 @@
 										"ptblPrimaryKeyColumn": {
 											"value": "'@{item().PrimaryKeyColumn}'",
 											"type": "Expression"
+										},
+										"ptblSchema": {
+											"value": "'@{item().SourceSchema}'",
+											"type": "Expression"
 										}
 									},
 									"datasetParameters": {
-										"RptDBTEST": {
-											"Schema": "CURAPD01",
-											"TableName": {
-												"value": "@item().Table",
-												"type": "Expression"
-											}
-										},
 										"StgDBTEST": {
 											"Schema": "STG",
 											"TableName": {
