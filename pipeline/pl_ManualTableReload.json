@@ -1,5 +1,5 @@
 {
-	"name": "pl_DynamicDataFlow_ForLastWritten",
+	"name": "pl_ManualTableReload",
 	"properties": {
 		"activities": [
 			{
@@ -38,7 +38,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Filter1",
+						"activity": "FilterRowsWithY",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -47,7 +47,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Filter1').output.value",
+						"value": "@activity('FilterRowsWithY').output.value",
 						"type": "Expression"
 					},
 					"batchCount": 4,
@@ -117,7 +117,7 @@
 				}
 			},
 			{
-				"name": "Filter1",
+				"name": "FilterRowsWithY",
 				"type": "Filter",
 				"dependsOn": [
 					{
