@@ -38,7 +38,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "LkupTableNames",
+						"activity": "Filter1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -47,7 +47,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('LkupTableNames').output.value\n\n",
+						"value": "@activity('Filter1').output.value",
 						"type": "Expression"
 					},
 					"batchCount": 4,
@@ -57,7 +57,7 @@
 							"type": "ExecuteDataFlow",
 							"dependsOn": [],
 							"policy": {
-								"timeout": "0.12:00:00",
+								"timeout": "0.00:10:00",
 								"retry": 0,
 								"retryIntervalInSeconds": 30,
 								"secureOutput": false,
@@ -114,6 +114,29 @@
 							}
 						}
 					]
+				}
+			},
+			{
+				"name": "Filter1",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "LkupTableNames",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LkupTableNames').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@startswith(item().Process,'Y')",
+						"type": "Expression"
+					}
 				}
 			}
 		],
