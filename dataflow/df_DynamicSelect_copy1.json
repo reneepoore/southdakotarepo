@@ -1,0 +1,82 @@
+{
+	"name": "df_DynamicSelect_copy1",
+	"properties": {
+		"folder": {
+			"name": "Testing"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "db2DynamicSource",
+						"type": "DatasetReference"
+					},
+					"name": "RptDBTEST"
+				},
+				{
+					"dataset": {
+						"referenceName": "blbDynamicTableReload",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "stgDynamicTarget",
+						"type": "DatasetReference"
+					},
+					"name": "StgDBTEST"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Upsert"
+				},
+				{
+					"name": "join1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     ptblTableName as string,",
+				"     ptblLastWritten as string,",
+				"     ptblPrimaryKeyColumn as string,",
+				"     ptblSchema as string",
+				"}",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     waterMarkColumn: 'LastWritten',",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: (\"SELECT * FROM CURAPD01.\"+$ptblTableName+\" where Lastwritten>='\"+$ptblLastWritten+\"'\"                    ),",
+				"     format: 'query',",
+				"     mode: 'read') ~> RptDBTEST",
+				"source(output(",
+				"          Column_1 as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"join1 alterRow(upsertIf(true())) ~> Upsert",
+				"RptDBTEST, source1 join(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"Upsert sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:false,",
+				"     upsertable:true,",
+				"     keys:[($ptblPrimaryKeyColumn)],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> StgDBTEST"
+			]
+		}
+	}
+}
