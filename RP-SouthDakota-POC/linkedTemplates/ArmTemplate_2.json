@@ -13,145 +13,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/pl_DynamicDataFlow_ForLastWritten')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "LkupTableNames",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:15:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"dataset": {
-								"referenceName": "blbDynamicTableReload",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "GetEachTableName",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "LkupTableNames",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('LkupTableNames').output.value\n\n",
-								"type": "Expression"
-							},
-							"batchCount": 4,
-							"activities": [
-								{
-									"name": "df_DynamicSelect",
-									"type": "ExecuteDataFlow",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"dataflow": {
-											"referenceName": "df_DynamicSelect",
-											"type": "DataFlowReference",
-											"parameters": {
-												"ptblTableName": {
-													"value": "'@{item().Table}'",
-													"type": "Expression"
-												},
-												"ptblLastWritten": {
-													"value": "'@{item().DateTime}'",
-													"type": "Expression"
-												},
-												"ptblPrimaryKeyColumn": {
-													"value": "'@{item().PrimaryKeyColumn}'",
-													"type": "Expression"
-												},
-												"ptblSchema": {
-													"value": "'@{item().SourceSchema}'",
-													"type": "Expression"
-												}
-											},
-											"datasetParameters": {
-												"RptDBTEST": {
-													"Schema": {
-														"value": "@item().SourceSchema",
-														"type": "Expression"
-													},
-													"TableName": {
-														"value": "@item().Table",
-														"type": "Expression"
-													}
-												},
-												"StgDBTEST": {
-													"Schema": "STG",
-													"TableName": {
-														"value": "@item().Table",
-														"type": "Expression"
-													}
-												}
-											},
-											"linkedServiceParameters": {
-												"RptDBTEST": {
-													"schemaLinkedService": {}
-												}
-											}
-										},
-										"staging": {},
-										"compute": {
-											"coreCount": 8,
-											"computeType": "General"
-										},
-										"traceLevel": "Fine"
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/pl_LogTesting_POC_Test_MailAlert')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -262,6 +123,163 @@
 				},
 				"annotations": [],
 				"lastPublishTime": "2022-10-04T20:18:01Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_ManualTableReload')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkupTableNames",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "blbDynamicTableReload",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "GetEachTableName",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "FilterRowsWithY",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('FilterRowsWithY').output.value",
+								"type": "Expression"
+							},
+							"batchCount": 4,
+							"activities": [
+								{
+									"name": "df_DynamicSelect",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.00:10:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "df_DynamicSelect",
+											"type": "DataFlowReference",
+											"parameters": {
+												"ptblTableName": {
+													"value": "'@{item().Table}'",
+													"type": "Expression"
+												},
+												"ptblLastWritten": {
+													"value": "'@{item().DateTime}'",
+													"type": "Expression"
+												},
+												"ptblPrimaryKeyColumn": {
+													"value": "'@{item().PrimaryKeyColumn}'",
+													"type": "Expression"
+												},
+												"ptblSchema": {
+													"value": "'@{item().SourceSchema}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"RptDBTEST": {
+													"Schema": {
+														"value": "@item().SourceSchema",
+														"type": "Expression"
+													},
+													"TableName": {
+														"value": "@item().Table",
+														"type": "Expression"
+													}
+												},
+												"StgDBTEST": {
+													"Schema": "STG",
+													"TableName": {
+														"value": "@item().Table",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "FilterRowsWithY",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "LkupTableNames",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkupTableNames').output.value",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@startswith(item().Process,'Y')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": []
 			},
 			"dependsOn": []
 		},
