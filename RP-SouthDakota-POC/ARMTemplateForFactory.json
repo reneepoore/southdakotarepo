@@ -627,13 +627,18 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "/*\n********************************************************************************************************\nThe first sql select will get the table names.\nthe second sql will get the max ordinal. This is to check if there are multiple columns that make up\na unique row. In the case of CODETABLEITEM there are 3. I only want to process on row. If there is\none row the column is use in as the Key Identifier in the data flow.\nIf the Ordinal Position is greater than 1 it is the CODETABLEITEM. Then that data is processed \ndifferently in the data flow via Conditional split.\nThe third sql gets the columns used in the Primary Key\n\nCode by: Renee Poore\n  \n\n*******************************************************************************************************\n*/\n\nSELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID,\n       mop.ORDINAL_POSITION \nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n                               MAX(ORDINAL_POSITION) AS ORDINAL_POSITION\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1\n                        GROUP  BY TABLE_NAME) mop\n                    ON tblinfo.TABLE_NAME = mop.TABLE_NAME\n\n       INNER JOIN (SELECT DISTINCT TABLE_NAME,\n                                   COLUMN_NAME,\n                                   ORDINAL_POSITION\n                   FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                   WHERE\n                    OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                             + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n               ON mop.TABLE_NAME = tblid.TABLE_NAME\n                  AND mop.ORDINAL_POSITION = tblid.ORDINAL_POSITION \n\n\n\t\t\t\tWHERE MOP.ORDINAL_POSITION = 1",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
 							},
 							"dataset": {
-								"referenceName": "LookupDynamicAllTables",
+								"referenceName": "blbDynamicTableReload",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -660,11 +665,11 @@
 							"batchCount": 4,
 							"activities": [
 								{
-									"name": "df_RptToStage",
+									"name": "df_DynamicSelect",
 									"type": "ExecuteDataFlow",
 									"dependsOn": [],
 									"policy": {
-										"timeout": "0.00:03:00",
+										"timeout": "0.12:00:00",
 										"retry": 0,
 										"retryIntervalInSeconds": 30,
 										"secureOutput": false,
@@ -673,39 +678,48 @@
 									"userProperties": [],
 									"typeProperties": {
 										"dataflow": {
-											"referenceName": "df_RptToStage",
+											"referenceName": "df_DynamicSelect",
 											"type": "DataFlowReference",
 											"parameters": {
-												"TableName": {
-													"value": "'@{item().table_name}'",
+												"ptblTableName": {
+													"value": "'@{item().Table}'",
 													"type": "Expression"
 												},
-												"SchemaName": {
-													"value": "'@{item().table_schema}'",
+												"ptblLastWritten": {
+													"value": "'@{item().DateTime}'",
 													"type": "Expression"
 												},
-												"UniqueID": {
-													"value": "'@{item().unique_id}'",
+												"ptblPrimaryKeyColumn": {
+													"value": "'@{item().PrimaryKeyColumn}'",
+													"type": "Expression"
+												},
+												"ptblSchema": {
+													"value": "'@{item().SourceSchema}'",
 													"type": "Expression"
 												}
 											},
 											"datasetParameters": {
-												"RptDB": {
+												"RptDBTEST": {
 													"Schema": {
-														"value": "@item().table_schema",
+														"value": "@item().SourceSchema",
 														"type": "Expression"
 													},
 													"TableName": {
-														"value": "@item().table_name",
+														"value": "@item().Table",
 														"type": "Expression"
 													}
 												},
-												"StgDB": {
+												"StgDBTEST": {
 													"Schema": "STG",
 													"TableName": {
-														"value": "@item().table_name",
+														"value": "@item().Table",
 														"type": "Expression"
 													}
+												}
+											},
+											"linkedServiceParameters": {
+												"RptDBTEST": {
+													"schemaLinkedService": {}
 												}
 											}
 										},
@@ -731,8 +745,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/LookupDynamicAllTables')]",
-				"[concat(variables('factoryId'), '/dataflows/df_RptToStage')]"
+				"[concat(variables('factoryId'), '/datasets/blbDynamicTableReload')]",
+				"[concat(variables('factoryId'), '/dataflows/df_DynamicSelect')]"
 			]
 		},
 		{
@@ -1256,82 +1270,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/pl_Testing')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_TestGetOneTableDyamically')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "df_DynamicSelect",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:10:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_DynamicSelect",
-								"type": "DataFlowReference",
-								"parameters": {
-									"ptblTableName": {
-										"value": "'@{pipeline().parameters.pplTableName}'",
-										"type": "Expression"
-									},
-									"ptblLastWritten": {
-										"value": "'@{pipeline().parameters.pplLastWritten}'",
-										"type": "Expression"
-									}
-								},
-								"datasetParameters": {
-									"RptDBTEST": {
-										"dspTableName": {
-											"value": "@pipeline().parameters.pplTableName",
-											"type": "Expression"
-										}
-									},
-									"StgDBTEST": {
-										"ptblTableName": "@pipeline().parameters.pplTableName"
-									}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"parameters": {
-					"pplTableName": {
-						"type": "string",
-						"defaultValue": "APPLICATION"
-					},
-					"pplLastWritten": {
-						"type": "string",
-						"defaultValue": "2022-07-12 09:17:13.000"
-					}
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_DynamicSelect')]"
 			]
 		},
 		{
@@ -2256,6 +2194,41 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/blbDynamicTableReload')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Staging"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "DynamicTableReload.csv",
+						"container": "newcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
 			]
 		},
 		{
@@ -3387,7 +3360,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "dsTestSourceSelectTable",
+								"referenceName": "db2DynamicSource",
 								"type": "DatasetReference"
 							},
 							"name": "RptDBTEST"
@@ -3396,17 +3369,23 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "dsTestTargetSelectTable",
+								"referenceName": "stgDynamicTarget",
 								"type": "DatasetReference"
 							},
 							"name": "StgDBTEST"
 						}
 					],
-					"transformations": [],
+					"transformations": [
+						{
+							"name": "Upsert"
+						}
+					],
 					"scriptLines": [
 						"parameters{",
 						"     ptblTableName as string,",
-						"     ptblLastWritten as string",
+						"     ptblLastWritten as string,",
+						"     ptblPrimaryKeyColumn as string,",
+						"     ptblSchema as string",
 						"}",
 						"source(allowSchemaDrift: true,",
 						"     validateSchema: false,",
@@ -3415,12 +3394,14 @@
 						"     query: (\"SELECT * FROM CURAPD01.\"+$ptblTableName+\" where Lastwritten>='\"+$ptblLastWritten+\"'\"                    ),",
 						"     format: 'query',",
 						"     mode: 'read') ~> RptDBTEST",
-						"RptDBTEST sink(allowSchemaDrift: true,",
+						"RptDBTEST alterRow(upsertIf(true())) ~> Upsert",
+						"Upsert sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
-						"     insertable:true,",
+						"     insertable:false,",
 						"     updateable:false,",
-						"     upsertable:false,",
+						"     upsertable:true,",
+						"     keys:[($ptblPrimaryKeyColumn)],",
 						"     format: 'table',",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
@@ -3429,8 +3410,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/dsTestSourceSelectTable')]",
-				"[concat(variables('factoryId'), '/datasets/dsTestTargetSelectTable')]"
+				"[concat(variables('factoryId'), '/datasets/db2DynamicSource')]",
+				"[concat(variables('factoryId'), '/datasets/stgDynamicTarget')]"
 			]
 		},
 		{
