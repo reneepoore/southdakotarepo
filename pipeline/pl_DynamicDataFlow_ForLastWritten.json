@@ -87,6 +87,16 @@
 										}
 									},
 									"datasetParameters": {
+										"RptDBTEST": {
+											"Schema": {
+												"value": "@item().SourceSchema",
+												"type": "Expression"
+											},
+											"TableName": {
+												"value": "@item().Table",
+												"type": "Expression"
+											}
+										},
 										"StgDBTEST": {
 											"Schema": "STG",
 											"TableName": {
