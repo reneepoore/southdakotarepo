@@ -2,7 +2,7 @@
 	"name": "df_DynamicSelect",
 	"properties": {
 		"folder": {
-			"name": "Testing"
+			"name": "Staging"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
