@@ -1,5 +1,5 @@
 {
-	"name": "stgCODETABLEITEM",
+	"name": "stgCodeTableItem",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "TargetSandbox",

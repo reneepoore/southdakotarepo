@@ -9,7 +9,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "db2CODETABLEITEM",
+						"referenceName": "db2CodeTableItem",
 						"type": "DatasetReference"
 					},
 					"name": "RptDB"
@@ -18,7 +18,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "stgCODETABLEITEM",
+						"referenceName": "stgCodeTableItem",
 						"type": "DatasetReference"
 					},
 					"name": "StgDB"
