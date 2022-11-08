@@ -711,7 +711,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/db2CODETABLEITEM')]",
+			"name": "[concat(parameters('factoryName'), '/db2CodeTableItem')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
