@@ -249,6 +249,7 @@
 				"     mapColumn(",
 				"          EmpID = SQL_EmpID,",
 				"          FirstName = SQL_FirstName,",
+				"          LastName = SQL_LastName,",
 				"          MiddleName = SQL_MiddleName,",
 				"          Title = SQL_Title,",
 				"          HireDate = SQL_HireDate,",
