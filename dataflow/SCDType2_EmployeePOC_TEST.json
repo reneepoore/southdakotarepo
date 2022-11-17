@@ -7,14 +7,14 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "stgSourceEmployee",
+						"referenceName": "TestDataForEmployee",
 						"type": "DatasetReference"
 					},
 					"name": "srcEmployeeData"
 				},
 				{
 					"dataset": {
-						"referenceName": "tgtDimEmployee",
+						"referenceName": "TestDataForEmployeeDim",
 						"type": "DatasetReference"
 					},
 					"name": "tgtDimEmployee"
@@ -75,14 +75,12 @@
 					"name": "SelectColumns"
 				},
 				{
-					"name": "FilterCurrent"
-				},
-				{
 					"name": "SelectSinkColumns"
 				}
 			],
 			"scriptLines": [
 				"source(output(",
+				"          EmpID as integer,",
 				"          FirstName as string,",
 				"          LastName as string,",
 				"          MiddleName as string,",
@@ -97,7 +95,7 @@
 				"          Gender as string,",
 				"          DepartmentName as string,",
 				"          StartDate as date,",
-				"          EndDate as date,",
+				"          EndDate as string,",
 				"          Status as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
@@ -105,7 +103,7 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcEmployeeData",
 				"source(output(",
-				"          EmployeeKey as integer,",
+				"          EmpID as integer,",
 				"          FirstName as string,",
 				"          LastName as string,",
 				"          MiddleName as string,",
@@ -120,9 +118,8 @@
 				"          Gender as string,",
 				"          DepartmentName as string,",
 				"          StartDate as date,",
-				"          EndDate as date,",
-				"          Status as string,",
-				"          IsActive as integer",
+				"          EndDate as string,",
+				"          Status as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
@@ -181,7 +178,7 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectInactiveColumns",
 				"SelectInactiveColumns alterRow(updateIf(true())) ~> UpdateColumns",
-				"FilterCurrent, tgtDimEmployee lookup(srcEmployeeData@FirstName == tgtDimEmployee@FirstName",
+				"srcEmployeeData, tgtDimEmployee lookup(srcEmployeeData@FirstName == tgtDimEmployee@FirstName",
 				"     && srcEmployeeData@LastName == tgtDimEmployee@LastName",
 				"     && srcEmployeeData@BirthDate == tgtDimEmployee@BirthDate,",
 				"     multiple: true,",
@@ -216,7 +213,6 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectColumns",
-				"srcEmployeeData filter(Status=='Current') ~> FilterCurrent",
 				"SetIsActive select(mapColumn(",
 				"          FirstName,",
 				"          LastName,",
