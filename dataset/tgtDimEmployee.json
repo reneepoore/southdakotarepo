@@ -1,0 +1,16 @@
+{
+	"name": "tgtDimEmployee",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AdventureWorksDW",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "tgtDimEmployee"
+		}
+	}
+}
