@@ -9,6 +9,11 @@
 		"type": "AzureSqlTable",
 		"schema": [
 			{
+				"name": "EmployeeKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
 				"name": "EmpID",
 				"type": "smallint",
 				"precision": 5
@@ -76,6 +81,10 @@
 			{
 				"name": "Status",
 				"type": "nvarchar"
+			},
+			{
+				"name": "IsActive",
+				"type": "bit"
 			}
 		],
 		"typeProperties": {
