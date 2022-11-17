@@ -23,7 +23,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "tgtDimEmployee",
+						"referenceName": "TestDataForEmployeeDim",
 						"type": "DatasetReference"
 					},
 					"name": "SinkNewData"
@@ -108,6 +108,25 @@
 				"     skipDuplicateMapOutputs: true) ~> SelectSinkColumns",
 				"SelectSinkColumns sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     input(",
+				"          EmpID as integer,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          MiddleName as string,",
+				"          Title as string,",
+				"          HireDate as date,",
+				"          BirthDate as date,",
+				"          Phone as string,",
+				"          MaritalStatus as string,",
+				"          EmergencyContactName as string,",
+				"          EmergencyContactPhone as string,",
+				"          SalariedFlag as boolean,",
+				"          Gender as string,",
+				"          DepartmentName as string,",
+				"          StartDate as date,",
+				"          EndDate as string,",
+				"          Status as string",
+				"     ),",
 				"     deletable:false,",
 				"     insertable:true,",
 				"     updateable:false,",
