@@ -63,6 +63,9 @@
 				},
 				{
 					"name": "select2"
+				},
+				{
+					"name": "AddIsActive"
 				}
 			],
 			"scriptLines": [
@@ -212,7 +215,8 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select2",
-				"SelectSinkColumns sink(allowSchemaDrift: true,",
+				"SelectSinkColumns derive(IsActive = 1) ~> AddIsActive",
+				"AddIsActive sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          EmployeeKey as integer,",
@@ -261,7 +265,8 @@
 				"          DepartmentName,",
 				"          StartDate,",
 				"          EndDate,",
-				"          Status",
+				"          Status,",
+				"          IsActive",
 				"     )) ~> SinkNewData",
 				"alterRow1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
@@ -295,7 +300,6 @@
 				"     skipDuplicateMapOutputs: true,",
 				"     errorHandlingOption: 'stopOnFirstError',",
 				"     mapColumn(",
-				"          EmployeeKey,",
 				"          EmpID,",
 				"          FirstName,",
 				"          LastName,",
