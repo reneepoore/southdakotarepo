@@ -312,7 +312,8 @@
 				"          DepartmentName,",
 				"          StartDate,",
 				"          EndDate,",
-				"          Status",
+				"          Status,",
+				"          IsActive",
 				"     )) ~> sink1"
 			]
 		}
