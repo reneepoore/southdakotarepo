@@ -216,7 +216,7 @@
 				"     skipDuplicateMapOutputs: true,",
 				"     saveOrder: 0,",
 				"     errorHandlingOption: 'stopOnFirstError') ~> SinkNewData",
-				"alterRow1 sink(allowSchemaDrift: false,",
+				"alterRow1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          EmpID as integer,",
