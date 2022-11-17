@@ -7,14 +7,14 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "stgSourceEmployee",
+						"referenceName": "TestDataForEmployee",
 						"type": "DatasetReference"
 					},
 					"name": "srcEmployeeData"
 				},
 				{
 					"dataset": {
-						"referenceName": "tgtDimEmployee",
+						"referenceName": "TestDataForEmployeeDim",
 						"type": "DatasetReference"
 					},
 					"name": "tgtDimEmployee"
@@ -27,20 +27,6 @@
 						"type": "DatasetReference"
 					},
 					"name": "SinkNewData"
-				},
-				{
-					"dataset": {
-						"referenceName": "tgtDimEmployee",
-						"type": "DatasetReference"
-					},
-					"name": "SinkInsertUpdates"
-				},
-				{
-					"dataset": {
-						"referenceName": "tgtDimEmployee",
-						"type": "DatasetReference"
-					},
-					"name": "SinkInactive"
 				}
 			],
 			"transformations": [
@@ -48,41 +34,12 @@
 					"name": "SetIsActive"
 				},
 				{
-					"name": "CheckNewRecords"
-				},
-				{
-					"name": "SelectToRename"
-				},
-				{
-					"name": "CheckForChanges"
-				},
-				{
-					"name": "AddIsActive"
-				},
-				{
-					"name": "ChangeIsActive"
-				},
-				{
-					"name": "SelectInactiveColumns"
-				},
-				{
-					"name": "UpdateColumns"
-				},
-				{
-					"name": "LkpEmployee"
-				},
-				{
-					"name": "SelectColumns"
-				},
-				{
-					"name": "FilterCurrent"
-				},
-				{
 					"name": "SelectSinkColumns"
 				}
 			],
 			"scriptLines": [
 				"source(output(",
+				"          EmpID as integer,",
 				"          FirstName as string,",
 				"          LastName as string,",
 				"          MiddleName as string,",
@@ -97,7 +54,7 @@
 				"          Gender as string,",
 				"          DepartmentName as string,",
 				"          StartDate as date,",
-				"          EndDate as date,",
+				"          EndDate as string,",
 				"          Status as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
@@ -105,7 +62,7 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcEmployeeData",
 				"source(output(",
-				"          EmployeeKey as integer,",
+				"          EmpID as integer,",
 				"          FirstName as string,",
 				"          LastName as string,",
 				"          MiddleName as string,",
@@ -120,103 +77,14 @@
 				"          Gender as string,",
 				"          DepartmentName as string,",
 				"          StartDate as date,",
-				"          EndDate as date,",
-				"          Status as string,",
-				"          IsActive as integer",
+				"          EndDate as string,",
+				"          Status as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> tgtDimEmployee",
-				"CheckNewRecords@NewRecords derive(IsActive = 1) ~> SetIsActive",
-				"SelectColumns split(isNull(tgtIsActive),",
-				"     disjoint: false) ~> CheckNewRecords@(NewRecords, CheckForUpdates)",
-				"CheckNewRecords@CheckForUpdates select(mapColumn(",
-				"          FirstName,",
-				"          LastName,",
-				"          MiddleName,",
-				"          Title,",
-				"          HireDate,",
-				"          BirthDate,",
-				"          Phone,",
-				"          MaritalStatus,",
-				"          EmergencyContactName,",
-				"          EmergencyContactPhone,",
-				"          SalariedFlag,",
-				"          Gender,",
-				"          DepartmentName,",
-				"          StartDate,",
-				"          EndDate,",
-				"          Status",
-				"     ),",
-				"     skipDuplicateMapInputs: false,",
-				"     skipDuplicateMapOutputs: false) ~> SelectToRename",
-				"SelectToRename, tgtDimEmployee exists(SelectToRename@FirstName ==tgtDimEmployee@FirstName&&\r",
-				"SelectToRename@LastName==tgtDimEmployee@LastName&&\r",
-				"SelectToRename@BirthDate==tgtDimEmployee@BirthDate&&\r",
-				"\r",
-				"(\r",
-				"SelectToRename@LastName!=tgtDimEmployee@LastName||\r",
-				"SelectToRename@Title!=tgtDimEmployee@Title||\r",
-				"SelectToRename@Phone!=tgtDimEmployee@Phone||\r",
-				"SelectToRename@MaritalStatus!=tgtDimEmployee@MaritalStatus||\r",
-				"SelectToRename@SalariedFlag!=tgtDimEmployee@SalariedFlag||\r",
-				"SelectToRename@DepartmentName!=tgtDimEmployee@DepartmentName||\r",
-				"SelectToRename@EndDate!=tgtDimEmployee@EndDate||\r",
-				"SelectToRename@Status!=tgtDimEmployee@Status),",
-				"     negate:false,",
-				"     broadcast: 'left')~> CheckForChanges",
-				"CheckForChanges derive(IsActive = 1) ~> AddIsActive",
-				"CheckForChanges derive(drvIsActive = 0,",
-				"          drvEndDate = currentDate(),",
-				"          drvStatus = 'Termed') ~> ChangeIsActive",
-				"ChangeIsActive select(mapColumn(",
-				"          EndDate = drvEndDate,",
-				"          Status = drvStatus,",
-				"          IsActive = drvIsActive,",
-				"          FirstName,",
-				"          LastName,",
-				"          BirthDate",
-				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectInactiveColumns",
-				"SelectInactiveColumns alterRow(updateIf(true())) ~> UpdateColumns",
-				"FilterCurrent, tgtDimEmployee lookup(srcEmployeeData@FirstName == tgtDimEmployee@FirstName",
-				"     && srcEmployeeData@LastName == tgtDimEmployee@LastName",
-				"     && srcEmployeeData@BirthDate == tgtDimEmployee@BirthDate,",
-				"     multiple: true,",
-				"     broadcast: 'right')~> LkpEmployee",
-				"LkpEmployee select(mapColumn(",
-				"          FirstName = srcEmployeeData@FirstName,",
-				"          LastName = srcEmployeeData@LastName,",
-				"          MiddleName = srcEmployeeData@MiddleName,",
-				"          Title = srcEmployeeData@Title,",
-				"          HireDate = srcEmployeeData@HireDate,",
-				"          BirthDate = srcEmployeeData@BirthDate,",
-				"          Phone = srcEmployeeData@Phone,",
-				"          MaritalStatus = srcEmployeeData@MaritalStatus,",
-				"          EmergencyContactName = srcEmployeeData@EmergencyContactName,",
-				"          EmergencyContactPhone = srcEmployeeData@EmergencyContactPhone,",
-				"          SalariedFlag = srcEmployeeData@SalariedFlag,",
-				"          Gender = srcEmployeeData@Gender,",
-				"          DepartmentName = srcEmployeeData@DepartmentName,",
-				"          StartDate = srcEmployeeData@StartDate,",
-				"          EndDate = srcEmployeeData@EndDate,",
-				"          Status = srcEmployeeData@Status,",
-				"          EmployeeKey,",
-				"          tgtLastName = tgtDimEmployee@LastName,",
-				"          tgtTitle = tgtDimEmployee@Title,",
-				"          tgtPhone = tgtDimEmployee@Phone,",
-				"          tgtMaritalStatus = tgtDimEmployee@MaritalStatus,",
-				"          tgtSalariedFlag = tgtDimEmployee@SalariedFlag,",
-				"          tgtDepartmentName = tgtDimEmployee@DepartmentName,",
-				"          tgtEndDate = tgtDimEmployee@EndDate,",
-				"          tgtStatus = tgtDimEmployee@Status,",
-				"          tgtIsActive = IsActive",
-				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectColumns",
-				"srcEmployeeData filter(Status=='Current') ~> FilterCurrent",
+				"srcEmployeeData derive(IsActive = 1) ~> SetIsActive",
 				"SetIsActive select(mapColumn(",
 				"          FirstName,",
 				"          LastName,",
@@ -248,30 +116,7 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     saveOrder: 1,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> SinkNewData",
-				"AddIsActive sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     deletable:false,",
-				"     insertable:true,",
-				"     updateable:false,",
-				"     upsertable:false,",
-				"     format: 'table',",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     saveOrder: 3,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> SinkInsertUpdates",
-				"UpdateColumns sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     deletable:false,",
-				"     insertable:false,",
-				"     updateable:true,",
-				"     upsertable:false,",
-				"     keys:['FirstName','LastName','BirthDate'],",
-				"     format: 'table',",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     saveOrder: 2,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> SinkInactive"
+				"     errorHandlingOption: 'stopOnFirstError') ~> SinkNewData"
 			]
 		}
 	}
