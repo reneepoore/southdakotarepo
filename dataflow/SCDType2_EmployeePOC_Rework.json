@@ -27,6 +27,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "SinkNewData"
+				},
+				{
+					"dataset": {
+						"referenceName": "TestDataForEmployeeDim",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
 				}
 			],
 			"transformations": [
@@ -44,6 +51,15 @@
 				},
 				{
 					"name": "ExistingRows"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "alterRow1"
 				}
 			],
 			"scriptLines": [
@@ -144,7 +160,32 @@
 				"srcEmployeeData, SelectRename lookup(EmpID == SQL_EmpID,",
 				"     multiple: true,",
 				"     broadcast: 'auto')~> Lkup",
-				"Lkup filter(!isNull(EmpID)) ~> ExistingRows",
+				"Lkup filter(!isNull(SQL_EmpID)) ~> ExistingRows",
+				"ExistingRows select(mapColumn(",
+				"          SQL_EmployeeKey,",
+				"          SQL_EmpID,",
+				"          SQL_FirstName,",
+				"          SQL_LastName,",
+				"          SQL_MiddleName,",
+				"          SQL_Title,",
+				"          SQL_HireDate,",
+				"          SQL_BirthDate,",
+				"          SQL_Phone,",
+				"          SQL_MaritalStatus,",
+				"          SQL_EmergencyContactName,",
+				"          SQL_EmergencyContactPhone,",
+				"          SQL_SalariedFlag,",
+				"          SQL_Gender,",
+				"          SQL_DepartmentName,",
+				"          SQL_StartDate,",
+				"          SQL_EndDate,",
+				"          SQL_Status,",
+				"          SQL_IsActive",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 derive(SQL_IsActive = 0) ~> derivedColumn1",
+				"derivedColumn1 alterRow(updateIf(true())) ~> alterRow1",
 				"SelectSinkColumns sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -173,8 +214,38 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     saveOrder: 1,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> SinkNewData"
+				"     saveOrder: 0,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> SinkNewData",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          EmpID as integer,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          MiddleName as string,",
+				"          Title as string,",
+				"          HireDate as date,",
+				"          BirthDate as date,",
+				"          Phone as string,",
+				"          MaritalStatus as string,",
+				"          EmergencyContactName as string,",
+				"          EmergencyContactPhone as string,",
+				"          SalariedFlag as boolean,",
+				"          Gender as string,",
+				"          DepartmentName as string,",
+				"          StartDate as date,",
+				"          EndDate as string,",
+				"          Status as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:true,",
+				"     upsertable:false,",
+				"     keys:['SQL_EmployeeKey'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
 			]
 		}
 	}
