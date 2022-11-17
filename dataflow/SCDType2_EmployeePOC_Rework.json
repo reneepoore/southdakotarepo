@@ -245,7 +245,25 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          EmpID = SQL_EmpID,",
+				"          FirstName = SQL_FirstName,",
+				"          MiddleName = SQL_MiddleName,",
+				"          Title = SQL_Title,",
+				"          HireDate = SQL_HireDate,",
+				"          BirthDate = SQL_BirthDate,",
+				"          Phone = SQL_Phone,",
+				"          MaritalStatus = SQL_MaritalStatus,",
+				"          EmergencyContactName = SQL_EmergencyContactName,",
+				"          EmergencyContactPhone = SQL_EmergencyContactPhone,",
+				"          SalariedFlag = SQL_SalariedFlag,",
+				"          Gender = SQL_Gender,",
+				"          DepartmentName = SQL_DepartmentName,",
+				"          StartDate = SQL_StartDate,",
+				"          EndDate = SQL_EndDate,",
+				"          Status = SQL_Status",
+				"     )) ~> sink1"
 			]
 		}
 	}
