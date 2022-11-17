@@ -86,6 +86,7 @@
 				"     format: 'table') ~> tgtDimEmployee",
 				"srcEmployeeData derive(IsActive = 1) ~> SetIsActive",
 				"SetIsActive select(mapColumn(",
+				"          EmpID,",
 				"          FirstName,",
 				"          LastName,",
 				"          MiddleName,",
