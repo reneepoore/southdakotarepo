@@ -2,6 +2,9 @@
 	"name": "SCDType2_EmployeePOC_Rework",
 	"properties": {
 		"description": "POC for SCD Type 2 with Adventure Works Data",
+		"folder": {
+			"name": "Testing"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [

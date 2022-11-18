@@ -1,6 +1,9 @@
 {
 	"name": "SCD2_Example",
 	"properties": {
+		"folder": {
+			"name": "Dimensions"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
