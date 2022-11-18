@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_FactSalesOrderHeader_UpsertFinalPOC",
+						"referenceName": "df_SCD1_Example",
 						"type": "DataFlowReference"
 					},
 					"compute": {
