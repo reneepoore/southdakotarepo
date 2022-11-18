@@ -1,9 +1,9 @@
 {
-	"name": "pl_UpsertFinalPOC",
+	"name": "pl_SCD1_POC_Example",
 	"properties": {
 		"activities": [
 			{
-				"name": "df_FactSalesOrderHeader_UpsertFinalPOC",
+				"name": "df_SCD1_Example",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -31,7 +31,7 @@
 			}
 		],
 		"folder": {
-			"name": "Testing"
+			"name": "Facts"
 		},
 		"annotations": []
 	}
