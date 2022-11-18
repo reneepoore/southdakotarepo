@@ -1198,58 +1198,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pl_SCD2')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "SCDType2_EmployeePOC_Rework",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:10:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "SCDType2_EmployeePOC_Rework",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"srcEmployeeData": {},
-									"tgtDimEmployee": {},
-									"SinkNewData": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/SCDType2_EmployeePOC_Rework')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/pl_SCD2_POC_Example')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1659,13 +1607,13 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pl_UpsertFinalPOC')]",
+			"name": "[concat(parameters('factoryName'), '/pl_SCD1_POC_Example')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "df_FactSalesOrderHeader_UpsertFinalPOC",
+						"name": "df_SCD1_Example",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -1705,66 +1653,12 @@
 					"cancelAfter": {}
 				},
 				"folder": {
-					"name": "Testing"
+					"name": "Facts"
 				},
 				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/df_SCD1_Example')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/testCodeItem')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "df_CodeTableItem",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:15:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_CodeTableItem",
-								"type": "DataFlowReference",
-								"parameters": {
-									"TableName": "'CODETABLEITEM'",
-									"SchemaName": "'CURAPD01'",
-									"UniqueID": "'na'"
-								},
-								"datasetParameters": {
-									"RptDB": {},
-									"StgDB": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_CodeTableItem')]"
 			]
 		},
 		{
