@@ -1,0 +1,70 @@
+{
+	"name": "SCD2_Example",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "TestDataForEmployee1",
+						"type": "DatasetReference"
+					},
+					"name": "srcEmployee"
+				},
+				{
+					"dataset": {
+						"referenceName": "TestDataForEmployeeDim1",
+						"type": "DatasetReference"
+					},
+					"name": "srcEmployeeDim"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "TestDataForEmployeeDim1",
+						"type": "DatasetReference"
+					},
+					"name": "SinkEmployeeDimInsert"
+				},
+				{
+					"dataset": {
+						"referenceName": "TestDataForEmployeeDim1",
+						"type": "DatasetReference"
+					},
+					"name": "SinkEmployeeDimUpdate"
+				}
+			],
+			"transformations": [
+				{
+					"name": "HASHInput"
+				},
+				{
+					"name": "HASHRef"
+				},
+				{
+					"name": "SetToActive"
+				},
+				{
+					"name": "ExistsCheckforUpdates"
+				},
+				{
+					"name": "ExistsCheckforObsolete"
+				},
+				{
+					"name": "SetToInActive"
+				},
+				{
+					"name": "AlterRow1"
+				},
+				{
+					"name": "SelectColumns"
+				},
+				{
+					"name": "FilterForTesting"
+				}
+			],
+			"script": "source(output(\n\t\tEmpID as short,\n\t\tFirstName as string,\n\t\tLastName as string,\n\t\tMiddleName as string,\n\t\tTitle as string,\n\t\tHireDate as date,\n\t\tBirthDate as date,\n\t\tPhone as string,\n\t\tMaritalStatus as string,\n\t\tEmergencyContactName as string,\n\t\tEmergencyContactPhone as string,\n\t\tSalariedFlag as boolean,\n\t\tGender as string,\n\t\tDepartmentName as string,\n\t\tStartDate as date,\n\t\tEndDate as string,\n\t\tStatus as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\twildcardPaths:['2021/*.csv']) ~> srcEmployee\nsource(output(\n\t\tEmployeeKey as integer,\n\t\tEmpID as short,\n\t\tFirstName as string,\n\t\tLastName as string,\n\t\tMiddleName as string,\n\t\tTitle as string,\n\t\tHireDate as date,\n\t\tBirthDate as date,\n\t\tPhone as string,\n\t\tMaritalStatus as string,\n\t\tEmergencyContactName as string,\n\t\tEmergencyContactPhone as string,\n\t\tSalariedFlag as boolean,\n\t\tGender as string,\n\t\tDepartmentName as string,\n\t\tStartDate as date,\n\t\tEndDate as string,\n\t\tStatus as string,\n\t\tIsActive as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> srcEmployeeDim\nSelectColumns derive(inputhash = md5(EmpID,LastName,Title,Phone,MaritalStatus,SalariedFlag,DepartmentName)) ~> HASHInput\nsrcEmployeeDim derive(sqlhash = md5(EmpID,LastName,Title,Phone,MaritalStatus,SalariedFlag,DepartmentName)) ~> HASHRef\nExistsCheckforUpdates derive(IsActive = 1,\n\t\tEndDate = toDate('9999-12-31')) ~> SetToActive\nHASHInput, HASHRef exists(inputhash == sqlhash,\n\tnegate:true,\n\tbroadcast: 'auto')~> ExistsCheckforUpdates\nHASHRef, SetToActive exists(srcEmployeeDim@EmpID == SelectColumns@EmpID,\n\tnegate:false,\n\tbroadcast: 'auto')~> ExistsCheckforObsolete\nExistsCheckforObsolete derive(EndDate = toDate(currentUTC()),\n\t\tIsActive = 0,\n\t\tStatus = 'Termed') ~> SetToInActive\nSetToInActive alterRow(updateIf(true())) ~> AlterRow1\nFilterForTesting select(mapColumn(\n\t\tEmpID,\n\t\tFirstName,\n\t\tLastName,\n\t\tMiddleName,\n\t\tTitle,\n\t\tHireDate,\n\t\tBirthDate,\n\t\tPhone,\n\t\tMaritalStatus,\n\t\tEmergencyContactName,\n\t\tEmergencyContactPhone,\n\t\tSalariedFlag,\n\t\tGender,\n\t\tDepartmentName,\n\t\tStartDate,\n\t\tEndDate,\n\t\tStatus\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectColumns\nsrcEmployee filter(EmpID ==1002) ~> FilterForTesting\nSetToActive sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tEmpID,\n\t\tFirstName,\n\t\tLastName,\n\t\tMiddleName,\n\t\tTitle,\n\t\tHireDate,\n\t\tBirthDate,\n\t\tPhone,\n\t\tMaritalStatus,\n\t\tEmergencyContactName,\n\t\tEmergencyContactPhone,\n\t\tSalariedFlag,\n\t\tGender,\n\t\tDepartmentName,\n\t\tStartDate,\n\t\tEndDate,\n\t\tStatus,\n\t\tIsActive\n\t)) ~> SinkEmployeeDimInsert\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['EmployeeKey'],\n\tskipKeyWrites:true,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tEmployeeKey,\n\t\tEmpID,\n\t\tFirstName,\n\t\tLastName,\n\t\tMiddleName,\n\t\tTitle,\n\t\tHireDate,\n\t\tBirthDate,\n\t\tPhone,\n\t\tMaritalStatus,\n\t\tEmergencyContactName,\n\t\tEmergencyContactPhone,\n\t\tSalariedFlag,\n\t\tGender,\n\t\tDepartmentName,\n\t\tStartDate,\n\t\tEndDate,\n\t\tStatus,\n\t\tIsActive\n\t)) ~> SinkEmployeeDimUpdate"
+		}
+	}
+}
