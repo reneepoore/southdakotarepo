@@ -13,6 +13,276 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/TestDataForEmployee')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AdventureWorksDW",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "EmpID",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "FirstName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MiddleName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Title",
+						"type": "nvarchar"
+					},
+					{
+						"name": "HireDate",
+						"type": "date"
+					},
+					{
+						"name": "BirthDate",
+						"type": "date"
+					},
+					{
+						"name": "Phone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MaritalStatus",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EmergencyContactName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EmergencyContactPhone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SalariedFlag",
+						"type": "bit"
+					},
+					{
+						"name": "Gender",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DepartmentName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "StartDate",
+						"type": "date"
+					},
+					{
+						"name": "EndDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Status",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TestDataForEmployee"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestDataForEmployee1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AdventureWorksDW",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TestDataForEmployee"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestDataForEmployeeDim')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AdventureWorksDW",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "EmployeeKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "EmpID",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "FirstName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MiddleName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Title",
+						"type": "nvarchar"
+					},
+					{
+						"name": "HireDate",
+						"type": "date"
+					},
+					{
+						"name": "BirthDate",
+						"type": "date"
+					},
+					{
+						"name": "Phone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MaritalStatus",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EmergencyContactName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EmergencyContactPhone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SalariedFlag",
+						"type": "bit"
+					},
+					{
+						"name": "Gender",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DepartmentName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "StartDate",
+						"type": "date"
+					},
+					{
+						"name": "EndDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "IsActive",
+						"type": "bit"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TestDataForEmployeeDim"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestDataForEmployeeDim1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AdventureWorksDW",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TestDataForEmployeeDim"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/blbDynamicTableReload')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Staging"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "DynamicTableReload.csv",
+						"container": "newcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/db2CodeTableItem')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -676,6 +946,9 @@
 					"referenceName": "AdventureWorksDW",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "Testing"
+				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [
@@ -960,6 +1233,9 @@
 					"referenceName": "AdventureWorksDW",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "Testing"
+				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
@@ -969,613 +1245,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SCDType2_EmployeePOC_Rework')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "POC for SCD Type 2 with Adventure Works Data",
-				"folder": {
-					"name": "Testing"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "TestDataForEmployee",
-								"type": "DatasetReference"
-							},
-							"name": "srcEmployeeData"
-						},
-						{
-							"dataset": {
-								"referenceName": "TestDataForEmployeeDim",
-								"type": "DatasetReference"
-							},
-							"name": "tgtDimEmployee"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "TestDataForEmployeeDim",
-								"type": "DatasetReference"
-							},
-							"name": "SinkNewData"
-						},
-						{
-							"dataset": {
-								"referenceName": "TestDataForEmployeeDim",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [
-						{
-							"name": "SetIsActive"
-						},
-						{
-							"name": "SelectSinkColumns"
-						},
-						{
-							"name": "SelectRename"
-						},
-						{
-							"name": "Lkup"
-						},
-						{
-							"name": "ExistingRows"
-						},
-						{
-							"name": "select1"
-						},
-						{
-							"name": "derivedColumn1"
-						},
-						{
-							"name": "alterRow1"
-						},
-						{
-							"name": "select2"
-						},
-						{
-							"name": "AddIsActive"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          EmpID as integer,",
-						"          FirstName as string,",
-						"          LastName as string,",
-						"          MiddleName as string,",
-						"          Title as string,",
-						"          HireDate as date,",
-						"          BirthDate as date,",
-						"          Phone as string,",
-						"          MaritalStatus as string,",
-						"          EmergencyContactName as string,",
-						"          EmergencyContactPhone as string,",
-						"          SalariedFlag as boolean,",
-						"          Gender as string,",
-						"          DepartmentName as string,",
-						"          StartDate as date,",
-						"          EndDate as string,",
-						"          Status as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> srcEmployeeData",
-						"source(output(",
-						"          EmployeeKey as integer,",
-						"          EmpID as integer,",
-						"          FirstName as string,",
-						"          LastName as string,",
-						"          MiddleName as string,",
-						"          Title as string,",
-						"          HireDate as date,",
-						"          BirthDate as date,",
-						"          Phone as string,",
-						"          MaritalStatus as string,",
-						"          EmergencyContactName as string,",
-						"          EmergencyContactPhone as string,",
-						"          SalariedFlag as boolean,",
-						"          Gender as string,",
-						"          DepartmentName as string,",
-						"          StartDate as date,",
-						"          EndDate as string,",
-						"          Status as string,",
-						"          IsActive as boolean",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> tgtDimEmployee",
-						"srcEmployeeData derive(IsActive = 1) ~> SetIsActive",
-						"SetIsActive select(mapColumn(",
-						"          EmpID,",
-						"          FirstName,",
-						"          LastName,",
-						"          MiddleName,",
-						"          Title,",
-						"          HireDate,",
-						"          BirthDate,",
-						"          Phone,",
-						"          MaritalStatus,",
-						"          EmergencyContactName,",
-						"          EmergencyContactPhone,",
-						"          SalariedFlag,",
-						"          Gender,",
-						"          DepartmentName,",
-						"          StartDate,",
-						"          EndDate,",
-						"          Status,",
-						"          IsActive",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectSinkColumns",
-						"tgtDimEmployee select(mapColumn(",
-						"          SQL_EmployeeKey = EmployeeKey,",
-						"          SQL_EmpID = EmpID,",
-						"          SQL_FirstName = FirstName,",
-						"          SQL_LastName = LastName,",
-						"          SQL_MiddleName = MiddleName,",
-						"          SQL_Title = Title,",
-						"          SQL_HireDate = HireDate,",
-						"          SQL_BirthDate = BirthDate,",
-						"          SQL_Phone = Phone,",
-						"          SQL_MaritalStatus = MaritalStatus,",
-						"          SQL_EmergencyContactName = EmergencyContactName,",
-						"          SQL_EmergencyContactPhone = EmergencyContactPhone,",
-						"          SQL_SalariedFlag = SalariedFlag,",
-						"          SQL_Gender = Gender,",
-						"          SQL_DepartmentName = DepartmentName,",
-						"          SQL_StartDate = StartDate,",
-						"          SQL_EndDate = EndDate,",
-						"          SQL_Status = Status,",
-						"          SQL_IsActive = IsActive",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectRename",
-						"srcEmployeeData, SelectRename lookup(EmpID == SQL_EmpID,",
-						"     multiple: true,",
-						"     broadcast: 'auto')~> Lkup",
-						"Lkup filter(!isNull(SQL_EmpID)) ~> ExistingRows",
-						"ExistingRows select(mapColumn(",
-						"          SQL_EmployeeKey,",
-						"          SQL_EmpID,",
-						"          SQL_FirstName,",
-						"          SQL_LastName,",
-						"          SQL_MiddleName,",
-						"          SQL_Title,",
-						"          SQL_HireDate,",
-						"          SQL_BirthDate,",
-						"          SQL_Phone,",
-						"          SQL_MaritalStatus,",
-						"          SQL_EmergencyContactName,",
-						"          SQL_EmergencyContactPhone,",
-						"          SQL_SalariedFlag,",
-						"          SQL_Gender,",
-						"          SQL_DepartmentName,",
-						"          SQL_StartDate,",
-						"          SQL_EndDate,",
-						"          SQL_Status,",
-						"          SQL_IsActive",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> select1",
-						"select1 derive(SQL_IsActive = 0) ~> derivedColumn1",
-						"select2 alterRow(updateIf(true())) ~> alterRow1",
-						"derivedColumn1 select(mapColumn(",
-						"          EmployeeKey = SQL_EmployeeKey,",
-						"          EmpID = SQL_EmpID,",
-						"          FirstName = SQL_FirstName,",
-						"          LastName = SQL_LastName,",
-						"          MiddleName = SQL_MiddleName,",
-						"          Title = SQL_Title,",
-						"          HireDate = SQL_HireDate,",
-						"          BirthDate = SQL_BirthDate,",
-						"          Phone = SQL_Phone,",
-						"          MaritalStatus = SQL_MaritalStatus,",
-						"          EmergencyContactName = SQL_EmergencyContactName,",
-						"          EmergencyContactPhone = SQL_EmergencyContactPhone,",
-						"          SalariedFlag = SQL_SalariedFlag,",
-						"          Gender = SQL_Gender,",
-						"          DepartmentName = SQL_DepartmentName,",
-						"          StartDate = SQL_StartDate,",
-						"          EndDate = SQL_EndDate,",
-						"          Status = SQL_Status,",
-						"          IsActive = SQL_IsActive",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> select2",
-						"SelectSinkColumns derive(IsActive = 1) ~> AddIsActive",
-						"AddIsActive sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          EmployeeKey as integer,",
-						"          EmpID as integer,",
-						"          FirstName as string,",
-						"          LastName as string,",
-						"          MiddleName as string,",
-						"          Title as string,",
-						"          HireDate as date,",
-						"          BirthDate as date,",
-						"          Phone as string,",
-						"          MaritalStatus as string,",
-						"          EmergencyContactName as string,",
-						"          EmergencyContactPhone as string,",
-						"          SalariedFlag as boolean,",
-						"          Gender as string,",
-						"          DepartmentName as string,",
-						"          StartDate as date,",
-						"          EndDate as string,",
-						"          Status as string,",
-						"          IsActive as boolean",
-						"     ),",
-						"     deletable:false,",
-						"     insertable:true,",
-						"     updateable:false,",
-						"     upsertable:false,",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     saveOrder: 0,",
-						"     errorHandlingOption: 'stopOnFirstError',",
-						"     mapColumn(",
-						"          EmpID,",
-						"          FirstName,",
-						"          LastName,",
-						"          MiddleName,",
-						"          Title,",
-						"          HireDate,",
-						"          BirthDate,",
-						"          Phone,",
-						"          MaritalStatus,",
-						"          EmergencyContactName,",
-						"          EmergencyContactPhone,",
-						"          SalariedFlag,",
-						"          Gender,",
-						"          DepartmentName,",
-						"          StartDate,",
-						"          EndDate,",
-						"          Status,",
-						"          IsActive",
-						"     )) ~> SinkNewData",
-						"alterRow1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          EmployeeKey as integer,",
-						"          EmpID as integer,",
-						"          FirstName as string,",
-						"          LastName as string,",
-						"          MiddleName as string,",
-						"          Title as string,",
-						"          HireDate as date,",
-						"          BirthDate as date,",
-						"          Phone as string,",
-						"          MaritalStatus as string,",
-						"          EmergencyContactName as string,",
-						"          EmergencyContactPhone as string,",
-						"          SalariedFlag as boolean,",
-						"          Gender as string,",
-						"          DepartmentName as string,",
-						"          StartDate as date,",
-						"          EndDate as string,",
-						"          Status as string,",
-						"          IsActive as boolean",
-						"     ),",
-						"     deletable:false,",
-						"     insertable:true,",
-						"     updateable:false,",
-						"     upsertable:false,",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError',",
-						"     mapColumn(",
-						"          EmpID,",
-						"          FirstName,",
-						"          LastName,",
-						"          MiddleName,",
-						"          Title,",
-						"          HireDate,",
-						"          BirthDate,",
-						"          Phone,",
-						"          MaritalStatus,",
-						"          EmergencyContactName,",
-						"          EmergencyContactPhone,",
-						"          SalariedFlag,",
-						"          Gender,",
-						"          DepartmentName,",
-						"          StartDate,",
-						"          EndDate,",
-						"          Status,",
-						"          IsActive",
-						"     )) ~> sink1"
-					]
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_CodeTableItem')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "Staging"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "db2CodeTableItem",
-								"type": "DatasetReference"
-							},
-							"name": "RptDB"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "stgCodeTableItem",
-								"type": "DatasetReference"
-							},
-							"name": "StgDB"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Upsert"
-						}
-					],
-					"scriptLines": [
-						"parameters{",
-						"     TableName as string ('CODETABLEITEM'),",
-						"     SchemaName as string ('CURAPD01'),",
-						"     UniqueID as string ('na')",
-						"}",
-						"source(output(",
-						"          TABLENAME as string,",
-						"          CODE as string,",
-						"          DESCRIPTION as string,",
-						"          ANNOTATION as string,",
-						"          ISENABLED as string,",
-						"          SORTORDER as integer,",
-						"          LOCALEIDENTIFIER as string,",
-						"          PARENTCODE as string,",
-						"          COMMENTS as string,",
-						"          VERSIONNO as integer,",
-						"          LASTWRITTEN as timestamp",
-						"     ),",
-						"     allowSchemaDrift: false,",
-						"     validateSchema: false,",
-						"     waterMarkColumn: 'LastWritten',",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table',",
-						"     mode: 'read') ~> RptDB",
-						"RptDB alterRow(upsertIf(true())) ~> Upsert",
-						"Upsert sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     deletable:false,",
-						"     insertable:false,",
-						"     updateable:false,",
-						"     upsertable:true,",
-						"     keys:['TABLENAME','CODE','LOCALEIDENTIFIER'],",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> StgDB"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/db2CodeTableItem')]",
-				"[concat(variables('factoryId'), '/datasets/stgCodeTableItem')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_DimPlaceHolder')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "Dimensions"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "reportingSalesOrderHeader",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "Dummy",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [],
-					"scriptLines": [
-						"source(output(",
-						"          SalesOrderID as integer,",
-						"          RevisionNumber as integer,",
-						"          OrderDate as timestamp,",
-						"          DueDate as timestamp,",
-						"          ShipDate as timestamp,",
-						"          Status as integer,",
-						"          OnlineOrderFlag as boolean,",
-						"          SalesOrderNumber as string,",
-						"          PurchaseOrderNumber as string,",
-						"          AccountNumber as string,",
-						"          CustomerID as integer,",
-						"          ShipToAddressID as integer,",
-						"          BillToAddressID as integer,",
-						"          ShipMethod as string,",
-						"          CreditCardApprovalCode as string,",
-						"          SubTotal as decimal(19,4),",
-						"          TaxAmt as decimal(19,4),",
-						"          Freight as decimal(19,4),",
-						"          TotalDue as decimal(19,4),",
-						"          Comment as string,",
-						"          rowguid as string,",
-						"          ModifiedDate as timestamp",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> source1",
-						"source1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          Column_1 as string",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> sink1"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_DynamicSelect')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "Staging"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "db2DynamicSource",
-								"type": "DatasetReference"
-							},
-							"name": "RptDBTEST"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "stgDynamicTarget",
-								"type": "DatasetReference"
-							},
-							"name": "StgDBTEST"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Upsert"
-						}
-					],
-					"scriptLines": [
-						"parameters{",
-						"     ptblTableName as string,",
-						"     ptblLastWritten as string,",
-						"     ptblPrimaryKeyColumn as string,",
-						"     ptblSchema as string",
-						"}",
-						"source(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     waterMarkColumn: 'LastWritten',",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     query: (\"SELECT * FROM CURAPD01.\"+$ptblTableName+\" where Lastwritten>='\"+$ptblLastWritten+\"'\"                    ),",
-						"     format: 'query',",
-						"     mode: 'read') ~> RptDBTEST",
-						"RptDBTEST alterRow(upsertIf(true())) ~> Upsert",
-						"Upsert sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     deletable:false,",
-						"     insertable:false,",
-						"     updateable:false,",
-						"     upsertable:true,",
-						"     keys:[($ptblPrimaryKeyColumn)],",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> StgDBTEST"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/db2DynamicSource')]",
-				"[concat(variables('factoryId'), '/datasets/stgDynamicTarget')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_DynamicSelect_Backup')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "Testing"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "dsTestSourceSelectTable",
-								"type": "DatasetReference"
-							},
-							"name": "RptDBTEST"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "dsTestTargetSelectTable",
-								"type": "DatasetReference"
-							},
-							"name": "StgDBTEST"
-						}
-					],
-					"transformations": [],
-					"scriptLines": [
-						"parameters{",
-						"     ptblTableName as string,",
-						"     ptblLastWritten as string",
-						"}",
-						"source(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     waterMarkColumn: 'LastWritten',",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     query: (concat('SELECT * FROM CURAPD01.',$ptblTableName)),",
-						"     format: 'query',",
-						"     mode: 'read') ~> RptDBTEST",
-						"RptDBTEST sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     deletable:false,",
-						"     insertable:true,",
-						"     updateable:false,",
-						"     upsertable:false,",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> StgDBTEST"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/dsTestSourceSelectTable')]",
-				"[concat(variables('factoryId'), '/datasets/dsTestTargetSelectTable')]"
-			]
 		}
 	]
 }
