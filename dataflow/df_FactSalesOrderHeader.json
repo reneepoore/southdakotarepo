@@ -2,7 +2,7 @@
 	"name": "df_FactSalesOrderHeader",
 	"properties": {
 		"folder": {
-			"name": "Testing"
+			"name": "Dimensions"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {

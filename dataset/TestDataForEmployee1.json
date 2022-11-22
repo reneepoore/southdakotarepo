@@ -5,6 +5,9 @@
 			"referenceName": "AdventureWorksDW",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "Testing"
+		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": [],

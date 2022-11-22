@@ -8,10 +8,6 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
-					"pipeline": {
-						"referenceName": "pl_Testing",
-						"type": "PipelineReference"
-					},
 					"waitOnCompletion": true
 				}
 			},
