@@ -8,6 +8,10 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_MasterStaging",
+						"type": "PipelineReference"
+					},
 					"waitOnCompletion": true
 				}
 			},
