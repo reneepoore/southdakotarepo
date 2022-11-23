@@ -23,7 +23,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "DimCustomer1",
+						"referenceName": "DimCustomer",
 						"type": "DatasetReference"
 					},
 					"name": "DimCustomer"
