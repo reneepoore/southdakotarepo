@@ -9,7 +9,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "pl_MasterStaging",
+						"referenceName": "pl_TestDataFlows",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
