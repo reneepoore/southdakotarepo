@@ -1,5 +1,5 @@
 {
-	"name": "TestDataForEmployee1",
+	"name": "TestDataForEmployee",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AdventureWorksDW",

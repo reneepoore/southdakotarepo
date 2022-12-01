@@ -9,14 +9,14 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "TestDataForEmployee1",
+						"referenceName": "TestDataForEmployee",
 						"type": "DatasetReference"
 					},
 					"name": "srcEmployee"
 				},
 				{
 					"dataset": {
-						"referenceName": "TestDataForEmployeeDim1",
+						"referenceName": "TestDataForEmployeeDim",
 						"type": "DatasetReference"
 					},
 					"name": "srcEmployeeDim"
@@ -25,14 +25,14 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "TestDataForEmployeeDim1",
+						"referenceName": "TestDataForEmployeeDim",
 						"type": "DatasetReference"
 					},
 					"name": "SinkEmployeeDimInsert"
 				},
 				{
 					"dataset": {
-						"referenceName": "TestDataForEmployeeDim1",
+						"referenceName": "TestDataForEmployeeDim",
 						"type": "DatasetReference"
 					},
 					"name": "SinkEmployeeDimUpdate"

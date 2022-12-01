@@ -1,5 +1,5 @@
 {
-	"name": "CodeTables1",
+	"name": "CodeTables",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CURAPD01",

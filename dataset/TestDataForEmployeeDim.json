@@ -1,5 +1,5 @@
 {
-	"name": "TestDataForEmployeeDim1",
+	"name": "TestDataForEmployeeDim",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AdventureWorksDW",

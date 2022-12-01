@@ -9,7 +9,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "CodeTables1",
+						"referenceName": "CodeTables",
 						"type": "DatasetReference"
 					},
 					"name": "vwCodeTables"

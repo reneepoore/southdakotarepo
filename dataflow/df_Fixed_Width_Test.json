@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "Dummy2",
+						"referenceName": "Dummy",
 						"type": "DatasetReference"
 					},
 					"name": "tgtDummyOutput"
