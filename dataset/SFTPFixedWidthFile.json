@@ -1,0 +1,25 @@
+{
+	"name": "SFTPFixedWidthFile",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Sftp_Redmane_Incoming",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "SftpLocation",
+				"folderPath": "/sdazsftpd/DataWarehouse"
+			},
+			"columnDelimiter": "",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"type": "String"
+			}
+		]
+	}
+}

@@ -1,0 +1,144 @@
+{
+	"name": "df_Fixed_Width_Test",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DimCustomer2",
+						"type": "DatasetReference"
+					},
+					"name": "srcDimCustomer"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Dummy2",
+						"type": "DatasetReference"
+					},
+					"name": "tgtDummyOutput"
+				},
+				{
+					"dataset": {
+						"referenceName": "EmailFile",
+						"type": "DatasetReference"
+					},
+					"name": "tgtEmailFile"
+				},
+				{
+					"dataset": {
+						"referenceName": "SFTPFixedWidthFile",
+						"type": "DatasetReference"
+					},
+					"name": "tgtSFTPServer"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SelectColumns"
+				},
+				{
+					"name": "ConcatFields"
+				},
+				{
+					"name": "SelectConcatString"
+				},
+				{
+					"name": "IffNullTrim"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CustomerKey as integer,",
+				"          GeographyKey as integer,",
+				"          CustomerAlternateKey as string,",
+				"          Title as string,",
+				"          FirstName as string,",
+				"          MiddleName as string,",
+				"          LastName as string,",
+				"          NameStyle as boolean,",
+				"          BirthDate as date,",
+				"          MaritalStatus as string,",
+				"          Suffix as string,",
+				"          Gender as string,",
+				"          EmailAddress as string,",
+				"          YearlyIncome as decimal(19,4),",
+				"          TotalChildren as integer,",
+				"          NumberChildrenAtHome as integer,",
+				"          EnglishEducation as string,",
+				"          SpanishEducation as string,",
+				"          FrenchEducation as string,",
+				"          EnglishOccupation as string,",
+				"          SpanishOccupation as string,",
+				"          FrenchOccupation as string,",
+				"          HouseOwnerFlag as string,",
+				"          NumberCarsOwned as integer,",
+				"          AddressLine1 as string,",
+				"          AddressLine2 as string,",
+				"          Phone as string,",
+				"          DateFirstPurchase as date,",
+				"          CommuteDistance as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcDimCustomer",
+				"srcDimCustomer select(mapColumn(",
+				"          CustomerAlternateKey,",
+				"          Title,",
+				"          FirstName,",
+				"          MiddleName,",
+				"          LastName,",
+				"          BirthDate,",
+				"          MaritalStatus,",
+				"          Suffix,",
+				"          Gender,",
+				"          TotalChildren,",
+				"          EnglishEducation,",
+				"          EnglishOccupation,",
+				"          HouseOwnerFlag,",
+				"          AddressLine1,",
+				"          Phone",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+				"IffNullTrim derive(drvConcatAll = concat(rpad(FirstName,15,' '),rpad(MiddleName, 1, ' '),rpad(LastName, 20, ' '),rpad(AddressLine1, 45, ' '),rpad(EnglishEducation, 10, ' '))) ~> ConcatFields",
+				"ConcatFields select(mapColumn(",
+				"          ConcatAll = drvConcatAll",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectConcatString",
+				"SelectColumns derive(FirstName = iifNull(trim(FirstName) ,'' ),",
+				"          LastName = iifNull(trim(LastName) ,'' ),",
+				"          MiddleName = iifNull(trim(MiddleName) ,'' ),",
+				"          AddressLine1 = iifNull(trim(AddressLine1) ,'' ),",
+				"          EnglishEducation = iifNull(trim(EnglishEducation) ,'' )) ~> IffNullTrim",
+				"SelectConcatString sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string",
+				"     ),",
+				"     partitionFileNames:['FixedWidthTest.txt'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtDummyOutput",
+				"SelectConcatString sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['EmailFile'],",
+				"     truncate: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtEmailFile",
+				"SelectConcatString sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> tgtSFTPServer"
+			]
+		}
+	}
+}
