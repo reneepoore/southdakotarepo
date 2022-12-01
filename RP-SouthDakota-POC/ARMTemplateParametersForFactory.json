@@ -23,8 +23,23 @@
 		"textSinkTest_accountKey": {
 			"value": ""
 		},
+		"Sftp_Redmane_Incoming_privateKeyContent": {
+			"value": ""
+		},
+		"Sftp_Redmane_Incoming_passPhrase": {
+			"value": ""
+		},
 		"textSinkTest_properties_typeProperties_url": {
 			"value": "https://reneetesting.dfs.core.windows.net/"
+		},
+		"Sftp_Redmane_Incoming_properties_typeProperties_host": {
+			"value": "devsftp.sdeeservices.com"
+		},
+		"Sftp_Redmane_Incoming_properties_typeProperties_hostKeyFingerprint": {
+			"value": "ssh-ed25519 32 2d:18:b8:2d:fe:ef:98:b5:7b:e4:ab:f4:41:6b:ac:d9"
+		},
+		"Sftp_Redmane_Incoming_properties_typeProperties_userName": {
+			"value": "dev-azfsuser"
 		}
 	}
 }

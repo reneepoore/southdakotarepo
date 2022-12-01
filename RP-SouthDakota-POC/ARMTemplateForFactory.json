@@ -31,9 +31,29 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'textSinkTest'"
 		},
+		"Sftp_Redmane_Incoming_privateKeyContent": {
+			"type": "secureString",
+			"metadata": "Secure string for 'privateKeyContent' of 'Sftp_Redmane_Incoming'"
+		},
+		"Sftp_Redmane_Incoming_passPhrase": {
+			"type": "secureString",
+			"metadata": "Secure string for 'passPhrase' of 'Sftp_Redmane_Incoming'"
+		},
 		"textSinkTest_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://reneetesting.dfs.core.windows.net/"
+		},
+		"Sftp_Redmane_Incoming_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "devsftp.sdeeservices.com"
+		},
+		"Sftp_Redmane_Incoming_properties_typeProperties_hostKeyFingerprint": {
+			"type": "string",
+			"defaultValue": "ssh-ed25519 32 2d:18:b8:2d:fe:ef:98:b5:7b:e4:ab:f4:41:6b:ac:d9"
+		},
+		"Sftp_Redmane_Incoming_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "dev-azfsuser"
 		}
 	},
 	"variables": {
@@ -1250,7 +1270,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "pl_MasterStaging",
+								"referenceName": "pl_TestDataFlows",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -1277,7 +1297,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://rpsendemail.azurewebsites.net:443/api/SendEmail/triggers/manual/invoke?api-version=2022-05-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xnVuhU0n2whYlNHCyiFNMdnY9iALouTQvHkkEcY5Hnc",
+							"url": "https://rpsendemails.azurewebsites.net:443/api/SendEmails/triggers/manual/invoke?api-version=2022-05-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=E6bnpTmU4f1291Y6F7flHe6bNFGb62hhC__AY3fnvx4",
 							"method": "POST",
 							"headers": {},
 							"body": {
@@ -1306,7 +1326,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://rpsendemail.azurewebsites.net:443/api/SendEmail/triggers/manual/invoke?api-version=2022-05-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xnVuhU0n2whYlNHCyiFNMdnY9iALouTQvHkkEcY5Hnc",
+							"url": "https://rpsendemails.azurewebsites.net:443/api/SendEmails/triggers/manual/invoke?api-version=2022-05-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=E6bnpTmU4f1291Y6F7flHe6bNFGb62hhC__AY3fnvx4",
 							"method": "POST",
 							"headers": {},
 							"body": {
@@ -1327,7 +1347,57 @@
 				"lastPublishTime": "2022-10-04T20:04:46Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pl_MasterStaging')]"
+				"[concat(variables('factoryId'), '/pipelines/pl_TestDataFlows')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_TestDataFlows')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "df_CodeTableItem",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:05:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_CodeTableItem",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"RptDB": {},
+									"StgDB": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_CodeTableItem')]"
 			]
 		},
 		{
@@ -3579,6 +3649,111 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/target_SalesOrderHeader')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AdventureWorksLT2019",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "SalesOrderID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "OrderDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Status",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "SalesOrderNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PurchaseOrderNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AccountNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CustomerDescription",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ShipToAddressDescription",
+						"type": "nvarchar"
+					},
+					{
+						"name": "BillToAddressDesciption",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ShipMethod",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SubTotal",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "TaxAmt",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "Freight",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "TotalDue",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "CreatedDate",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "SalesLT",
+					"table": "target_SalesOrderHeader"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AdventureWorksLT2019')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/target_SalesOrderHeader_wDate')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -3790,6 +3965,267 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Facts"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "reportingSalesOrderHeader",
+								"type": "DatasetReference"
+							},
+							"name": "reportingSalesOrderHeader"
+						},
+						{
+							"dataset": {
+								"referenceName": "DimAddress",
+								"type": "DatasetReference"
+							},
+							"name": "DimAddress"
+						},
+						{
+							"dataset": {
+								"referenceName": "DimCustomer",
+								"type": "DatasetReference"
+							},
+							"name": "DimCustomer"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "target_SalesOrderHeader_wDate",
+								"type": "DatasetReference"
+							},
+							"name": "targetSalesOrders"
+						}
+					],
+					"transformations": [
+						{
+							"name": "SelectColumnsWShipToDescription"
+						},
+						{
+							"name": "LkpShipToAddress"
+						},
+						{
+							"name": "Upsert"
+						},
+						{
+							"name": "LkpCustomerDescip"
+						},
+						{
+							"name": "SelectColumnWCustDescrip"
+						},
+						{
+							"name": "LkpBillToAddressDescr"
+						},
+						{
+							"name": "SelectColumnsWBillToDescr"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          SalesOrderID as integer,",
+						"          RevisionNumber as integer,",
+						"          OrderDate as timestamp,",
+						"          DueDate as timestamp,",
+						"          ShipDate as timestamp,",
+						"          Status as integer,",
+						"          OnlineOrderFlag as boolean,",
+						"          SalesOrderNumber as string,",
+						"          PurchaseOrderNumber as string,",
+						"          AccountNumber as string,",
+						"          CustomerID as integer,",
+						"          ShipToAddressID as integer,",
+						"          BillToAddressID as integer,",
+						"          ShipMethod as string,",
+						"          CreditCardApprovalCode as string,",
+						"          SubTotal as decimal(19,4),",
+						"          TaxAmt as decimal(19,4),",
+						"          Freight as decimal(19,4),",
+						"          TotalDue as decimal(19,4),",
+						"          Comment as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     enableCdc: true,",
+						"     mode: 'read',",
+						"     skipInitialLoad: true,",
+						"     waterMarkColumn: 'ModifiedDate',",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> reportingSalesOrderHeader",
+						"source(output(",
+						"          AddressID as integer,",
+						"          AddressLine1 as string,",
+						"          AddressLine2 as string,",
+						"          City as string,",
+						"          StateProvince as string,",
+						"          CountryRegion as string,",
+						"          PostalCode as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> DimAddress",
+						"source(output(",
+						"          CustomerID as integer,",
+						"          NameStyle as boolean,",
+						"          Title as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          Suffix as string,",
+						"          CompanyName as string,",
+						"          SalesPerson as string,",
+						"          EmailAddress as string,",
+						"          Phone as string,",
+						"          PasswordHash as string,",
+						"          PasswordSalt as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> DimCustomer",
+						"LkpShipToAddress select(mapColumn(",
+						"          SalesOrderID,",
+						"          OrderDate,",
+						"          Status,",
+						"          SalesOrderNumber,",
+						"          PurchaseOrderNumber,",
+						"          AccountNumber,",
+						"          ShipMethod,",
+						"          SubTotal,",
+						"          TaxAmt,",
+						"          Freight,",
+						"          TotalDue,",
+						"          ModifiedDate = reportingSalesOrderHeader@ModifiedDate,",
+						"          ShipToAddressDesscription = AddressLine1,",
+						"          CustomerID,",
+						"          BillToAddressID",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumnsWShipToDescription",
+						"reportingSalesOrderHeader, DimAddress lookup(ShipToAddressID == AddressID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LkpShipToAddress",
+						"SelectColumnsWBillToDescr alterRow(upsertIf(true())) ~> Upsert",
+						"SelectColumnsWShipToDescription, DimCustomer lookup(SelectColumnsWShipToDescription@CustomerID == DimCustomer@CustomerID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LkpCustomerDescip",
+						"LkpCustomerDescip select(mapColumn(",
+						"          SalesOrderID,",
+						"          OrderDate,",
+						"          Status,",
+						"          SalesOrderNumber,",
+						"          PurchaseOrderNumber,",
+						"          AccountNumber,",
+						"          ShipMethod,",
+						"          SubTotal,",
+						"          TaxAmt,",
+						"          Freight,",
+						"          TotalDue,",
+						"          ModifiedDate = SelectColumnsWShipToDescription@ModifiedDate,",
+						"          ShipToAddressDesscription,",
+						"          CustomerDescription = CompanyName,",
+						"          ModifiedDate = DimCustomer@ModifiedDate,",
+						"          BillToAddressID",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumnWCustDescrip",
+						"SelectColumnWCustDescrip, DimAddress lookup(BillToAddressID == AddressID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LkpBillToAddressDescr",
+						"LkpBillToAddressDescr select(mapColumn(",
+						"          SalesOrderID,",
+						"          OrderDate,",
+						"          Status,",
+						"          SalesOrderNumber,",
+						"          PurchaseOrderNumber,",
+						"          AccountNumber,",
+						"          ShipMethod,",
+						"          SubTotal,",
+						"          TaxAmt,",
+						"          Freight,",
+						"          TotalDue,",
+						"          ModifiedDate = SelectColumnWCustDescrip@ModifiedDate,",
+						"          ShipToAddressDesscription,",
+						"          BillToAddressDesciption = AddressLine1,",
+						"          CustomerDescription",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumnsWBillToDescr",
+						"Upsert sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          SalesOrderID as integer,",
+						"          OrderDate as timestamp,",
+						"          Status as integer,",
+						"          SalesOrderNumber as string,",
+						"          PurchaseOrderNumber as string,",
+						"          AccountNumber as string,",
+						"          CustomerDescription as string,",
+						"          ShipToAddressDescription as string,",
+						"          BillToAddressDesciption as string,",
+						"          ShipMethod as string,",
+						"          SubTotal as decimal(19,4),",
+						"          TaxAmt as decimal(19,4),",
+						"          Freight as decimal(19,4),",
+						"          TotalDue as decimal(19,4),",
+						"          ModifiedDate as timestamp,",
+						"          CreatedDate as timestamp",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:false,",
+						"     updateable:false,",
+						"     upsertable:true,",
+						"     keys:['SalesOrderID'],",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          SalesOrderID,",
+						"          OrderDate,",
+						"          Status,",
+						"          SalesOrderNumber,",
+						"          PurchaseOrderNumber,",
+						"          AccountNumber,",
+						"          ShipMethod,",
+						"          SubTotal,",
+						"          TaxAmt,",
+						"          Freight,",
+						"          TotalDue,",
+						"          ModifiedDate,",
+						"          ShipToAddressDescription = ShipToAddressDesscription,",
+						"          CustomerDescription,",
+						"          BillToAddressDesciption",
+						"     )) ~> targetSalesOrders"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]",
+				"[concat(variables('factoryId'), '/datasets/DimAddress')]",
+				"[concat(variables('factoryId'), '/datasets/DimCustomer')]",
+				"[concat(variables('factoryId'), '/datasets/target_SalesOrderHeader_wDate')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_CaseHeader_Lookups_POC')]",
@@ -4448,12 +4884,278 @@
 						"     ),",
 						"     allowSchemaDrift: false,",
 						"     validateSchema: false,",
-						"     enableCdc: true,",
-						"     mode: 'read',",
-						"     skipInitialLoad: false,",
 						"     waterMarkColumn: 'ModifiedDate',",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> reportingSalesOrderHeader",
+						"     format: 'table',",
+						"     mode: 'read') ~> reportingSalesOrderHeader",
+						"source(output(",
+						"          AddressID as integer,",
+						"          AddressLine1 as string,",
+						"          AddressLine2 as string,",
+						"          City as string,",
+						"          StateProvince as string,",
+						"          CountryRegion as string,",
+						"          PostalCode as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> DimAddress",
+						"source(output(",
+						"          CustomerID as integer,",
+						"          NameStyle as boolean,",
+						"          Title as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          Suffix as string,",
+						"          CompanyName as string,",
+						"          SalesPerson as string,",
+						"          EmailAddress as string,",
+						"          Phone as string,",
+						"          PasswordHash as string,",
+						"          PasswordSalt as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> DimCustomer",
+						"reportingSalesOrderHeader, DimAddress lookup(ShipToAddressID == AddressID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LkpShipToAddress",
+						"SelectColumnsWShipToDescription, DimAddress lookup(BillToAddressID == AddressID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LkpBillToAddress",
+						"LkpShipToAddress select(mapColumn(",
+						"          SalesOrderID,",
+						"          OrderDate,",
+						"          Status,",
+						"          SalesOrderNumber,",
+						"          PurchaseOrderNumber,",
+						"          AccountNumber,",
+						"          CustomerID,",
+						"          ShipToAddressID,",
+						"          BillToAddressID,",
+						"          ShipMethod,",
+						"          SubTotal,",
+						"          TaxAmt,",
+						"          Freight,",
+						"          TotalDue,",
+						"          Comment,",
+						"          rowguid = reportingSalesOrderHeader@rowguid,",
+						"          ModifiedDate = reportingSalesOrderHeader@ModifiedDate,",
+						"          ShipToAddressLine1 = AddressLine1",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumnsWShipToDescription",
+						"LkpBillToAddress select(mapColumn(",
+						"          SalesOrderID,",
+						"          OrderDate,",
+						"          Status,",
+						"          SalesOrderNumber,",
+						"          PurchaseOrderNumber,",
+						"          AccountNumber,",
+						"          CustomerID,",
+						"          ShipToAddressID,",
+						"          BillToAddressID,",
+						"          ShipMethod,",
+						"          SubTotal,",
+						"          TaxAmt,",
+						"          Freight,",
+						"          TotalDue,",
+						"          ModifiedDate = SelectColumnsWShipToDescription@ModifiedDate,",
+						"          ShipToAddressLine1,",
+						"          BillToAddressLine1 = AddressLine1",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumnsWBillToAddress",
+						"SelectColumnsWBillToAddress, DimCustomer lookup(SelectColumnsWBillToAddress@CustomerID == DimCustomer@CustomerID,",
+						"     multiple: false,",
+						"     pickup: 'first',",
+						"     asc(DimCustomer@CustomerID, true),",
+						"     broadcast: 'auto')~> LkpCustomerDescription",
+						"LkpCustomerDescription select(mapColumn(",
+						"          SalesOrderID,",
+						"          OrderDate,",
+						"          Status,",
+						"          SalesOrderNumber,",
+						"          PurchaseOrderNumber,",
+						"          AccountNumber,",
+						"          ShipMethod,",
+						"          SubTotal,",
+						"          TaxAmt,",
+						"          Freight,",
+						"          TotalDue,",
+						"          ModifiedDate = SelectColumnsWBillToAddress@ModifiedDate,",
+						"          ShipToAddressDescription = ShipToAddressLine1,",
+						"          BillToAddressDesciption = BillToAddressLine1,",
+						"          CustomerDescription = CompanyName",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumnsWCustomerDescription",
+						"SelectColumnsWCustomerDescription alterRow(upsertIf(true())) ~> Upsert",
+						"Upsert sink(allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     input(",
+						"          SalesOrderID as integer,",
+						"          OrderDate as timestamp,",
+						"          Status as integer,",
+						"          SalesOrderNumber as string,",
+						"          PurchaseOrderNumber as string,",
+						"          AccountNumber as string,",
+						"          CustomerDescription as string,",
+						"          ShipToAddressDescription as string,",
+						"          BillToAddressDesciption as string,",
+						"          ShipMethod as string,",
+						"          SubTotal as decimal(19,4),",
+						"          TaxAmt as decimal(19,4),",
+						"          Freight as decimal(19,4),",
+						"          TotalDue as decimal(19,4),",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:false,",
+						"     updateable:false,",
+						"     upsertable:true,",
+						"     keys:['SalesOrderID'],",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'allErrors',",
+						"     transactionCommit: 'single',",
+						"     reportSuccessOnError: false,",
+						"     mapColumn(",
+						"          SalesOrderID,",
+						"          OrderDate,",
+						"          Status,",
+						"          SalesOrderNumber,",
+						"          PurchaseOrderNumber,",
+						"          AccountNumber,",
+						"          CustomerDescription,",
+						"          ShipToAddressDescription,",
+						"          BillToAddressDesciption,",
+						"          ShipMethod,",
+						"          SubTotal,",
+						"          TaxAmt,",
+						"          Freight,",
+						"          TotalDue,",
+						"          ModifiedDate",
+						"     )) ~> targetSalesOrderHeader"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]",
+				"[concat(variables('factoryId'), '/datasets/DimAddress')]",
+				"[concat(variables('factoryId'), '/datasets/DimCustomer')]",
+				"[concat(variables('factoryId'), '/datasets/targetSalesOrderHeader')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_FactSalesOrderHeader_wo_CDC')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Dimensions"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "reportingSalesOrderHeader",
+								"type": "DatasetReference"
+							},
+							"name": "reportingSalesOrderHeader"
+						},
+						{
+							"dataset": {
+								"referenceName": "DimAddress",
+								"type": "DatasetReference"
+							},
+							"name": "DimAddress"
+						},
+						{
+							"dataset": {
+								"referenceName": "DimCustomer",
+								"type": "DatasetReference"
+							},
+							"name": "DimCustomer"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "targetSalesOrderHeader",
+								"type": "DatasetReference"
+							},
+							"name": "targetSalesOrderHeader"
+						}
+					],
+					"transformations": [
+						{
+							"name": "LkpShipToAddress",
+							"description": "Add second stream to the Lookup from settings. Lookup ShipTo Address"
+						},
+						{
+							"name": "LkpBillToAddress",
+							"description": "Add second stream to the Lookup from settings. Lookup BillTo Address"
+						},
+						{
+							"name": "SelectColumnsWShipToDescription"
+						},
+						{
+							"name": "SelectColumnsWBillToAddress"
+						},
+						{
+							"name": "LkpCustomerDescription",
+							"description": "Add second stream to the Lookup from settings. Lookup Customer Description"
+						},
+						{
+							"name": "SelectColumnsWCustomerDescription"
+						},
+						{
+							"name": "Upsert"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          SalesOrderID as integer,",
+						"          RevisionNumber as integer,",
+						"          OrderDate as timestamp,",
+						"          DueDate as timestamp,",
+						"          ShipDate as timestamp,",
+						"          Status as integer,",
+						"          OnlineOrderFlag as boolean,",
+						"          SalesOrderNumber as string,",
+						"          PurchaseOrderNumber as string,",
+						"          AccountNumber as string,",
+						"          CustomerID as integer,",
+						"          ShipToAddressID as integer,",
+						"          BillToAddressID as integer,",
+						"          ShipMethod as string,",
+						"          CreditCardApprovalCode as string,",
+						"          SubTotal as decimal(19,4),",
+						"          TaxAmt as decimal(19,4),",
+						"          Freight as decimal(19,4),",
+						"          TotalDue as decimal(19,4),",
+						"          Comment as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     waterMarkColumn: 'ModifiedDate',",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table',",
+						"     mode: 'read') ~> reportingSalesOrderHeader",
 						"source(output(",
 						"          AddressID as integer,",
 						"          AddressLine1 as string,",
@@ -4780,12 +5482,269 @@
 						"     ),",
 						"     allowSchemaDrift: false,",
 						"     validateSchema: false,",
-						"     enableCdc: true,",
-						"     mode: 'read',",
-						"     skipInitialLoad: true,",
 						"     waterMarkColumn: 'ModifiedDate',",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> reportingSalesOrderHeader",
+						"     format: 'table',",
+						"     mode: 'read') ~> reportingSalesOrderHeader",
+						"source(output(",
+						"          AddressID as integer,",
+						"          AddressLine1 as string,",
+						"          AddressLine2 as string,",
+						"          City as string,",
+						"          StateProvince as string,",
+						"          CountryRegion as string,",
+						"          PostalCode as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> DimAddress",
+						"source(output(",
+						"          CustomerID as integer,",
+						"          NameStyle as boolean,",
+						"          Title as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          Suffix as string,",
+						"          CompanyName as string,",
+						"          SalesPerson as string,",
+						"          EmailAddress as string,",
+						"          Phone as string,",
+						"          PasswordHash as string,",
+						"          PasswordSalt as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> DimCustomer",
+						"LkpShipToAddress select(mapColumn(",
+						"          SalesOrderID,",
+						"          OrderDate,",
+						"          Status,",
+						"          SalesOrderNumber,",
+						"          PurchaseOrderNumber,",
+						"          AccountNumber,",
+						"          ShipMethod,",
+						"          SubTotal,",
+						"          TaxAmt,",
+						"          Freight,",
+						"          TotalDue,",
+						"          ModifiedDate = reportingSalesOrderHeader@ModifiedDate,",
+						"          ShipToAddressDesscription = AddressLine1,",
+						"          CustomerID,",
+						"          BillToAddressID",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumnsWShipToDescription",
+						"reportingSalesOrderHeader, DimAddress lookup(ShipToAddressID == AddressID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LkpShipToAddress",
+						"SelectColumnsWBillToDescr alterRow(upsertIf(true())) ~> Upsert",
+						"SelectColumnsWShipToDescription, DimCustomer lookup(SelectColumnsWShipToDescription@CustomerID == DimCustomer@CustomerID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LkpCustomerDescip",
+						"LkpCustomerDescip select(mapColumn(",
+						"          SalesOrderID,",
+						"          OrderDate,",
+						"          Status,",
+						"          SalesOrderNumber,",
+						"          PurchaseOrderNumber,",
+						"          AccountNumber,",
+						"          ShipMethod,",
+						"          SubTotal,",
+						"          TaxAmt,",
+						"          Freight,",
+						"          TotalDue,",
+						"          ModifiedDate = SelectColumnsWShipToDescription@ModifiedDate,",
+						"          ShipToAddressDesscription,",
+						"          CustomerDescription = CompanyName,",
+						"          ModifiedDate = DimCustomer@ModifiedDate,",
+						"          BillToAddressID",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumnWCustDescrip",
+						"SelectColumnWCustDescrip, DimAddress lookup(BillToAddressID == AddressID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LkpBillToAddressDescr",
+						"LkpBillToAddressDescr select(mapColumn(",
+						"          SalesOrderID,",
+						"          OrderDate,",
+						"          Status,",
+						"          SalesOrderNumber,",
+						"          PurchaseOrderNumber,",
+						"          AccountNumber,",
+						"          ShipMethod,",
+						"          SubTotal,",
+						"          TaxAmt,",
+						"          Freight,",
+						"          TotalDue,",
+						"          ModifiedDate = SelectColumnWCustDescrip@ModifiedDate,",
+						"          ShipToAddressDesscription,",
+						"          BillToAddressDesciption = AddressLine1,",
+						"          CustomerDescription",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumnsWBillToDescr",
+						"Upsert sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          SalesOrderID as integer,",
+						"          OrderDate as timestamp,",
+						"          Status as integer,",
+						"          SalesOrderNumber as string,",
+						"          PurchaseOrderNumber as string,",
+						"          AccountNumber as string,",
+						"          CustomerDescription as string,",
+						"          ShipToAddressDescription as string,",
+						"          BillToAddressDesciption as string,",
+						"          ShipMethod as string,",
+						"          SubTotal as decimal(19,4),",
+						"          TaxAmt as decimal(19,4),",
+						"          Freight as decimal(19,4),",
+						"          TotalDue as decimal(19,4),",
+						"          ModifiedDate as timestamp,",
+						"          CreatedDate as timestamp",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:false,",
+						"     updateable:false,",
+						"     upsertable:true,",
+						"     keys:['SalesOrderID'],",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          SalesOrderID,",
+						"          OrderDate,",
+						"          Status,",
+						"          SalesOrderNumber,",
+						"          PurchaseOrderNumber,",
+						"          AccountNumber,",
+						"          ShipMethod,",
+						"          SubTotal,",
+						"          TaxAmt,",
+						"          Freight,",
+						"          TotalDue,",
+						"          ModifiedDate,",
+						"          ShipToAddressDescription = ShipToAddressDesscription,",
+						"          CustomerDescription,",
+						"          BillToAddressDesciption",
+						"     )) ~> targetSalesOrders"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]",
+				"[concat(variables('factoryId'), '/datasets/DimAddress')]",
+				"[concat(variables('factoryId'), '/datasets/DimCustomer')]",
+				"[concat(variables('factoryId'), '/datasets/target_SalesOrderHeader_wDate')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_SCD1_Example_NoCDC')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Facts"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "reportingSalesOrderHeader",
+								"type": "DatasetReference"
+							},
+							"name": "reportingSalesOrderHeader"
+						},
+						{
+							"dataset": {
+								"referenceName": "DimAddress",
+								"type": "DatasetReference"
+							},
+							"name": "DimAddress"
+						},
+						{
+							"dataset": {
+								"referenceName": "DimCustomer",
+								"type": "DatasetReference"
+							},
+							"name": "DimCustomer"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "target_SalesOrderHeader_wDate",
+								"type": "DatasetReference"
+							},
+							"name": "targetSalesOrders"
+						}
+					],
+					"transformations": [
+						{
+							"name": "SelectColumnsWShipToDescription"
+						},
+						{
+							"name": "LkpShipToAddress"
+						},
+						{
+							"name": "Upsert"
+						},
+						{
+							"name": "LkpCustomerDescip"
+						},
+						{
+							"name": "SelectColumnWCustDescrip"
+						},
+						{
+							"name": "LkpBillToAddressDescr"
+						},
+						{
+							"name": "SelectColumnsWBillToDescr"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          SalesOrderID as integer,",
+						"          RevisionNumber as integer,",
+						"          OrderDate as timestamp,",
+						"          DueDate as timestamp,",
+						"          ShipDate as timestamp,",
+						"          Status as integer,",
+						"          OnlineOrderFlag as boolean,",
+						"          SalesOrderNumber as string,",
+						"          PurchaseOrderNumber as string,",
+						"          AccountNumber as string,",
+						"          CustomerID as integer,",
+						"          ShipToAddressID as integer,",
+						"          BillToAddressID as integer,",
+						"          ShipMethod as string,",
+						"          CreditCardApprovalCode as string,",
+						"          SubTotal as decimal(19,4),",
+						"          TaxAmt as decimal(19,4),",
+						"          Freight as decimal(19,4),",
+						"          TotalDue as decimal(19,4),",
+						"          Comment as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     waterMarkColumn: 'ModifiedDate',",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table',",
+						"     mode: 'read') ~> reportingSalesOrderHeader",
 						"source(output(",
 						"          AddressID as integer,",
 						"          AddressLine1 as string,",
@@ -5099,6 +6058,471 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]",
 				"[concat(variables('factoryId'), '/datasets/Dummy')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sftp_Redmane_Incoming')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Sftp",
+				"typeProperties": {
+					"host": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_host')]",
+					"port": 22,
+					"skipHostKeyValidation": false,
+					"hostKeyFingerprint": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_hostKeyFingerprint')]",
+					"authenticationType": "SshPublicKey",
+					"userName": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_userName')]",
+					"privateKeyContent": {
+						"type": "SecureString",
+						"value": "[parameters('Sftp_Redmane_Incoming_privateKeyContent')]"
+					},
+					"passPhrase": {
+						"type": "SecureString",
+						"value": "[parameters('Sftp_Redmane_Incoming_passPhrase')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DimCustomer2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AdventureWorksDW",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Source"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CustomerKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "GeographyKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CustomerAlternateKey",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Title",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FirstName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MiddleName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "NameStyle",
+						"type": "bit"
+					},
+					{
+						"name": "BirthDate",
+						"type": "date"
+					},
+					{
+						"name": "MaritalStatus",
+						"type": "nchar"
+					},
+					{
+						"name": "Suffix",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Gender",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EmailAddress",
+						"type": "nvarchar"
+					},
+					{
+						"name": "YearlyIncome",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "TotalChildren",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "NumberChildrenAtHome",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "EnglishEducation",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SpanishEducation",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FrenchEducation",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EnglishOccupation",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SpanishOccupation",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FrenchOccupation",
+						"type": "nvarchar"
+					},
+					{
+						"name": "HouseOwnerFlag",
+						"type": "nchar"
+					},
+					{
+						"name": "NumberCarsOwned",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "AddressLine1",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AddressLine2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Phone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DateFirstPurchase",
+						"type": "date"
+					},
+					{
+						"name": "CommuteDistance",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DimCustomer"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AdventureWorksDW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Dummy2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "POCWork"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "dfdummy.txt",
+						"container": "newcontainer"
+					},
+					"columnDelimiter": "",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EmailFile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "emaillocation"
+					},
+					"columnDelimiter": "",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SFTPFixedWidthFile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Sftp_Redmane_Incoming",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "SftpLocation",
+						"folderPath": "/sdazsftpd/DataWarehouse"
+					},
+					"columnDelimiter": "",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Sftp_Redmane_Incoming')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_Fixed_Width_Test')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DimCustomer2",
+								"type": "DatasetReference"
+							},
+							"name": "srcDimCustomer"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Dummy2",
+								"type": "DatasetReference"
+							},
+							"name": "tgtDummyOutput"
+						},
+						{
+							"dataset": {
+								"referenceName": "EmailFile",
+								"type": "DatasetReference"
+							},
+							"name": "tgtEmailFile"
+						},
+						{
+							"dataset": {
+								"referenceName": "SFTPFixedWidthFile",
+								"type": "DatasetReference"
+							},
+							"name": "tgtSFTPServer"
+						}
+					],
+					"transformations": [
+						{
+							"name": "SelectColumns"
+						},
+						{
+							"name": "ConcatFields"
+						},
+						{
+							"name": "SelectConcatString"
+						},
+						{
+							"name": "IffNullTrim"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          CustomerKey as integer,",
+						"          GeographyKey as integer,",
+						"          CustomerAlternateKey as string,",
+						"          Title as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          NameStyle as boolean,",
+						"          BirthDate as date,",
+						"          MaritalStatus as string,",
+						"          Suffix as string,",
+						"          Gender as string,",
+						"          EmailAddress as string,",
+						"          YearlyIncome as decimal(19,4),",
+						"          TotalChildren as integer,",
+						"          NumberChildrenAtHome as integer,",
+						"          EnglishEducation as string,",
+						"          SpanishEducation as string,",
+						"          FrenchEducation as string,",
+						"          EnglishOccupation as string,",
+						"          SpanishOccupation as string,",
+						"          FrenchOccupation as string,",
+						"          HouseOwnerFlag as string,",
+						"          NumberCarsOwned as integer,",
+						"          AddressLine1 as string,",
+						"          AddressLine2 as string,",
+						"          Phone as string,",
+						"          DateFirstPurchase as date,",
+						"          CommuteDistance as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcDimCustomer",
+						"srcDimCustomer select(mapColumn(",
+						"          CustomerAlternateKey,",
+						"          Title,",
+						"          FirstName,",
+						"          MiddleName,",
+						"          LastName,",
+						"          BirthDate,",
+						"          MaritalStatus,",
+						"          Suffix,",
+						"          Gender,",
+						"          TotalChildren,",
+						"          EnglishEducation,",
+						"          EnglishOccupation,",
+						"          HouseOwnerFlag,",
+						"          AddressLine1,",
+						"          Phone",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+						"IffNullTrim derive(drvConcatAll = concat(rpad(FirstName,15,' '),rpad(MiddleName, 1, ' '),rpad(LastName, 20, ' '),rpad(AddressLine1, 45, ' '),rpad(EnglishEducation, 10, ' '))) ~> ConcatFields",
+						"ConcatFields select(mapColumn(",
+						"          ConcatAll = drvConcatAll",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectConcatString",
+						"SelectColumns derive(FirstName = iifNull(trim(FirstName) ,'' ),",
+						"          LastName = iifNull(trim(LastName) ,'' ),",
+						"          MiddleName = iifNull(trim(MiddleName) ,'' ),",
+						"          AddressLine1 = iifNull(trim(AddressLine1) ,'' ),",
+						"          EnglishEducation = iifNull(trim(EnglishEducation) ,'' )) ~> IffNullTrim",
+						"SelectConcatString sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string",
+						"     ),",
+						"     partitionFileNames:['FixedWidthTest.txt'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtDummyOutput",
+						"SelectConcatString sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['EmailFile'],",
+						"     truncate: true,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtEmailFile",
+						"SelectConcatString sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> tgtSFTPServer"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DimCustomer2')]",
+				"[concat(variables('factoryId'), '/datasets/Dummy2')]",
+				"[concat(variables('factoryId'), '/datasets/EmailFile')]",
+				"[concat(variables('factoryId'), '/datasets/SFTPFixedWidthFile')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_TestFixedWidth_SFTP')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "df_Fixed_Width_Test",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:05:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_Fixed_Width_Test",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"srcDimCustomer": {},
+									"tgtDummyOutput": {},
+									"tgtEmailFile": {},
+									"tgtSFTPServer": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_Fixed_Width_Test')]"
 			]
 		}
 	]

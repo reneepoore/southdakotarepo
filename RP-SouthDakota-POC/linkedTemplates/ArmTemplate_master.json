@@ -31,9 +31,29 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'textSinkTest'"
 		},
+		"Sftp_Redmane_Incoming_privateKeyContent": {
+			"type": "secureString",
+			"metadata": "Secure string for 'privateKeyContent' of 'Sftp_Redmane_Incoming'"
+		},
+		"Sftp_Redmane_Incoming_passPhrase": {
+			"type": "secureString",
+			"metadata": "Secure string for 'passPhrase' of 'Sftp_Redmane_Incoming'"
+		},
 		"textSinkTest_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://reneetesting.dfs.core.windows.net/"
+		},
+		"Sftp_Redmane_Incoming_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "devsftp.sdeeservices.com"
+		},
+		"Sftp_Redmane_Incoming_properties_typeProperties_hostKeyFingerprint": {
+			"type": "string",
+			"defaultValue": "ssh-ed25519 32 2d:18:b8:2d:fe:ef:98:b5:7b:e4:ab:f4:41:6b:ac:d9"
+		},
+		"Sftp_Redmane_Incoming_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "dev-azfsuser"
 		},
 		"containerUri": {
 			"type": "string",
@@ -80,8 +100,23 @@
 					"textSinkTest_accountKey": {
 						"value": "[parameters('textSinkTest_accountKey')]"
 					},
+					"Sftp_Redmane_Incoming_privateKeyContent": {
+						"value": "[parameters('Sftp_Redmane_Incoming_privateKeyContent')]"
+					},
+					"Sftp_Redmane_Incoming_passPhrase": {
+						"value": "[parameters('Sftp_Redmane_Incoming_passPhrase')]"
+					},
 					"textSinkTest_properties_typeProperties_url": {
 						"value": "[parameters('textSinkTest_properties_typeProperties_url')]"
+					},
+					"Sftp_Redmane_Incoming_properties_typeProperties_host": {
+						"value": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_host')]"
+					},
+					"Sftp_Redmane_Incoming_properties_typeProperties_hostKeyFingerprint": {
+						"value": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_hostKeyFingerprint')]"
+					},
+					"Sftp_Redmane_Incoming_properties_typeProperties_userName": {
+						"value": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_userName')]"
 					}
 				}
 			},
@@ -125,6 +160,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'RP-SouthDakota-POC_ArmTemplate_1')]"
+			]
+		},
+		{
+			"name": "RP-SouthDakota-POC_ArmTemplate_3",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'RP-SouthDakota-POC_ArmTemplate_2')]"
 			]
 		}
 	]

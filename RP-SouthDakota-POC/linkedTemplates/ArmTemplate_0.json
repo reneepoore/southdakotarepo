@@ -31,9 +31,29 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'textSinkTest'"
 		},
+		"Sftp_Redmane_Incoming_privateKeyContent": {
+			"type": "secureString",
+			"metadata": "Secure string for 'privateKeyContent' of 'Sftp_Redmane_Incoming'"
+		},
+		"Sftp_Redmane_Incoming_passPhrase": {
+			"type": "secureString",
+			"metadata": "Secure string for 'passPhrase' of 'Sftp_Redmane_Incoming'"
+		},
 		"textSinkTest_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://reneetesting.dfs.core.windows.net/"
+		},
+		"Sftp_Redmane_Incoming_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "devsftp.sdeeservices.com"
+		},
+		"Sftp_Redmane_Incoming_properties_typeProperties_hostKeyFingerprint": {
+			"type": "string",
+			"defaultValue": "ssh-ed25519 32 2d:18:b8:2d:fe:ef:98:b5:7b:e4:ab:f4:41:6b:ac:d9"
+		},
+		"Sftp_Redmane_Incoming_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "dev-azfsuser"
 		}
 	},
 	"variables": {
@@ -119,6 +139,32 @@
 					"accountKey": {
 						"type": "SecureString",
 						"value": "[parameters('textSinkTest_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sftp_Redmane_Incoming')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Sftp",
+				"typeProperties": {
+					"host": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_host')]",
+					"port": 22,
+					"skipHostKeyValidation": false,
+					"hostKeyFingerprint": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_hostKeyFingerprint')]",
+					"authenticationType": "SshPublicKey",
+					"userName": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_userName')]",
+					"privateKeyContent": {
+						"type": "SecureString",
+						"value": "[parameters('Sftp_Redmane_Incoming_privateKeyContent')]"
+					},
+					"passPhrase": {
+						"type": "SecureString",
+						"value": "[parameters('Sftp_Redmane_Incoming_passPhrase')]"
 					}
 				}
 			},
@@ -1204,27 +1250,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AdventureWorksLT2019')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LookupDynamicAllTables')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CURAPD01",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Staging"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
 			]
 		}
 	]
