@@ -15,13 +15,6 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "Dummy",
-						"type": "DatasetReference"
-					},
-					"name": "tgtDummyOutput"
-				},
-				{
-					"dataset": {
 						"referenceName": "EmailFile",
 						"type": "DatasetReference"
 					},
@@ -115,15 +108,6 @@
 				"          MiddleName = iifNull(trim(MiddleName) ,'' ),",
 				"          AddressLine1 = iifNull(trim(AddressLine1) ,'' ),",
 				"          EnglishEducation = iifNull(trim(EnglishEducation) ,'' )) ~> IffNullTrim",
-				"SelectConcatString sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     input(",
-				"          Column_1 as string",
-				"     ),",
-				"     partitionFileNames:['FixedWidthTest.txt'],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> tgtDummyOutput",
 				"SelectConcatString sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['EmailFile'],",
