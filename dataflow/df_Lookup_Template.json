@@ -1,0 +1,337 @@
+{
+	"name": "df_Lookup_Template",
+	"properties": {
+		"folder": {
+			"name": "Final df POCs"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CodeTables",
+						"type": "DatasetReference"
+					},
+					"name": "vwCodeTables"
+				},
+				{
+					"dataset": {
+						"referenceName": "CaseHeader1",
+						"type": "DatasetReference"
+					},
+					"name": "srcCaseHeader"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Dummy1",
+						"type": "DatasetReference"
+					},
+					"name": "DummyFile"
+				}
+			],
+			"transformations": [
+				{
+					"name": "CaseObjective"
+				},
+				{
+					"name": "CaseStatus"
+				},
+				{
+					"name": "CasePriority"
+				},
+				{
+					"name": "CaseOutcome"
+				},
+				{
+					"name": "CaseCatTypeCode"
+				},
+				{
+					"name": "CaseClassification"
+				},
+				{
+					"name": "CaseTypeCode"
+				},
+				{
+					"name": "SelectCaseColumns"
+				},
+				{
+					"name": "LookupCaseObjective"
+				},
+				{
+					"name": "SelectCaseObjective"
+				},
+				{
+					"name": "LookupStatus"
+				},
+				{
+					"name": "SelectCaseStatus"
+				},
+				{
+					"name": "LookupCasePriority"
+				},
+				{
+					"name": "SelectCasePriority"
+				},
+				{
+					"name": "LookupCaseOutcome"
+				},
+				{
+					"name": "SelectCaseOutcome"
+				},
+				{
+					"name": "LookupTypeCode"
+				},
+				{
+					"name": "SelectCaseCatTypeCode"
+				},
+				{
+					"name": "LookupClassification"
+				},
+				{
+					"name": "SelectClassification"
+				},
+				{
+					"name": "LookupCaseTypeCode"
+				},
+				{
+					"name": "SelectCaseTypeCode"
+				},
+				{
+					"name": "TrimCodeFields"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwCodeTables",
+				"source(output(",
+				"          APPEALINDICATOR as string,",
+				"          CASEID as long,",
+				"          INTEGRATEDCASEID as long,",
+				"          CASEREFERENCE as string,",
+				"          CASETYPECODE as string,",
+				"          CLASSIFICATIONCODE as string,",
+				"          EXPECTEDOUTCOME as long,",
+				"          ACTUALOUTCOME as string,",
+				"          OWNERORGOBJECTLINKID as long,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp,",
+				"          INTEGRATEDCASETYPE as string,",
+				"          OBJECTIVECODE as string,",
+				"          OUTCOMECODE as string,",
+				"          PLANID as long,",
+				"          PRIORITYCODE as string,",
+				"          RECEIVEDDATE as date,",
+				"          EFFECTIVEDATE as date,",
+				"          STATUSCODE as string,",
+				"          ENDDATE as date,",
+				"          EXPECTEDENDDATE as date,",
+				"          EXPECTEDSTARTDATE as date,",
+				"          FIRSTREVIEWDATE as date,",
+				"          COMMENTS as string,",
+				"          CONCERNROLEID as long,",
+				"          REGISTRATIONDATE as date,",
+				"          STARTDATE as date,",
+				"          DEFAULTCURRENCYTYPECODE as string,",
+				"          DEFAULTDELIVERYMETHODTYPE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcCaseHeader",
+				"vwCodeTables filter(TABLENAME=='CaseObjective') ~> CaseObjective",
+				"vwCodeTables filter(TABLENAME=='CaseStatus') ~> CaseStatus",
+				"vwCodeTables filter(TABLENAME=='CasePriority') ~> CasePriority",
+				"vwCodeTables filter(TABLENAME=='CaseOutcome') ~> CaseOutcome",
+				"vwCodeTables filter(TABLENAME=='CaseCatTypeCode') ~> CaseCatTypeCode",
+				"vwCodeTables filter(TABLENAME=='CaseClassification') ~> CaseClassification",
+				"vwCodeTables filter(TABLENAME=='CaseTypeCode') ~> CaseTypeCode",
+				"TrimCodeFields select(mapColumn(",
+				"          APPEALINDICATOR,",
+				"          CASEID,",
+				"          INTEGRATEDCASEID,",
+				"          CASETYPECODE,",
+				"          CLASSIFICATIONCODE,",
+				"          INTEGRATEDCASETYPE,",
+				"          OBJECTIVECODE,",
+				"          OUTCOMECODE,",
+				"          PRIORITYCODE,",
+				"          STATUSCODE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectCaseColumns",
+				"SelectCaseColumns, CaseObjective lookup(OBJECTIVECODE == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupCaseObjective",
+				"LookupCaseObjective select(mapColumn(",
+				"          APPEALINDICATOR,",
+				"          CASEID,",
+				"          CASETYPECODE,",
+				"          CLASSIFICATIONCODE,",
+				"          OBJECTIVECODE,",
+				"          OUTCOMECODE,",
+				"          PRIORITYCODE,",
+				"          STATUSCODE,",
+				"          INTEGRATEDCASETYPE,",
+				"          CaseObj_DESCRIPTION = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectCaseObjective",
+				"SelectCaseObjective, CaseStatus lookup(STATUSCODE == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupStatus",
+				"LookupStatus select(mapColumn(",
+				"          APPEALINDICATOR,",
+				"          CASEID,",
+				"          CASETYPECODE,",
+				"          CLASSIFICATIONCODE,",
+				"          OBJECTIVECODE,",
+				"          OUTCOMECODE,",
+				"          PRIORITYCODE,",
+				"          STATUSCODE,",
+				"          INTEGRATEDCASETYPE,",
+				"          CaseObj_DESCRIPTION,",
+				"          CaseStatus_DESCRIPTION = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectCaseStatus",
+				"SelectCaseStatus, CasePriority lookup(PRIORITYCODE == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupCasePriority",
+				"LookupCasePriority select(mapColumn(",
+				"          APPEALINDICATOR,",
+				"          CASEID,",
+				"          CASETYPECODE,",
+				"          CLASSIFICATIONCODE,",
+				"          OBJECTIVECODE,",
+				"          OUTCOMECODE,",
+				"          PRIORITYCODE,",
+				"          STATUSCODE,",
+				"          INTEGRATEDCASETYPE,",
+				"          CaseObj_DESCRIPTION,",
+				"          CaseStatus_DESCRIPTION,",
+				"          CasePriority_DESCRIPTION = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectCasePriority",
+				"SelectCasePriority, CaseOutcome lookup(OUTCOMECODE == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupCaseOutcome",
+				"LookupCaseOutcome select(mapColumn(",
+				"          APPEALINDICATOR,",
+				"          CASEID,",
+				"          CASETYPECODE,",
+				"          CLASSIFICATIONCODE,",
+				"          OBJECTIVECODE,",
+				"          OUTCOMECODE,",
+				"          PRIORITYCODE,",
+				"          STATUSCODE,",
+				"          INTEGRATEDCASETYPE,",
+				"          CaseObj_DESCRIPTION,",
+				"          CaseStatus_DESCRIPTION,",
+				"          CasePriority_DESCRIPTION,",
+				"          CaseOutcome_DESCRIPTION = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectCaseOutcome",
+				"SelectCaseOutcome, CaseCatTypeCode lookup(INTEGRATEDCASETYPE == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupTypeCode",
+				"LookupTypeCode select(mapColumn(",
+				"          APPEALINDICATOR,",
+				"          CASEID,",
+				"          CASETYPECODE,",
+				"          CLASSIFICATIONCODE,",
+				"          OBJECTIVECODE,",
+				"          OUTCOMECODE,",
+				"          PRIORITYCODE,",
+				"          STATUSCODE,",
+				"          INTEGRATEDCASETYPE,",
+				"          CaseObj_DESCRIPTION,",
+				"          CaseStatus_DESCRIPTION,",
+				"          CasePriority_DESCRIPTION,",
+				"          CaseOutcome_DESCRIPTION,",
+				"          CaseCatType_DESCRIPTION = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectCaseCatTypeCode",
+				"SelectCaseCatTypeCode, CaseClassification lookup(CLASSIFICATIONCODE == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupClassification",
+				"LookupClassification select(mapColumn(",
+				"          APPEALINDICATOR,",
+				"          CASEID,",
+				"          CASETYPECODE,",
+				"          CLASSIFICATIONCODE,",
+				"          OBJECTIVECODE,",
+				"          OUTCOMECODE,",
+				"          PRIORITYCODE,",
+				"          STATUSCODE,",
+				"          INTEGRATEDCASETYPE,",
+				"          CaseObj_DESCRIPTION,",
+				"          CaseStatus_DESCRIPTION,",
+				"          CasePriority_DESCRIPTION,",
+				"          CaseOutcome_DESCRIPTION,",
+				"          CaseCatType_DESCRIPTION,",
+				"          CaseClass_DESCRIPTION = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectClassification",
+				"SelectClassification, CaseTypeCode lookup(CASETYPECODE == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupCaseTypeCode",
+				"LookupCaseTypeCode select(mapColumn(",
+				"          APPEALINDICATOR,",
+				"          CASEID,",
+				"          CASETYPECODE,",
+				"          CLASSIFICATIONCODE,",
+				"          OBJECTIVECODE,",
+				"          OUTCOMECODE,",
+				"          PRIORITYCODE,",
+				"          STATUSCODE,",
+				"          INTEGRATEDCASETYPE,",
+				"          CaseObj_DESCRIPTION,",
+				"          CaseStatus_DESCRIPTION,",
+				"          CasePriority_DESCRIPTION,",
+				"          CaseOutcome_DESCRIPTION,",
+				"          CaseCatType_DESCRIPTION,",
+				"          CaseClass_DESCRIPTION,",
+				"          CaseType_DESCRIPTION = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectCaseTypeCode",
+				"srcCaseHeader derive(OBJECTIVECODE = trim(OBJECTIVECODE),",
+				"          CASETYPECODE = trim(CASETYPECODE),",
+				"          CLASSIFICATIONCODE = trim(CLASSIFICATIONCODE),",
+				"          INTEGRATEDCASETYPE = trim(INTEGRATEDCASETYPE),",
+				"          PRIORITYCODE = trim(PRIORITYCODE),",
+				"          STATUSCODE = trim(STATUSCODE),",
+				"          OUTCOMECODE = trim(OUTCOMECODE)) ~> TrimCodeFields",
+				"SelectCaseTypeCode sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string",
+				"     ),",
+				"     partitionFileNames:['CaseHeaderPOC'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DummyFile"
+			]
+		}
+	}
+}
