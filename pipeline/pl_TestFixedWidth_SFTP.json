@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_Fixed_Width_Test_No_SMTP",
+				"name": "df_Fixed_Width_Test",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_Fixed_Width_Test_No_SMTP",
+						"referenceName": "df_Fixed_Width_Test",
 						"type": "DataFlowReference"
 					},
 					"compute": {
