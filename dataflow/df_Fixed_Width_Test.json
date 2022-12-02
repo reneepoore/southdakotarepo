@@ -120,8 +120,10 @@
 				"     input(",
 				"          Column_1 as string",
 				"     ),",
+				"     partitionFileNames:['FixedWidth.txt'],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> tgtSFTPServer"
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtSFTPServer"
 			]
 		}
 	}
