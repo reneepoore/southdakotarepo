@@ -23,14 +23,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'CURAPD01'"
 		},
-		"TargetSandbox_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'TargetSandbox'"
-		},
-		"textSinkTest_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'textSinkTest'"
-		},
 		"Sftp_Redmane_Incoming_privateKeyContent": {
 			"type": "secureString",
 			"metadata": "Secure string for 'privateKeyContent' of 'Sftp_Redmane_Incoming'"
@@ -39,9 +31,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'passPhrase' of 'Sftp_Redmane_Incoming'"
 		},
-		"textSinkTest_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://reneetesting.dfs.core.windows.net/"
+		"TargetSandbox_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'TargetSandbox'"
+		},
+		"textSinkTest_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'textSinkTest'"
 		},
 		"Sftp_Redmane_Incoming_properties_typeProperties_host": {
 			"type": "string",
@@ -54,6 +50,10 @@
 		"Sftp_Redmane_Incoming_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "dev-azfsuser"
+		},
+		"textSinkTest_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://reneetesting.dfs.core.windows.net/"
 		}
 	},
 	"variables": {
@@ -115,6 +115,32 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Sftp_Redmane_Incoming')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Sftp",
+				"typeProperties": {
+					"host": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_host')]",
+					"port": 22,
+					"skipHostKeyValidation": false,
+					"hostKeyFingerprint": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_hostKeyFingerprint')]",
+					"authenticationType": "SshPublicKey",
+					"userName": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_userName')]",
+					"privateKeyContent": {
+						"type": "SecureString",
+						"value": "[parameters('Sftp_Redmane_Incoming_privateKeyContent')]"
+					},
+					"passPhrase": {
+						"type": "SecureString",
+						"value": "[parameters('Sftp_Redmane_Incoming_passPhrase')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/TargetSandbox')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -139,32 +165,6 @@
 					"accountKey": {
 						"type": "SecureString",
 						"value": "[parameters('textSinkTest_accountKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Sftp_Redmane_Incoming')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "Sftp",
-				"typeProperties": {
-					"host": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_host')]",
-					"port": 22,
-					"skipHostKeyValidation": false,
-					"hostKeyFingerprint": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_hostKeyFingerprint')]",
-					"authenticationType": "SshPublicKey",
-					"userName": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_userName')]",
-					"privateKeyContent": {
-						"type": "SecureString",
-						"value": "[parameters('Sftp_Redmane_Incoming_privateKeyContent')]"
-					},
-					"passPhrase": {
-						"type": "SecureString",
-						"value": "[parameters('Sftp_Redmane_Incoming_passPhrase')]"
 					}
 				}
 			},
@@ -496,30 +496,6 @@
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/CodeTables')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CURAPD01",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "vw_CODETABLES"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CodeTables1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1223,6 +1199,35 @@
 						"type": "String"
 					}
 				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EmailFile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "POCWork"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "emaillocation"
+					},
+					"columnDelimiter": "",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"

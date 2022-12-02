@@ -23,14 +23,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'CURAPD01'"
 		},
-		"TargetSandbox_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'TargetSandbox'"
-		},
-		"textSinkTest_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'textSinkTest'"
-		},
 		"Sftp_Redmane_Incoming_privateKeyContent": {
 			"type": "secureString",
 			"metadata": "Secure string for 'privateKeyContent' of 'Sftp_Redmane_Incoming'"
@@ -39,9 +31,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'passPhrase' of 'Sftp_Redmane_Incoming'"
 		},
-		"textSinkTest_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://reneetesting.dfs.core.windows.net/"
+		"TargetSandbox_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'TargetSandbox'"
+		},
+		"textSinkTest_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'textSinkTest'"
 		},
 		"Sftp_Redmane_Incoming_properties_typeProperties_host": {
 			"type": "string",
@@ -54,6 +50,10 @@
 		"Sftp_Redmane_Incoming_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "dev-azfsuser"
+		},
+		"textSinkTest_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://reneetesting.dfs.core.windows.net/"
 		}
 	},
 	"variables": {
@@ -1734,30 +1734,6 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "Testing"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "vw_CODETABLES"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CodeTables1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CURAPD01",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
 					"name": "POCWork"
 				},
 				"annotations": [],
@@ -2459,6 +2435,35 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/EmailFile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "POCWork"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "emaillocation"
+					},
+					"columnDelimiter": "",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ErrorLogging')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2504,101 +2509,40 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/TestDataForEmployee')]",
+			"name": "[concat(parameters('factoryName'), '/SFTPFixedWidthFile')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "AdventureWorksDW",
+					"referenceName": "Sftp_Redmane_Incoming",
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "Testing"
+					"name": "POCWork"
 				},
 				"annotations": [],
-				"type": "AzureSqlTable",
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "SftpLocation",
+						"folderPath": "/sdazsftpd/DataWarehouse"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
 				"schema": [
 					{
-						"name": "EmpID",
-						"type": "smallint",
-						"precision": 5
-					},
-					{
-						"name": "FirstName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LastName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MiddleName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Title",
-						"type": "nvarchar"
-					},
-					{
-						"name": "HireDate",
-						"type": "date"
-					},
-					{
-						"name": "BirthDate",
-						"type": "date"
-					},
-					{
-						"name": "Phone",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MaritalStatus",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EmergencyContactName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EmergencyContactPhone",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SalariedFlag",
-						"type": "bit"
-					},
-					{
-						"name": "Gender",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DepartmentName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "StartDate",
-						"type": "date"
-					},
-					{
-						"name": "EndDate",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Status",
-						"type": "nvarchar"
+						"type": "String"
 					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "TestDataForEmployee"
-				}
+				]
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AdventureWorksDW')]"
+				"[concat(variables('factoryId'), '/linkedServices/Sftp_Redmane_Incoming')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/TestDataForEmployee1')]",
+			"name": "[concat(parameters('factoryName'), '/TestDataForEmployee')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -2623,109 +2567,6 @@
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/TestDataForEmployeeDim')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AdventureWorksDW",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "EmployeeKey",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "EmpID",
-						"type": "smallint",
-						"precision": 5
-					},
-					{
-						"name": "FirstName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LastName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MiddleName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Title",
-						"type": "nvarchar"
-					},
-					{
-						"name": "HireDate",
-						"type": "date"
-					},
-					{
-						"name": "BirthDate",
-						"type": "date"
-					},
-					{
-						"name": "Phone",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MaritalStatus",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EmergencyContactName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EmergencyContactPhone",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SalariedFlag",
-						"type": "bit"
-					},
-					{
-						"name": "Gender",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DepartmentName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "StartDate",
-						"type": "date"
-					},
-					{
-						"name": "EndDate",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Status",
-						"type": "nvarchar"
-					},
-					{
-						"name": "IsActive",
-						"type": "bit"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "TestDataForEmployeeDim"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AdventureWorksDW')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TestDataForEmployeeDim1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -3937,6 +3778,32 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Sftp_Redmane_Incoming')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Sftp",
+				"typeProperties": {
+					"host": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_host')]",
+					"port": 22,
+					"skipHostKeyValidation": false,
+					"hostKeyFingerprint": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_hostKeyFingerprint')]",
+					"authenticationType": "SshPublicKey",
+					"userName": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_userName')]",
+					"privateKeyContent": {
+						"type": "SecureString",
+						"value": "[parameters('Sftp_Redmane_Incoming_privateKeyContent')]"
+					},
+					"passPhrase": {
+						"type": "SecureString",
+						"value": "[parameters('Sftp_Redmane_Incoming_passPhrase')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/TargetSandbox')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -4240,7 +4107,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CodeTables1",
+								"referenceName": "CodeTables",
 								"type": "DatasetReference"
 							},
 							"name": "vwCodeTables"
@@ -4566,7 +4433,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CodeTables1')]",
+				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
 				"[concat(variables('factoryId'), '/datasets/CaseHeader1')]",
 				"[concat(variables('factoryId'), '/datasets/Dummy1')]"
 			]
@@ -5326,6 +5193,280 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/df_Fixed_Width_Test')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DimCustomerAWDW",
+								"type": "DatasetReference"
+							},
+							"name": "srcDimCustomer"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "EmailFile",
+								"type": "DatasetReference"
+							},
+							"name": "tgtEmailFile"
+						},
+						{
+							"dataset": {
+								"referenceName": "SFTPFixedWidthFile",
+								"type": "DatasetReference"
+							},
+							"name": "tgtSFTPServer"
+						}
+					],
+					"transformations": [
+						{
+							"name": "SelectColumns"
+						},
+						{
+							"name": "ConcatFields"
+						},
+						{
+							"name": "SelectConcatString"
+						},
+						{
+							"name": "IffNullTrim"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          CustomerKey as integer,",
+						"          GeographyKey as integer,",
+						"          CustomerAlternateKey as string,",
+						"          Title as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          NameStyle as boolean,",
+						"          BirthDate as date,",
+						"          MaritalStatus as string,",
+						"          Suffix as string,",
+						"          Gender as string,",
+						"          EmailAddress as string,",
+						"          YearlyIncome as decimal(19,4),",
+						"          TotalChildren as integer,",
+						"          NumberChildrenAtHome as integer,",
+						"          EnglishEducation as string,",
+						"          SpanishEducation as string,",
+						"          FrenchEducation as string,",
+						"          EnglishOccupation as string,",
+						"          SpanishOccupation as string,",
+						"          FrenchOccupation as string,",
+						"          HouseOwnerFlag as string,",
+						"          NumberCarsOwned as integer,",
+						"          AddressLine1 as string,",
+						"          AddressLine2 as string,",
+						"          Phone as string,",
+						"          DateFirstPurchase as date,",
+						"          CommuteDistance as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcDimCustomer",
+						"srcDimCustomer select(mapColumn(",
+						"          CustomerAlternateKey,",
+						"          Title,",
+						"          FirstName,",
+						"          MiddleName,",
+						"          LastName,",
+						"          BirthDate,",
+						"          MaritalStatus,",
+						"          Suffix,",
+						"          Gender,",
+						"          TotalChildren,",
+						"          EnglishEducation,",
+						"          EnglishOccupation,",
+						"          HouseOwnerFlag,",
+						"          AddressLine1,",
+						"          Phone",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+						"IffNullTrim derive(drvConcatAll = concat(rpad(FirstName,15,' '),rpad(MiddleName, 1, ' '),rpad(LastName, 20, ' '),rpad(AddressLine1, 45, ' '),rpad(EnglishEducation, 10, ' '))) ~> ConcatFields",
+						"ConcatFields select(mapColumn(",
+						"          ConcatAll = drvConcatAll",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectConcatString",
+						"SelectColumns derive(FirstName = iifNull(trim(FirstName) ,'' ),",
+						"          LastName = iifNull(trim(LastName) ,'' ),",
+						"          MiddleName = iifNull(trim(MiddleName) ,'' ),",
+						"          AddressLine1 = iifNull(trim(AddressLine1) ,'' ),",
+						"          EnglishEducation = iifNull(trim(EnglishEducation) ,'' )) ~> IffNullTrim",
+						"SelectConcatString sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['EmailFile'],",
+						"     truncate: true,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtEmailFile",
+						"SelectConcatString sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string",
+						"     ),",
+						"     partitionFileNames:['FixedWidth.txt'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtSFTPServer"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DimCustomerAWDW')]",
+				"[concat(variables('factoryId'), '/datasets/EmailFile')]",
+				"[concat(variables('factoryId'), '/datasets/SFTPFixedWidthFile')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_Fixed_Width_Test_No_SMTP')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DimCustomerAWDW",
+								"type": "DatasetReference"
+							},
+							"name": "srcDimCustomer"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Dummy",
+								"type": "DatasetReference"
+							},
+							"name": "tgtDummyOutput"
+						},
+						{
+							"dataset": {
+								"referenceName": "EmailFile",
+								"type": "DatasetReference"
+							},
+							"name": "tgtEmailFile"
+						}
+					],
+					"transformations": [
+						{
+							"name": "SelectColumns"
+						},
+						{
+							"name": "ConcatFields"
+						},
+						{
+							"name": "SelectConcatString"
+						},
+						{
+							"name": "IffNullTrim"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          CustomerKey as integer,",
+						"          GeographyKey as integer,",
+						"          CustomerAlternateKey as string,",
+						"          Title as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          NameStyle as boolean,",
+						"          BirthDate as date,",
+						"          MaritalStatus as string,",
+						"          Suffix as string,",
+						"          Gender as string,",
+						"          EmailAddress as string,",
+						"          YearlyIncome as decimal(19,4),",
+						"          TotalChildren as integer,",
+						"          NumberChildrenAtHome as integer,",
+						"          EnglishEducation as string,",
+						"          SpanishEducation as string,",
+						"          FrenchEducation as string,",
+						"          EnglishOccupation as string,",
+						"          SpanishOccupation as string,",
+						"          FrenchOccupation as string,",
+						"          HouseOwnerFlag as string,",
+						"          NumberCarsOwned as integer,",
+						"          AddressLine1 as string,",
+						"          AddressLine2 as string,",
+						"          Phone as string,",
+						"          DateFirstPurchase as date,",
+						"          CommuteDistance as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcDimCustomer",
+						"srcDimCustomer select(mapColumn(",
+						"          CustomerAlternateKey,",
+						"          Title,",
+						"          FirstName,",
+						"          MiddleName,",
+						"          LastName,",
+						"          BirthDate,",
+						"          MaritalStatus,",
+						"          Suffix,",
+						"          Gender,",
+						"          TotalChildren,",
+						"          EnglishEducation,",
+						"          EnglishOccupation,",
+						"          HouseOwnerFlag,",
+						"          AddressLine1,",
+						"          Phone",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+						"IffNullTrim derive(drvConcatAll = concat(rpad(FirstName,15,' '),rpad(MiddleName, 1, ' '),rpad(LastName, 20, ' '),rpad(AddressLine1, 45, ' '),rpad(EnglishEducation, 10, ' '))) ~> ConcatFields",
+						"ConcatFields select(mapColumn(",
+						"          ConcatAll = drvConcatAll",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectConcatString",
+						"SelectColumns derive(FirstName = iifNull(trim(FirstName) ,'' ),",
+						"          LastName = iifNull(trim(LastName) ,'' ),",
+						"          MiddleName = iifNull(trim(MiddleName) ,'' ),",
+						"          AddressLine1 = iifNull(trim(AddressLine1) ,'' ),",
+						"          EnglishEducation = iifNull(trim(EnglishEducation) ,'' )) ~> IffNullTrim",
+						"SelectConcatString sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string",
+						"     ),",
+						"     partitionFileNames:['FixedWidthTest.txt'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtDummyOutput",
+						"SelectConcatString sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['EmailFile'],",
+						"     truncate: true,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtEmailFile"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DimCustomerAWDW')]",
+				"[concat(variables('factoryId'), '/datasets/Dummy')]",
+				"[concat(variables('factoryId'), '/datasets/EmailFile')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/df_RptToStage')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -5921,14 +6062,14 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "TestDataForEmployee1",
+								"referenceName": "TestDataForEmployee",
 								"type": "DatasetReference"
 							},
 							"name": "srcEmployee"
 						},
 						{
 							"dataset": {
-								"referenceName": "TestDataForEmployeeDim1",
+								"referenceName": "TestDataForEmployeeDim",
 								"type": "DatasetReference"
 							},
 							"name": "srcEmployeeDim"
@@ -5937,14 +6078,14 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "TestDataForEmployeeDim1",
+								"referenceName": "TestDataForEmployeeDim",
 								"type": "DatasetReference"
 							},
 							"name": "SinkEmployeeDimInsert"
 						},
 						{
 							"dataset": {
-								"referenceName": "TestDataForEmployeeDim1",
+								"referenceName": "TestDataForEmployeeDim",
 								"type": "DatasetReference"
 							},
 							"name": "SinkEmployeeDimUpdate"
@@ -5983,8 +6124,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/TestDataForEmployee1')]",
-				"[concat(variables('factoryId'), '/datasets/TestDataForEmployeeDim1')]"
+				"[concat(variables('factoryId'), '/datasets/TestDataForEmployee')]",
+				"[concat(variables('factoryId'), '/datasets/TestDataForEmployeeDim')]"
 			]
 		},
 		{
@@ -6061,423 +6202,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Sftp_Redmane_Incoming')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "Sftp",
-				"typeProperties": {
-					"host": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_host')]",
-					"port": 22,
-					"skipHostKeyValidation": false,
-					"hostKeyFingerprint": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_hostKeyFingerprint')]",
-					"authenticationType": "SshPublicKey",
-					"userName": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_userName')]",
-					"privateKeyContent": {
-						"type": "SecureString",
-						"value": "[parameters('Sftp_Redmane_Incoming_privateKeyContent')]"
-					},
-					"passPhrase": {
-						"type": "SecureString",
-						"value": "[parameters('Sftp_Redmane_Incoming_passPhrase')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DimCustomer2')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AdventureWorksDW",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Source"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "CustomerKey",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "GeographyKey",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CustomerAlternateKey",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Title",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FirstName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MiddleName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LastName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "NameStyle",
-						"type": "bit"
-					},
-					{
-						"name": "BirthDate",
-						"type": "date"
-					},
-					{
-						"name": "MaritalStatus",
-						"type": "nchar"
-					},
-					{
-						"name": "Suffix",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Gender",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EmailAddress",
-						"type": "nvarchar"
-					},
-					{
-						"name": "YearlyIncome",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "TotalChildren",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "NumberChildrenAtHome",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "EnglishEducation",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SpanishEducation",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FrenchEducation",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EnglishOccupation",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SpanishOccupation",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FrenchOccupation",
-						"type": "nvarchar"
-					},
-					{
-						"name": "HouseOwnerFlag",
-						"type": "nchar"
-					},
-					{
-						"name": "NumberCarsOwned",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "AddressLine1",
-						"type": "nvarchar"
-					},
-					{
-						"name": "AddressLine2",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Phone",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DateFirstPurchase",
-						"type": "date"
-					},
-					{
-						"name": "CommuteDistance",
-						"type": "nvarchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "DimCustomer"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AdventureWorksDW')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Dummy2')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "POCWork"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "dfdummy.txt",
-						"container": "newcontainer"
-					},
-					"columnDelimiter": "",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/EmailFile')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "emaillocation"
-					},
-					"columnDelimiter": "",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SFTPFixedWidthFile')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Sftp_Redmane_Incoming",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "SftpLocation",
-						"folderPath": "/sdazsftpd/DataWarehouse"
-					},
-					"columnDelimiter": "",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Sftp_Redmane_Incoming')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_Fixed_Width_Test')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "DimCustomer2",
-								"type": "DatasetReference"
-							},
-							"name": "srcDimCustomer"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "Dummy2",
-								"type": "DatasetReference"
-							},
-							"name": "tgtDummyOutput"
-						},
-						{
-							"dataset": {
-								"referenceName": "EmailFile",
-								"type": "DatasetReference"
-							},
-							"name": "tgtEmailFile"
-						},
-						{
-							"dataset": {
-								"referenceName": "SFTPFixedWidthFile",
-								"type": "DatasetReference"
-							},
-							"name": "tgtSFTPServer"
-						}
-					],
-					"transformations": [
-						{
-							"name": "SelectColumns"
-						},
-						{
-							"name": "ConcatFields"
-						},
-						{
-							"name": "SelectConcatString"
-						},
-						{
-							"name": "IffNullTrim"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          CustomerKey as integer,",
-						"          GeographyKey as integer,",
-						"          CustomerAlternateKey as string,",
-						"          Title as string,",
-						"          FirstName as string,",
-						"          MiddleName as string,",
-						"          LastName as string,",
-						"          NameStyle as boolean,",
-						"          BirthDate as date,",
-						"          MaritalStatus as string,",
-						"          Suffix as string,",
-						"          Gender as string,",
-						"          EmailAddress as string,",
-						"          YearlyIncome as decimal(19,4),",
-						"          TotalChildren as integer,",
-						"          NumberChildrenAtHome as integer,",
-						"          EnglishEducation as string,",
-						"          SpanishEducation as string,",
-						"          FrenchEducation as string,",
-						"          EnglishOccupation as string,",
-						"          SpanishOccupation as string,",
-						"          FrenchOccupation as string,",
-						"          HouseOwnerFlag as string,",
-						"          NumberCarsOwned as integer,",
-						"          AddressLine1 as string,",
-						"          AddressLine2 as string,",
-						"          Phone as string,",
-						"          DateFirstPurchase as date,",
-						"          CommuteDistance as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> srcDimCustomer",
-						"srcDimCustomer select(mapColumn(",
-						"          CustomerAlternateKey,",
-						"          Title,",
-						"          FirstName,",
-						"          MiddleName,",
-						"          LastName,",
-						"          BirthDate,",
-						"          MaritalStatus,",
-						"          Suffix,",
-						"          Gender,",
-						"          TotalChildren,",
-						"          EnglishEducation,",
-						"          EnglishOccupation,",
-						"          HouseOwnerFlag,",
-						"          AddressLine1,",
-						"          Phone",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectColumns",
-						"IffNullTrim derive(drvConcatAll = concat(rpad(FirstName,15,' '),rpad(MiddleName, 1, ' '),rpad(LastName, 20, ' '),rpad(AddressLine1, 45, ' '),rpad(EnglishEducation, 10, ' '))) ~> ConcatFields",
-						"ConcatFields select(mapColumn(",
-						"          ConcatAll = drvConcatAll",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectConcatString",
-						"SelectColumns derive(FirstName = iifNull(trim(FirstName) ,'' ),",
-						"          LastName = iifNull(trim(LastName) ,'' ),",
-						"          MiddleName = iifNull(trim(MiddleName) ,'' ),",
-						"          AddressLine1 = iifNull(trim(AddressLine1) ,'' ),",
-						"          EnglishEducation = iifNull(trim(EnglishEducation) ,'' )) ~> IffNullTrim",
-						"SelectConcatString sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          Column_1 as string",
-						"     ),",
-						"     partitionFileNames:['FixedWidthTest.txt'],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> tgtDummyOutput",
-						"SelectConcatString sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:['EmailFile'],",
-						"     truncate: true,",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> tgtEmailFile",
-						"SelectConcatString sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          Column_1 as string",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> tgtSFTPServer"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DimCustomer2')]",
-				"[concat(variables('factoryId'), '/datasets/Dummy2')]",
-				"[concat(variables('factoryId'), '/datasets/EmailFile')]",
-				"[concat(variables('factoryId'), '/datasets/SFTPFixedWidthFile')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_TestFixedWidth_SFTP')]",
+			"name": "[concat(parameters('factoryName'), '/pl_FixedWidth_Email_SFTP_Server')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -6501,7 +6226,6 @@
 								"parameters": {},
 								"datasetParameters": {
 									"srcDimCustomer": {},
-									"tgtDummyOutput": {},
 									"tgtEmailFile": {},
 									"tgtSFTPServer": {}
 								}
@@ -6513,11 +6237,43 @@
 							},
 							"traceLevel": "Fine"
 						}
+					},
+					{
+						"name": "SendEmailWithAttachment",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "df_Fixed_Width_Test",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.00:05:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://rpsendemails.azurewebsites.net:443/api/SendEmailsAttachment/triggers/manual/invoke?api-version=2022-05-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=utmn1rr58YwpbXvNns-CAvWjbj_KDQkfOtnJxcux8k4",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "{\n \"title\":   \"@{pipeline().Pipeline} Succeeded!\",\n\"message\": \"Pipeline run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"pipeline().Pipeline\",\n    \"pipelineRunId\": \"pipeline().RunId\",\n     \"time\": \"@{utcnow()}\"\n\n\n}",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Final POCs"
 				},
 				"annotations": []
 			},

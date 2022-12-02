@@ -17,20 +17,17 @@
 		"CURAPD01_connectionString": {
 			"value": ""
 		},
-		"TargetSandbox_connectionString": {
-			"value": ""
-		},
-		"textSinkTest_accountKey": {
-			"value": ""
-		},
 		"Sftp_Redmane_Incoming_privateKeyContent": {
 			"value": ""
 		},
 		"Sftp_Redmane_Incoming_passPhrase": {
 			"value": ""
 		},
-		"textSinkTest_properties_typeProperties_url": {
-			"value": "https://reneetesting.dfs.core.windows.net/"
+		"TargetSandbox_connectionString": {
+			"value": ""
+		},
+		"textSinkTest_accountKey": {
+			"value": ""
 		},
 		"Sftp_Redmane_Incoming_properties_typeProperties_host": {
 			"value": "devsftp.sdeeservices.com"
@@ -40,6 +37,9 @@
 		},
 		"Sftp_Redmane_Incoming_properties_typeProperties_userName": {
 			"value": "dev-azfsuser"
+		},
+		"textSinkTest_properties_typeProperties_url": {
+			"value": "https://reneetesting.dfs.core.windows.net/"
 		}
 	}
 }

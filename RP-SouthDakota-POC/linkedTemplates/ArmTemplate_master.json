@@ -23,14 +23,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'CURAPD01'"
 		},
-		"TargetSandbox_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'TargetSandbox'"
-		},
-		"textSinkTest_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'textSinkTest'"
-		},
 		"Sftp_Redmane_Incoming_privateKeyContent": {
 			"type": "secureString",
 			"metadata": "Secure string for 'privateKeyContent' of 'Sftp_Redmane_Incoming'"
@@ -39,9 +31,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'passPhrase' of 'Sftp_Redmane_Incoming'"
 		},
-		"textSinkTest_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://reneetesting.dfs.core.windows.net/"
+		"TargetSandbox_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'TargetSandbox'"
+		},
+		"textSinkTest_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'textSinkTest'"
 		},
 		"Sftp_Redmane_Incoming_properties_typeProperties_host": {
 			"type": "string",
@@ -54,6 +50,10 @@
 		"Sftp_Redmane_Incoming_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "dev-azfsuser"
+		},
+		"textSinkTest_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://reneetesting.dfs.core.windows.net/"
 		},
 		"containerUri": {
 			"type": "string",
@@ -94,20 +94,17 @@
 					"CURAPD01_connectionString": {
 						"value": "[parameters('CURAPD01_connectionString')]"
 					},
-					"TargetSandbox_connectionString": {
-						"value": "[parameters('TargetSandbox_connectionString')]"
-					},
-					"textSinkTest_accountKey": {
-						"value": "[parameters('textSinkTest_accountKey')]"
-					},
 					"Sftp_Redmane_Incoming_privateKeyContent": {
 						"value": "[parameters('Sftp_Redmane_Incoming_privateKeyContent')]"
 					},
 					"Sftp_Redmane_Incoming_passPhrase": {
 						"value": "[parameters('Sftp_Redmane_Incoming_passPhrase')]"
 					},
-					"textSinkTest_properties_typeProperties_url": {
-						"value": "[parameters('textSinkTest_properties_typeProperties_url')]"
+					"TargetSandbox_connectionString": {
+						"value": "[parameters('TargetSandbox_connectionString')]"
+					},
+					"textSinkTest_accountKey": {
+						"value": "[parameters('textSinkTest_accountKey')]"
 					},
 					"Sftp_Redmane_Incoming_properties_typeProperties_host": {
 						"value": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_host')]"
@@ -117,6 +114,9 @@
 					},
 					"Sftp_Redmane_Incoming_properties_typeProperties_userName": {
 						"value": "[parameters('Sftp_Redmane_Incoming_properties_typeProperties_userName')]"
+					},
+					"textSinkTest_properties_typeProperties_url": {
+						"value": "[parameters('textSinkTest_properties_typeProperties_url')]"
 					}
 				}
 			},

@@ -13,109 +13,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/target_SalesOrderHeader_wDate')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AdventureWorksLT2019",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "SalesOrderID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "OrderDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "Status",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "SalesOrderNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PurchaseOrderNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "AccountNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CustomerDescription",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ShipToAddressDescription",
-						"type": "nvarchar"
-					},
-					{
-						"name": "BillToAddressDesciption",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ShipMethod",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SubTotal",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "TaxAmt",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "Freight",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "TotalDue",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "ModifiedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "CreatedDate",
-						"type": "smalldatetime",
-						"precision": 16,
-						"scale": 0
-					}
-				],
-				"typeProperties": {
-					"schema": "SalesLT",
-					"table": "target_SalesOrderHeader_wDate"
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/tgtDimEmployee')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -134,236 +31,6 @@
 					"schema": "dbo",
 					"table": "tgtDimEmployee"
 				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DimCustomer2')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AdventureWorksDW",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Source"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "CustomerKey",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "GeographyKey",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CustomerAlternateKey",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Title",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FirstName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MiddleName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LastName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "NameStyle",
-						"type": "bit"
-					},
-					{
-						"name": "BirthDate",
-						"type": "date"
-					},
-					{
-						"name": "MaritalStatus",
-						"type": "nchar"
-					},
-					{
-						"name": "Suffix",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Gender",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EmailAddress",
-						"type": "nvarchar"
-					},
-					{
-						"name": "YearlyIncome",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "TotalChildren",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "NumberChildrenAtHome",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "EnglishEducation",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SpanishEducation",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FrenchEducation",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EnglishOccupation",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SpanishOccupation",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FrenchOccupation",
-						"type": "nvarchar"
-					},
-					{
-						"name": "HouseOwnerFlag",
-						"type": "nchar"
-					},
-					{
-						"name": "NumberCarsOwned",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "AddressLine1",
-						"type": "nvarchar"
-					},
-					{
-						"name": "AddressLine2",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Phone",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DateFirstPurchase",
-						"type": "date"
-					},
-					{
-						"name": "CommuteDistance",
-						"type": "nvarchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "DimCustomer"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Dummy2')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "POCWork"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "dfdummy.txt",
-						"container": "newcontainer"
-					},
-					"columnDelimiter": "",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/EmailFile')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "emaillocation"
-					},
-					"columnDelimiter": "",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SFTPFixedWidthFile')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Sftp_Redmane_Incoming",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "SftpLocation",
-						"folderPath": "/sdazsftpd/DataWarehouse"
-					},
-					"columnDelimiter": "",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					}
-				]
 			},
 			"dependsOn": []
 		},
@@ -621,9 +288,7 @@
 					]
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/target_SalesOrderHeader_wDate')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_CaseHeader_Lookups_POC')]",
@@ -638,7 +303,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CodeTables1",
+								"referenceName": "CodeTables",
 								"type": "DatasetReference"
 							},
 							"name": "vwCodeTables"
@@ -1701,6 +1366,272 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/df_Fixed_Width_Test')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DimCustomerAWDW",
+								"type": "DatasetReference"
+							},
+							"name": "srcDimCustomer"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "EmailFile",
+								"type": "DatasetReference"
+							},
+							"name": "tgtEmailFile"
+						},
+						{
+							"dataset": {
+								"referenceName": "SFTPFixedWidthFile",
+								"type": "DatasetReference"
+							},
+							"name": "tgtSFTPServer"
+						}
+					],
+					"transformations": [
+						{
+							"name": "SelectColumns"
+						},
+						{
+							"name": "ConcatFields"
+						},
+						{
+							"name": "SelectConcatString"
+						},
+						{
+							"name": "IffNullTrim"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          CustomerKey as integer,",
+						"          GeographyKey as integer,",
+						"          CustomerAlternateKey as string,",
+						"          Title as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          NameStyle as boolean,",
+						"          BirthDate as date,",
+						"          MaritalStatus as string,",
+						"          Suffix as string,",
+						"          Gender as string,",
+						"          EmailAddress as string,",
+						"          YearlyIncome as decimal(19,4),",
+						"          TotalChildren as integer,",
+						"          NumberChildrenAtHome as integer,",
+						"          EnglishEducation as string,",
+						"          SpanishEducation as string,",
+						"          FrenchEducation as string,",
+						"          EnglishOccupation as string,",
+						"          SpanishOccupation as string,",
+						"          FrenchOccupation as string,",
+						"          HouseOwnerFlag as string,",
+						"          NumberCarsOwned as integer,",
+						"          AddressLine1 as string,",
+						"          AddressLine2 as string,",
+						"          Phone as string,",
+						"          DateFirstPurchase as date,",
+						"          CommuteDistance as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcDimCustomer",
+						"srcDimCustomer select(mapColumn(",
+						"          CustomerAlternateKey,",
+						"          Title,",
+						"          FirstName,",
+						"          MiddleName,",
+						"          LastName,",
+						"          BirthDate,",
+						"          MaritalStatus,",
+						"          Suffix,",
+						"          Gender,",
+						"          TotalChildren,",
+						"          EnglishEducation,",
+						"          EnglishOccupation,",
+						"          HouseOwnerFlag,",
+						"          AddressLine1,",
+						"          Phone",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+						"IffNullTrim derive(drvConcatAll = concat(rpad(FirstName,15,' '),rpad(MiddleName, 1, ' '),rpad(LastName, 20, ' '),rpad(AddressLine1, 45, ' '),rpad(EnglishEducation, 10, ' '))) ~> ConcatFields",
+						"ConcatFields select(mapColumn(",
+						"          ConcatAll = drvConcatAll",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectConcatString",
+						"SelectColumns derive(FirstName = iifNull(trim(FirstName) ,'' ),",
+						"          LastName = iifNull(trim(LastName) ,'' ),",
+						"          MiddleName = iifNull(trim(MiddleName) ,'' ),",
+						"          AddressLine1 = iifNull(trim(AddressLine1) ,'' ),",
+						"          EnglishEducation = iifNull(trim(EnglishEducation) ,'' )) ~> IffNullTrim",
+						"SelectConcatString sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['EmailFile'],",
+						"     truncate: true,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtEmailFile",
+						"SelectConcatString sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string",
+						"     ),",
+						"     partitionFileNames:['FixedWidth.txt'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtSFTPServer"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_Fixed_Width_Test_No_SMTP')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DimCustomerAWDW",
+								"type": "DatasetReference"
+							},
+							"name": "srcDimCustomer"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Dummy",
+								"type": "DatasetReference"
+							},
+							"name": "tgtDummyOutput"
+						},
+						{
+							"dataset": {
+								"referenceName": "EmailFile",
+								"type": "DatasetReference"
+							},
+							"name": "tgtEmailFile"
+						}
+					],
+					"transformations": [
+						{
+							"name": "SelectColumns"
+						},
+						{
+							"name": "ConcatFields"
+						},
+						{
+							"name": "SelectConcatString"
+						},
+						{
+							"name": "IffNullTrim"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          CustomerKey as integer,",
+						"          GeographyKey as integer,",
+						"          CustomerAlternateKey as string,",
+						"          Title as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          NameStyle as boolean,",
+						"          BirthDate as date,",
+						"          MaritalStatus as string,",
+						"          Suffix as string,",
+						"          Gender as string,",
+						"          EmailAddress as string,",
+						"          YearlyIncome as decimal(19,4),",
+						"          TotalChildren as integer,",
+						"          NumberChildrenAtHome as integer,",
+						"          EnglishEducation as string,",
+						"          SpanishEducation as string,",
+						"          FrenchEducation as string,",
+						"          EnglishOccupation as string,",
+						"          SpanishOccupation as string,",
+						"          FrenchOccupation as string,",
+						"          HouseOwnerFlag as string,",
+						"          NumberCarsOwned as integer,",
+						"          AddressLine1 as string,",
+						"          AddressLine2 as string,",
+						"          Phone as string,",
+						"          DateFirstPurchase as date,",
+						"          CommuteDistance as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcDimCustomer",
+						"srcDimCustomer select(mapColumn(",
+						"          CustomerAlternateKey,",
+						"          Title,",
+						"          FirstName,",
+						"          MiddleName,",
+						"          LastName,",
+						"          BirthDate,",
+						"          MaritalStatus,",
+						"          Suffix,",
+						"          Gender,",
+						"          TotalChildren,",
+						"          EnglishEducation,",
+						"          EnglishOccupation,",
+						"          HouseOwnerFlag,",
+						"          AddressLine1,",
+						"          Phone",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+						"IffNullTrim derive(drvConcatAll = concat(rpad(FirstName,15,' '),rpad(MiddleName, 1, ' '),rpad(LastName, 20, ' '),rpad(AddressLine1, 45, ' '),rpad(EnglishEducation, 10, ' '))) ~> ConcatFields",
+						"ConcatFields select(mapColumn(",
+						"          ConcatAll = drvConcatAll",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectConcatString",
+						"SelectColumns derive(FirstName = iifNull(trim(FirstName) ,'' ),",
+						"          LastName = iifNull(trim(LastName) ,'' ),",
+						"          MiddleName = iifNull(trim(MiddleName) ,'' ),",
+						"          AddressLine1 = iifNull(trim(AddressLine1) ,'' ),",
+						"          EnglishEducation = iifNull(trim(EnglishEducation) ,'' )) ~> IffNullTrim",
+						"SelectConcatString sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string",
+						"     ),",
+						"     partitionFileNames:['FixedWidthTest.txt'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtDummyOutput",
+						"SelectConcatString sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['EmailFile'],",
+						"     truncate: true,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtEmailFile"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/df_RptToStage')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -2014,9 +1945,7 @@
 					]
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/target_SalesOrderHeader_wDate')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_SCD1_Example_NoCDC')]",
@@ -2270,9 +2199,7 @@
 					]
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/target_SalesOrderHeader_wDate')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_SCD2_Example')]",
@@ -2287,14 +2214,14 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "TestDataForEmployee1",
+								"referenceName": "TestDataForEmployee",
 								"type": "DatasetReference"
 							},
 							"name": "srcEmployee"
 						},
 						{
 							"dataset": {
-								"referenceName": "TestDataForEmployeeDim1",
+								"referenceName": "TestDataForEmployeeDim",
 								"type": "DatasetReference"
 							},
 							"name": "srcEmployeeDim"
@@ -2303,14 +2230,14 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "TestDataForEmployeeDim1",
+								"referenceName": "TestDataForEmployeeDim",
 								"type": "DatasetReference"
 							},
 							"name": "SinkEmployeeDimInsert"
 						},
 						{
 							"dataset": {
-								"referenceName": "TestDataForEmployeeDim1",
+								"referenceName": "TestDataForEmployeeDim",
 								"type": "DatasetReference"
 							},
 							"name": "SinkEmployeeDimUpdate"
@@ -2421,158 +2348,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_Fixed_Width_Test')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "DimCustomer2",
-								"type": "DatasetReference"
-							},
-							"name": "srcDimCustomer"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "Dummy2",
-								"type": "DatasetReference"
-							},
-							"name": "tgtDummyOutput"
-						},
-						{
-							"dataset": {
-								"referenceName": "EmailFile",
-								"type": "DatasetReference"
-							},
-							"name": "tgtEmailFile"
-						},
-						{
-							"dataset": {
-								"referenceName": "SFTPFixedWidthFile",
-								"type": "DatasetReference"
-							},
-							"name": "tgtSFTPServer"
-						}
-					],
-					"transformations": [
-						{
-							"name": "SelectColumns"
-						},
-						{
-							"name": "ConcatFields"
-						},
-						{
-							"name": "SelectConcatString"
-						},
-						{
-							"name": "IffNullTrim"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          CustomerKey as integer,",
-						"          GeographyKey as integer,",
-						"          CustomerAlternateKey as string,",
-						"          Title as string,",
-						"          FirstName as string,",
-						"          MiddleName as string,",
-						"          LastName as string,",
-						"          NameStyle as boolean,",
-						"          BirthDate as date,",
-						"          MaritalStatus as string,",
-						"          Suffix as string,",
-						"          Gender as string,",
-						"          EmailAddress as string,",
-						"          YearlyIncome as decimal(19,4),",
-						"          TotalChildren as integer,",
-						"          NumberChildrenAtHome as integer,",
-						"          EnglishEducation as string,",
-						"          SpanishEducation as string,",
-						"          FrenchEducation as string,",
-						"          EnglishOccupation as string,",
-						"          SpanishOccupation as string,",
-						"          FrenchOccupation as string,",
-						"          HouseOwnerFlag as string,",
-						"          NumberCarsOwned as integer,",
-						"          AddressLine1 as string,",
-						"          AddressLine2 as string,",
-						"          Phone as string,",
-						"          DateFirstPurchase as date,",
-						"          CommuteDistance as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> srcDimCustomer",
-						"srcDimCustomer select(mapColumn(",
-						"          CustomerAlternateKey,",
-						"          Title,",
-						"          FirstName,",
-						"          MiddleName,",
-						"          LastName,",
-						"          BirthDate,",
-						"          MaritalStatus,",
-						"          Suffix,",
-						"          Gender,",
-						"          TotalChildren,",
-						"          EnglishEducation,",
-						"          EnglishOccupation,",
-						"          HouseOwnerFlag,",
-						"          AddressLine1,",
-						"          Phone",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectColumns",
-						"IffNullTrim derive(drvConcatAll = concat(rpad(FirstName,15,' '),rpad(MiddleName, 1, ' '),rpad(LastName, 20, ' '),rpad(AddressLine1, 45, ' '),rpad(EnglishEducation, 10, ' '))) ~> ConcatFields",
-						"ConcatFields select(mapColumn(",
-						"          ConcatAll = drvConcatAll",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectConcatString",
-						"SelectColumns derive(FirstName = iifNull(trim(FirstName) ,'' ),",
-						"          LastName = iifNull(trim(LastName) ,'' ),",
-						"          MiddleName = iifNull(trim(MiddleName) ,'' ),",
-						"          AddressLine1 = iifNull(trim(AddressLine1) ,'' ),",
-						"          EnglishEducation = iifNull(trim(EnglishEducation) ,'' )) ~> IffNullTrim",
-						"SelectConcatString sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          Column_1 as string",
-						"     ),",
-						"     partitionFileNames:['FixedWidthTest.txt'],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> tgtDummyOutput",
-						"SelectConcatString sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:['EmailFile'],",
-						"     truncate: true,",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> tgtEmailFile",
-						"SelectConcatString sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          Column_1 as string",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> tgtSFTPServer"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DimCustomer2')]",
-				"[concat(variables('factoryId'), '/datasets/Dummy2')]",
-				"[concat(variables('factoryId'), '/datasets/EmailFile')]",
-				"[concat(variables('factoryId'), '/datasets/SFTPFixedWidthFile')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/pl_CaseHeader_Code_Research_POC')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -2621,6 +2396,433 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/df_CaseHeader_Lookups_POC')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_DynamicDataFlow')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkupTableNames",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "/*\n********************************************************************************************************\nThe first sql select will get the table names.\nthe second sql will get the max ordinal. This is to check if there are multiple columns that make up\na unique row. In the case of CODETABLEITEM there are 3. I only want to process on row. If there is\none row the column is use in as the Key Identifier in the data flow.\nIf the Ordinal Position is greater than 1 it is the CODETABLEITEM. Then that data is processed \ndifferently in the data flow via Conditional split.\nThe third sql gets the columns used in the Primary Key\n\nCode by: Renee Poore\n  \n\n*******************************************************************************************************\n*/\n\nSELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID,\n       mop.ORDINAL_POSITION \nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n                               MAX(ORDINAL_POSITION) AS ORDINAL_POSITION\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1\n                        GROUP  BY TABLE_NAME) mop\n                    ON tblinfo.TABLE_NAME = mop.TABLE_NAME\n\n       INNER JOIN (SELECT DISTINCT TABLE_NAME,\n                                   COLUMN_NAME,\n                                   ORDINAL_POSITION\n                   FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                   WHERE\n                    OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                             + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n               ON mop.TABLE_NAME = tblid.TABLE_NAME\n                  AND mop.ORDINAL_POSITION = tblid.ORDINAL_POSITION \n\n\n\t\t\t\tWHERE MOP.ORDINAL_POSITION = 1",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "LookupDynamicAllTables",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "GetEachTableName",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LkupTableNames",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkupTableNames').output.value\n\n",
+								"type": "Expression"
+							},
+							"batchCount": 4,
+							"activities": [
+								{
+									"name": "df_RptToStage",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.00:03:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "df_RptToStage",
+											"type": "DataFlowReference",
+											"parameters": {
+												"TableName": {
+													"value": "'@{item().table_name}'",
+													"type": "Expression"
+												},
+												"SchemaName": {
+													"value": "'@{item().table_schema}'",
+													"type": "Expression"
+												},
+												"UniqueID": {
+													"value": "'@{item().unique_id}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"RptDB": {
+													"Schema": {
+														"value": "@item().table_schema",
+														"type": "Expression"
+													},
+													"TableName": {
+														"value": "@item().table_name",
+														"type": "Expression"
+													}
+												},
+												"StgDB": {
+													"Schema": "STG",
+													"TableName": {
+														"value": "@item().table_name",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "df_CodeTableItem",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_CodeTableItem",
+								"type": "DataFlowReference",
+								"parameters": {
+									"TableName": "'CODETABLEITEM'",
+									"SchemaName": "'CURAPD01'",
+									"UniqueID": "'na'"
+								},
+								"datasetParameters": {
+									"RptDB": {},
+									"StgDB": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Staging"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_CodeTableItem')]",
+				"[concat(variables('factoryId'), '/dataflows/df_RptToStage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_ManualTableReload')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkupTableNames",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "blbDynamicTableReload",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "GetEachTableName",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "FilterRowsWithY",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('FilterRowsWithY').output.value",
+								"type": "Expression"
+							},
+							"batchCount": 4,
+							"activities": [
+								{
+									"name": "df_DynamicSelect",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.00:10:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "df_DynamicSelect",
+											"type": "DataFlowReference",
+											"parameters": {
+												"ptblTableName": {
+													"value": "'@{item().Table}'",
+													"type": "Expression"
+												},
+												"ptblLastWritten": {
+													"value": "'@{item().DateTime}'",
+													"type": "Expression"
+												},
+												"ptblPrimaryKeyColumn": {
+													"value": "'@{item().PrimaryKeyColumn}'",
+													"type": "Expression"
+												},
+												"ptblSchema": {
+													"value": "'@{item().SourceSchema}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"RptDBTEST": {
+													"Schema": {
+														"value": "@item().SourceSchema",
+														"type": "Expression"
+													},
+													"TableName": {
+														"value": "@item().Table",
+														"type": "Expression"
+													}
+												},
+												"StgDBTEST": {
+													"Schema": "STG",
+													"TableName": {
+														"value": "@item().Table",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "FilterRowsWithY",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "LkupTableNames",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkupTableNames').output.value",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@startswith(item().Process,'Y')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Staging"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_DynamicSelect')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_MasterDimension')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "df_StagePlaceHolder",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_StagePlaceHolder",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Dimensions"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_StagePlaceHolder')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_MasterFact')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "This is the Main pipeline that will execute all pipelines.",
+				"activities": [
+					{
+						"name": "df_StagePlaceHolder",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_StagePlaceHolder",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"failure": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Facts"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_StagePlaceHolder')]"
 			]
 		}
 	]
