@@ -12,7 +12,7 @@
 				"type": "SftpLocation",
 				"folderPath": "/sdazsftpd/DataWarehouse"
 			},
-			"columnDelimiter": "",
+			"columnDelimiter": ",",
 			"escapeChar": "\\",
 			"quoteChar": "\""
 		},
