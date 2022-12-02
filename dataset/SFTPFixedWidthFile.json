@@ -5,6 +5,9 @@
 			"referenceName": "Sftp_Redmane_Incoming",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "POCWork"
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
