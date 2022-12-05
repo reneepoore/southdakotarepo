@@ -1,6 +1,9 @@
 {
 	"name": "df_Simple_Error_Handling_POC",
 	"properties": {
+		"folder": {
+			"name": "Final df POCs"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
