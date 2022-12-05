@@ -1,0 +1,74 @@
+{
+	"name": "df_Simple_Error_Handling_POC",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"name": "srcAddress"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "rowswritten",
+						"type": "DatasetReference"
+					},
+					"name": "tgtErrors"
+				},
+				{
+					"dataset": {
+						"referenceName": "rowswritten",
+						"type": "DatasetReference"
+					},
+					"name": "tgtValidRows"
+				}
+			],
+			"transformations": [
+				{
+					"name": "AssertCityBothell"
+				},
+				{
+					"name": "drvErrorColumns"
+				},
+				{
+					"name": "split1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          AddressID as integer,",
+				"          AddressLine1 as string,",
+				"          AddressLine2 as string,",
+				"          City as string,",
+				"          StateProvince as string,",
+				"          CountryRegion as string,",
+				"          PostalCode as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false) ~> srcAddress",
+				"srcAddress assert(expectTrue(City=='Bothell', false, 'assertIsBothell', null, 'City is  not Bothell')) ~> AssertCityBothell",
+				"AssertCityBothell derive(TotalErrors = assertErrorMessages(),",
+				"          CityError = at(assertErrorMessages(),'assertIsBothell')) ~> drvErrorColumns",
+				"drvErrorColumns split(hasError('assertIsBothell'),",
+				"     disjoint: false) ~> split1@(InvalidRecords, ValidRows)",
+				"split1@InvalidRecords sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Error.txt'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     outputAssertFailedRows: true,",
+				"     assertFailure_container: 'newcontainer',",
+				"     partitionBy('hash', 1)) ~> tgtErrors",
+				"split1@ValidRows sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['ValidRows.txt'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtValidRows"
+			]
+		}
+	}
+}
