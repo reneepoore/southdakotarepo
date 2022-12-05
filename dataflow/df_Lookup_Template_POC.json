@@ -21,7 +21,7 @@
 						"referenceName": "ds_Dummy_Lookup",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "tgtDummyFile"
 				}
 			],
 			"transformations": [
@@ -875,7 +875,7 @@
 				"          Column_6 as string",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     skipDuplicateMapOutputs: true) ~> tgtDummyFile"
 			]
 		}
 	}
