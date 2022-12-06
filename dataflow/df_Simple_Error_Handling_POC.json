@@ -8,6 +8,10 @@
 		"typeProperties": {
 			"sources": [
 				{
+					"dataset": {
+						"referenceName": "DimAddress",
+						"type": "DatasetReference"
+					},
 					"name": "srcAddress"
 				}
 			],
@@ -51,7 +55,9 @@
 				"          ModifiedDate as timestamp",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false) ~> srcAddress",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcAddress",
 				"srcAddress assert(expectTrue(City=='Bothell', false, 'assertIsBothell', null, 'City is  not Bothell')) ~> AssertCityBothell",
 				"AssertCityBothell derive(TotalErrors = assertErrorMessages(),",
 				"          CityError = at(assertErrorMessages(),'assertIsBothell')) ~> drvErrorColumns",
