@@ -679,6 +679,86 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/pl_FixedWidth_Email_SFTP_Server')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "df_Fixed_Width_Test",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:05:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_Fixed_Width_Test",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"srcDimCustomer": {},
+									"tgtEmailFile": {},
+									"tgtSFTPServer": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "SendEmailWithAttachment",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "df_Fixed_Width_Test",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.00:05:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://rpsendemails.azurewebsites.net:443/api/SendEmailsAttachment/triggers/manual/invoke?api-version=2022-05-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=utmn1rr58YwpbXvNns-CAvWjbj_KDQkfOtnJxcux8k4",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "{\n \"title\":   \"@{pipeline().Pipeline} Succeeded!\",\n\"message\": \"Pipeline run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"pipeline().Pipeline\",\n    \"pipelineRunId\": \"pipeline().RunId\",\n     \"time\": \"@{utcnow()}\"\n\n\n}",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Final POCs"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_Fixed_Width_Test')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/pl_MainLoad')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -3075,6 +3155,51 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ds_Dummy_Lookup')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "newcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/reportingSalesOrderHeader')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -3834,267 +3959,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "Facts"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "reportingSalesOrderHeader",
-								"type": "DatasetReference"
-							},
-							"name": "reportingSalesOrderHeader"
-						},
-						{
-							"dataset": {
-								"referenceName": "DimAddress",
-								"type": "DatasetReference"
-							},
-							"name": "DimAddress"
-						},
-						{
-							"dataset": {
-								"referenceName": "DimCustomer",
-								"type": "DatasetReference"
-							},
-							"name": "DimCustomer"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "target_SalesOrderHeader_wDate",
-								"type": "DatasetReference"
-							},
-							"name": "targetSalesOrders"
-						}
-					],
-					"transformations": [
-						{
-							"name": "SelectColumnsWShipToDescription"
-						},
-						{
-							"name": "LkpShipToAddress"
-						},
-						{
-							"name": "Upsert"
-						},
-						{
-							"name": "LkpCustomerDescip"
-						},
-						{
-							"name": "SelectColumnWCustDescrip"
-						},
-						{
-							"name": "LkpBillToAddressDescr"
-						},
-						{
-							"name": "SelectColumnsWBillToDescr"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          SalesOrderID as integer,",
-						"          RevisionNumber as integer,",
-						"          OrderDate as timestamp,",
-						"          DueDate as timestamp,",
-						"          ShipDate as timestamp,",
-						"          Status as integer,",
-						"          OnlineOrderFlag as boolean,",
-						"          SalesOrderNumber as string,",
-						"          PurchaseOrderNumber as string,",
-						"          AccountNumber as string,",
-						"          CustomerID as integer,",
-						"          ShipToAddressID as integer,",
-						"          BillToAddressID as integer,",
-						"          ShipMethod as string,",
-						"          CreditCardApprovalCode as string,",
-						"          SubTotal as decimal(19,4),",
-						"          TaxAmt as decimal(19,4),",
-						"          Freight as decimal(19,4),",
-						"          TotalDue as decimal(19,4),",
-						"          Comment as string,",
-						"          rowguid as string,",
-						"          ModifiedDate as timestamp",
-						"     ),",
-						"     allowSchemaDrift: false,",
-						"     validateSchema: false,",
-						"     enableCdc: true,",
-						"     mode: 'read',",
-						"     skipInitialLoad: true,",
-						"     waterMarkColumn: 'ModifiedDate',",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> reportingSalesOrderHeader",
-						"source(output(",
-						"          AddressID as integer,",
-						"          AddressLine1 as string,",
-						"          AddressLine2 as string,",
-						"          City as string,",
-						"          StateProvince as string,",
-						"          CountryRegion as string,",
-						"          PostalCode as string,",
-						"          rowguid as string,",
-						"          ModifiedDate as timestamp",
-						"     ),",
-						"     allowSchemaDrift: false,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> DimAddress",
-						"source(output(",
-						"          CustomerID as integer,",
-						"          NameStyle as boolean,",
-						"          Title as string,",
-						"          FirstName as string,",
-						"          MiddleName as string,",
-						"          LastName as string,",
-						"          Suffix as string,",
-						"          CompanyName as string,",
-						"          SalesPerson as string,",
-						"          EmailAddress as string,",
-						"          Phone as string,",
-						"          PasswordHash as string,",
-						"          PasswordSalt as string,",
-						"          rowguid as string,",
-						"          ModifiedDate as timestamp",
-						"     ),",
-						"     allowSchemaDrift: false,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> DimCustomer",
-						"LkpShipToAddress select(mapColumn(",
-						"          SalesOrderID,",
-						"          OrderDate,",
-						"          Status,",
-						"          SalesOrderNumber,",
-						"          PurchaseOrderNumber,",
-						"          AccountNumber,",
-						"          ShipMethod,",
-						"          SubTotal,",
-						"          TaxAmt,",
-						"          Freight,",
-						"          TotalDue,",
-						"          ModifiedDate = reportingSalesOrderHeader@ModifiedDate,",
-						"          ShipToAddressDesscription = AddressLine1,",
-						"          CustomerID,",
-						"          BillToAddressID",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectColumnsWShipToDescription",
-						"reportingSalesOrderHeader, DimAddress lookup(ShipToAddressID == AddressID,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> LkpShipToAddress",
-						"SelectColumnsWBillToDescr alterRow(upsertIf(true())) ~> Upsert",
-						"SelectColumnsWShipToDescription, DimCustomer lookup(SelectColumnsWShipToDescription@CustomerID == DimCustomer@CustomerID,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> LkpCustomerDescip",
-						"LkpCustomerDescip select(mapColumn(",
-						"          SalesOrderID,",
-						"          OrderDate,",
-						"          Status,",
-						"          SalesOrderNumber,",
-						"          PurchaseOrderNumber,",
-						"          AccountNumber,",
-						"          ShipMethod,",
-						"          SubTotal,",
-						"          TaxAmt,",
-						"          Freight,",
-						"          TotalDue,",
-						"          ModifiedDate = SelectColumnsWShipToDescription@ModifiedDate,",
-						"          ShipToAddressDesscription,",
-						"          CustomerDescription = CompanyName,",
-						"          ModifiedDate = DimCustomer@ModifiedDate,",
-						"          BillToAddressID",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectColumnWCustDescrip",
-						"SelectColumnWCustDescrip, DimAddress lookup(BillToAddressID == AddressID,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> LkpBillToAddressDescr",
-						"LkpBillToAddressDescr select(mapColumn(",
-						"          SalesOrderID,",
-						"          OrderDate,",
-						"          Status,",
-						"          SalesOrderNumber,",
-						"          PurchaseOrderNumber,",
-						"          AccountNumber,",
-						"          ShipMethod,",
-						"          SubTotal,",
-						"          TaxAmt,",
-						"          Freight,",
-						"          TotalDue,",
-						"          ModifiedDate = SelectColumnWCustDescrip@ModifiedDate,",
-						"          ShipToAddressDesscription,",
-						"          BillToAddressDesciption = AddressLine1,",
-						"          CustomerDescription",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectColumnsWBillToDescr",
-						"Upsert sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          SalesOrderID as integer,",
-						"          OrderDate as timestamp,",
-						"          Status as integer,",
-						"          SalesOrderNumber as string,",
-						"          PurchaseOrderNumber as string,",
-						"          AccountNumber as string,",
-						"          CustomerDescription as string,",
-						"          ShipToAddressDescription as string,",
-						"          BillToAddressDesciption as string,",
-						"          ShipMethod as string,",
-						"          SubTotal as decimal(19,4),",
-						"          TaxAmt as decimal(19,4),",
-						"          Freight as decimal(19,4),",
-						"          TotalDue as decimal(19,4),",
-						"          ModifiedDate as timestamp,",
-						"          CreatedDate as timestamp",
-						"     ),",
-						"     deletable:false,",
-						"     insertable:false,",
-						"     updateable:false,",
-						"     upsertable:true,",
-						"     keys:['SalesOrderID'],",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError',",
-						"     mapColumn(",
-						"          SalesOrderID,",
-						"          OrderDate,",
-						"          Status,",
-						"          SalesOrderNumber,",
-						"          PurchaseOrderNumber,",
-						"          AccountNumber,",
-						"          ShipMethod,",
-						"          SubTotal,",
-						"          TaxAmt,",
-						"          Freight,",
-						"          TotalDue,",
-						"          ModifiedDate,",
-						"          ShipToAddressDescription = ShipToAddressDesscription,",
-						"          CustomerDescription,",
-						"          BillToAddressDesciption",
-						"     )) ~> targetSalesOrders"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]",
-				"[concat(variables('factoryId'), '/datasets/DimAddress')]",
-				"[concat(variables('factoryId'), '/datasets/DimCustomer')]",
-				"[concat(variables('factoryId'), '/datasets/target_SalesOrderHeader_wDate')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/df_CaseHeader_Lookups_POC')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -4514,6 +4378,174 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/db2CodeTableItem')]",
 				"[concat(variables('factoryId'), '/datasets/stgCodeTableItem')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_Column_Pattern_Matching_For_Trimming_POC')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Final df POCs"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CaseHeader",
+								"type": "DatasetReference"
+							},
+							"name": "srcCaseHeader"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "CaseHeader",
+								"type": "DatasetReference"
+							},
+							"name": "tgtSimpleTest"
+						}
+					],
+					"transformations": [
+						{
+							"name": "drvTrimStringFields"
+						},
+						{
+							"name": "SelectColumns"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          APPEALINDICATOR as string,",
+						"          CASEID as long,",
+						"          INTEGRATEDCASEID as long,",
+						"          CASEREFERENCE as string,",
+						"          CASETYPECODE as string,",
+						"          CLASSIFICATIONCODE as string,",
+						"          EXPECTEDOUTCOME as long,",
+						"          ACTUALOUTCOME as string,",
+						"          OWNERORGOBJECTLINKID as long,",
+						"          VERSIONNO as integer,",
+						"          LASTWRITTEN as timestamp,",
+						"          INTEGRATEDCASETYPE as string,",
+						"          OBJECTIVECODE as string,",
+						"          OUTCOMECODE as string,",
+						"          PLANID as long,",
+						"          PRIORITYCODE as string,",
+						"          RECEIVEDDATE as date,",
+						"          EFFECTIVEDATE as date,",
+						"          STATUSCODE as string,",
+						"          ENDDATE as date,",
+						"          EXPECTEDENDDATE as date,",
+						"          EXPECTEDSTARTDATE as date,",
+						"          FIRSTREVIEWDATE as date,",
+						"          COMMENTS as string,",
+						"          CONCERNROLEID as long,",
+						"          REGISTRATIONDATE as date,",
+						"          STARTDATE as date,",
+						"          DEFAULTCURRENCYTYPECODE as string,",
+						"          DEFAULTDELIVERYMETHODTYPE as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcCaseHeader",
+						"srcCaseHeader derive(each(match(type=='string'), $$+'_trim' = trim($$))) ~> drvTrimStringFields",
+						"drvTrimStringFields select(mapColumn(",
+						"          APPEALINDICATOR,",
+						"          CASEID,",
+						"          INTEGRATEDCASEID,",
+						"          CASEREFERENCE,",
+						"          CASETYPECODE,",
+						"          CLASSIFICATIONCODE,",
+						"          EXPECTEDOUTCOME,",
+						"          ACTUALOUTCOME,",
+						"          OWNERORGOBJECTLINKID,",
+						"          VERSIONNO,",
+						"          LASTWRITTEN,",
+						"          INTEGRATEDCASETYPE,",
+						"          OBJECTIVECODE,",
+						"          OUTCOMECODE,",
+						"          PLANID,",
+						"          PRIORITYCODE,",
+						"          RECEIVEDDATE,",
+						"          EFFECTIVEDATE,",
+						"          STATUSCODE,",
+						"          ENDDATE,",
+						"          EXPECTEDENDDATE,",
+						"          EXPECTEDSTARTDATE,",
+						"          FIRSTREVIEWDATE,",
+						"          COMMENTS,",
+						"          CONCERNROLEID,",
+						"          REGISTRATIONDATE,",
+						"          STARTDATE,",
+						"          DEFAULTCURRENCYTYPECODE,",
+						"          DEFAULTDELIVERYMETHODTYPE,",
+						"          APPEALINDICATOR_trim,",
+						"          CASEREFERENCE_trim,",
+						"          CASETYPECODE_trim,",
+						"          CLASSIFICATIONCODE_trim,",
+						"          ACTUALOUTCOME_trim,",
+						"          INTEGRATEDCASETYPE_trim,",
+						"          OBJECTIVECODE_trim,",
+						"          OUTCOMECODE_trim,",
+						"          PRIORITYCODE_trim,",
+						"          STATUSCODE_trim,",
+						"          COMMENTS_trim,",
+						"          DEFAULTCURRENCYTYPECODE_trim,",
+						"          DEFAULTDELIVERYMETHODTYPE_trim",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+						"SelectColumns sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          APPEALINDICATOR as string,",
+						"          CASEID as long,",
+						"          INTEGRATEDCASEID as long,",
+						"          CASEREFERENCE as string,",
+						"          CASETYPECODE as string,",
+						"          CLASSIFICATIONCODE as string,",
+						"          EXPECTEDOUTCOME as long,",
+						"          ACTUALOUTCOME as string,",
+						"          OWNERORGOBJECTLINKID as long,",
+						"          VERSIONNO as integer,",
+						"          LASTWRITTEN as timestamp,",
+						"          INTEGRATEDCASETYPE as string,",
+						"          OBJECTIVECODE as string,",
+						"          OUTCOMECODE as string,",
+						"          PLANID as long,",
+						"          PRIORITYCODE as string,",
+						"          RECEIVEDDATE as date,",
+						"          EFFECTIVEDATE as date,",
+						"          STATUSCODE as string,",
+						"          ENDDATE as date,",
+						"          EXPECTEDENDDATE as date,",
+						"          EXPECTEDSTARTDATE as date,",
+						"          FIRSTREVIEWDATE as date,",
+						"          COMMENTS as string,",
+						"          CONCERNROLEID as long,",
+						"          REGISTRATIONDATE as date,",
+						"          STARTDATE as date,",
+						"          DEFAULTCURRENCYTYPECODE as string,",
+						"          DEFAULTDELIVERYMETHODTYPE as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     partitionBy('hash', 1)) ~> tgtSimpleTest"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CaseHeader')]"
 			]
 		},
 		{
@@ -5197,6 +5229,9 @@
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"folder": {
+					"name": "Final df POCs"
+				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
 					"sources": [
@@ -5334,6 +5369,9 @@
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"folder": {
+					"name": "Final df POCs"
+				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
 					"sources": [
@@ -5464,6 +5502,975 @@
 				"[concat(variables('factoryId'), '/datasets/DimCustomerAWDW')]",
 				"[concat(variables('factoryId'), '/datasets/Dummy')]",
 				"[concat(variables('factoryId'), '/datasets/EmailFile')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_Lookup_Template_Case')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Final df POCs"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CodeTables",
+								"type": "DatasetReference"
+							},
+							"name": "vwCodeTables"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Dummy1",
+								"type": "DatasetReference"
+							},
+							"name": "DummyFile"
+						}
+					],
+					"transformations": [
+						{
+							"name": "CaseObjective"
+						},
+						{
+							"name": "CaseStatus"
+						},
+						{
+							"name": "CasePriority"
+						},
+						{
+							"name": "CaseOutcome"
+						},
+						{
+							"name": "CaseClassification"
+						},
+						{
+							"name": "CaseTypeCode"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          TABLENAME as string,",
+						"          CODE as string,",
+						"          DESCRIPTION as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> vwCodeTables",
+						"vwCodeTables filter(TABLENAME=='CaseObjective') ~> CaseObjective",
+						"vwCodeTables filter(TABLENAME=='CaseStatus') ~> CaseStatus",
+						"vwCodeTables filter(TABLENAME=='CasePriority') ~> CasePriority",
+						"vwCodeTables filter(TABLENAME=='CaseOutcome') ~> CaseOutcome",
+						"vwCodeTables filter(TABLENAME=='CaseClassification') ~> CaseClassification",
+						"vwCodeTables filter(TABLENAME=='CaseTypeCode') ~> CaseTypeCode",
+						"CaseObjective sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string",
+						"     ),",
+						"     partitionFileNames:['CaseHeaderPOC'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> DummyFile"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/Dummy1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_Lookup_Template_POC')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Final df POCs"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CodeTables",
+								"type": "DatasetReference"
+							},
+							"name": "vwCodeTables"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ds_Dummy_Lookup",
+								"type": "DatasetReference"
+							},
+							"name": "tgtDummyFile"
+						}
+					],
+					"transformations": [
+						{
+							"name": "ActionPageNameCode"
+						},
+						{
+							"name": "ActivityCategory"
+						},
+						{
+							"name": "AddressCountry"
+						},
+						{
+							"name": "AddressLayoutType"
+						},
+						{
+							"name": "AddressState"
+						},
+						{
+							"name": "AddressType"
+						},
+						{
+							"name": "AddressUSCounty"
+						},
+						{
+							"name": "AdviceParameterType"
+						},
+						{
+							"name": "AESShareSetStatus"
+						},
+						{
+							"name": "AESShareSetType"
+						},
+						{
+							"name": "AllocationStrategyCode"
+						},
+						{
+							"name": "AlternateNameType"
+						},
+						{
+							"name": "ApplicantRole"
+						},
+						{
+							"name": "ApplicantStatus"
+						},
+						{
+							"name": "APPLICATIONCODE"
+						},
+						{
+							"name": "ApplicationCaseStatus"
+						},
+						{
+							"name": "ApplicationChannel"
+						},
+						{
+							"name": "ApplicationFiledByType"
+						},
+						{
+							"name": "ApplicationMethod"
+						},
+						{
+							"name": "ApplicationReassignReason"
+						},
+						{
+							"name": "ApplicationRoleStatus"
+						},
+						{
+							"name": "ApplicationRoleType"
+						},
+						{
+							"name": "ApplicationStatus"
+						},
+						{
+							"name": "ApplicationType"
+						},
+						{
+							"name": "AssessmentDateListType"
+						},
+						{
+							"name": "BranchOfService"
+						},
+						{
+							"name": "CaseAssessmentDetReason"
+						},
+						{
+							"name": "CaseCatTypeCode"
+						},
+						{
+							"name": "CaseClassification"
+						},
+						{
+							"name": "CaseDecisionStatusCode"
+						},
+						{
+							"name": "CaseDeterminationStatus"
+						},
+						{
+							"name": "CaseDeterminationType"
+						},
+						{
+							"name": "CaseDetEvidenceUsed"
+						},
+						{
+							"name": "CaseObjective"
+						},
+						{
+							"name": "CaseOutcome"
+						},
+						{
+							"name": "CaseParticipantRoleType"
+						},
+						{
+							"name": "CasePriority"
+						},
+						{
+							"name": "CaseSnapshoDetReason"
+						},
+						{
+							"name": "CaseStatus"
+						},
+						{
+							"name": "CaseTypeCode"
+						},
+						{
+							"name": "CategoryActionState"
+						},
+						{
+							"name": "CategoryName"
+						},
+						{
+							"name": "CategoryTitle"
+						},
+						{
+							"name": "CIPreferredContact"
+						},
+						{
+							"name": "CIReferralResason"
+						},
+						{
+							"name": "ClassDivisionType"
+						},
+						{
+							"name": "ClientRegistration"
+						},
+						{
+							"name": "CommunicationMethod"
+						},
+						{
+							"name": "CommunicationType"
+						},
+						{
+							"name": "CompanyType"
+						},
+						{
+							"name": "ConcernRoleAlternateID"
+						},
+						{
+							"name": "ConcernRoleStatus"
+						},
+						{
+							"name": "ConcernRoleType"
+						},
+						{
+							"name": "ConstraintType"
+						},
+						{
+							"name": "ContractType"
+						},
+						{
+							"name": "CopayCap"
+						},
+						{
+							"name": "Country"
+						},
+						{
+							"name": "CountyDetailsLinkedType"
+						},
+						{
+							"name": "CoverageEndReason"
+						},
+						{
+							"name": "CoverageType"
+						},
+						{
+							"name": "CreoleValueState"
+						},
+						{
+							"name": "Currency"
+						},
+						{
+							"name": "DADisabilityConditionType"
+						},
+						{
+							"name": "DeterminationCompStrategy"
+						},
+						{
+							"name": "DetIntSummarizerStrategy"
+						},
+						{
+							"name": "DETVersionStatus"
+						},
+						{
+							"name": "EmailType"
+						},
+						{
+							"name": "EthnicOrigin"
+						},
+						{
+							"name": "EvidenceChangeReason"
+						},
+						{
+							"name": "EvidenceDescriptorStatus"
+						},
+						{
+							"name": "EvidenceType"
+						},
+						{
+							"name": "EvMaintenancePattern"
+						},
+						{
+							"name": "ExpectedLengthOfStay"
+						},
+						{
+							"name": "ExpiryDateFrom"
+						},
+						{
+							"name": "FrequencyCode"
+						},
+						{
+							"name": "Gender"
+						},
+						{
+							"name": "GrantorType"
+						},
+						{
+							"name": "IndustryType"
+						},
+						{
+							"name": "IntakeClientType"
+						},
+						{
+							"name": "IntakeProcessDefntnState"
+						},
+						{
+							"name": "IntakeProgApplDenyReason"
+						},
+						{
+							"name": "IntakeProgApplStatus"
+						},
+						{
+							"name": "Language"
+						},
+						{
+							"name": "LevelOfCareType"
+						},
+						{
+							"name": "LiabilityReassessmentType"
+						},
+						{
+							"name": "Locale"
+						},
+						{
+							"name": "LocationStatus"
+						},
+						{
+							"name": "LocationType"
+						},
+						{
+							"name": "MaritalStatus"
+						},
+						{
+							"name": "MedicalInstitutionType"
+						},
+						{
+							"name": "MethodOfApplication"
+						},
+						{
+							"name": "MethodOfDelivery"
+						},
+						{
+							"name": "MilitaryRank"
+						},
+						{
+							"name": "Nationality"
+						},
+						{
+							"name": "OccupationType"
+						},
+						{
+							"name": "OutcomeAchieved"
+						},
+						{
+							"name": "OverUnderPmntProcessing"
+						},
+						{
+							"name": "ParticipantRoleEndReason"
+						},
+						{
+							"name": "PersonTitle"
+						},
+						{
+							"name": "PersonType"
+						},
+						{
+							"name": "PhoneType"
+						},
+						{
+							"name": "PlacedByFiledBy"
+						},
+						{
+							"name": "PlacedByType"
+						},
+						{
+							"name": "POIProgram"
+						},
+						{
+							"name": "PreferredSEMethod"
+						},
+						{
+							"name": "ProductAdminCategory"
+						},
+						{
+							"name": "ProductCategory"
+						},
+						{
+							"name": "ProductCoverPeriod"
+						},
+						{
+							"name": "ProductDeliveryCategory"
+						},
+						{
+							"name": "ProductName"
+						},
+						{
+							"name": "ProductReassessmentStrat"
+						},
+						{
+							"name": "ProductRoundType"
+						},
+						{
+							"name": "ProductType"
+						},
+						{
+							"name": "ProgAppStatusTransReason"
+						},
+						{
+							"name": "ProgGrpDeterminationType"
+						},
+						{
+							"name": "ProgramActionType"
+						},
+						{
+							"name": "ProgramName"
+						},
+						{
+							"name": "ProgramStatus"
+						},
+						{
+							"name": "ProgramStatusReason"
+						},
+						{
+							"name": "ProgramType"
+						},
+						{
+							"name": "ProgRecEligibilityStatus"
+						},
+						{
+							"name": "ProgRecEligibStartDate"
+						},
+						{
+							"name": "ProgRecEvidenceUsed"
+						},
+						{
+							"name": "ProgRecExecutionStatus"
+						},
+						{
+							"name": "PropertyCategory"
+						},
+						{
+							"name": "PropertyType"
+						},
+						{
+							"name": "ProviderCategory"
+						},
+						{
+							"name": "ProviderCategoryEndReason"
+						},
+						{
+							"name": "ProviderStatus"
+						},
+						{
+							"name": "RateCellType"
+						},
+						{
+							"name": "RateColumnType"
+						},
+						{
+							"name": "RateRowType"
+						},
+						{
+							"name": "RateStatus"
+						},
+						{
+							"name": "RateTableType"
+						},
+						{
+							"name": "RecordStatus"
+						},
+						{
+							"name": "ReferralSource"
+						},
+						{
+							"name": "ReimbursementType"
+						},
+						{
+							"name": "RelationshipEndReason"
+						},
+						{
+							"name": "RelationshipTypeCode"
+						},
+						{
+							"name": "RepresentativeType"
+						},
+						{
+							"name": "ReverificationMode"
+						},
+						{
+							"name": "RshipToPolicyholder"
+						},
+						{
+							"name": "SDAssessmentMethod"
+						},
+						{
+							"name": "SDAssessmentReason"
+						},
+						{
+							"name": "SDCalculationRule"
+						},
+						{
+							"name": "SDCREOLECaseDetAction"
+						},
+						{
+							"name": "SDCREOLECaseDetRecStatus"
+						},
+						{
+							"name": "SDCREOLECaseDetStatus"
+						},
+						{
+							"name": "SDIHSCoPayInd"
+						},
+						{
+							"name": "SDMAForcedEligReason"
+						},
+						{
+							"name": "SDMedAidPrgmCatClass"
+						},
+						{
+							"name": "SDPolicyholderRole"
+						},
+						{
+							"name": "SDProdHeirarchyCat"
+						},
+						{
+							"name": "SDRecertificationStatus"
+						},
+						{
+							"name": "SDRegionApplicationType"
+						},
+						{
+							"name": "SDSuspensionReason"
+						},
+						{
+							"name": "SDTribalEnrollmentInd"
+						},
+						{
+							"name": "SDTribeCode"
+						},
+						{
+							"name": "SecretQuestionType"
+						},
+						{
+							"name": "Sensitivity"
+						},
+						{
+							"name": "ServCessReason"
+						},
+						{
+							"name": "ServiceType"
+						},
+						{
+							"name": "SourceOfFund"
+						},
+						{
+							"name": "SpecialInterest"
+						},
+						{
+							"name": "StateCodes"
+						},
+						{
+							"name": "TargetItemType"
+						},
+						{
+							"name": "TaskCategoryCode"
+						},
+						{
+							"name": "TaskChangeType"
+						},
+						{
+							"name": "TaskPriority"
+						},
+						{
+							"name": "TaskStatus"
+						},
+						{
+							"name": "TemplateIDCode"
+						},
+						{
+							"name": "ThirdPartyProductType"
+						},
+						{
+							"name": "TrustCategory"
+						},
+						{
+							"name": "TrusteeType"
+						},
+						{
+							"name": "TrustIncomeType"
+						},
+						{
+							"name": "TrustType"
+						},
+						{
+							"name": "UndueHardshipReason"
+						},
+						{
+							"name": "UnearnedIncomeType"
+						},
+						{
+							"name": "UnearnedRentIncExpType"
+						},
+						{
+							"name": "URATypeAction"
+						},
+						{
+							"name": "UserGrade"
+						},
+						{
+							"name": "UserRecentActionType"
+						},
+						{
+							"name": "UserSearchType"
+						},
+						{
+							"name": "UtahCounties"
+						},
+						{
+							"name": "UtilityExpenseType"
+						},
+						{
+							"name": "UtilityType"
+						},
+						{
+							"name": "VehicleMake"
+						},
+						{
+							"name": "VehicleUsageCode"
+						},
+						{
+							"name": "VerifiableItemName"
+						},
+						{
+							"name": "VerificationCatName"
+						},
+						{
+							"name": "VerificationDueDateFrom"
+						},
+						{
+							"name": "VerificationItemName"
+						},
+						{
+							"name": "VerificationItemType"
+						},
+						{
+							"name": "VerificationItemUsageType"
+						},
+						{
+							"name": "VerificationLevel"
+						},
+						{
+							"name": "VerificationSkippedReason"
+						},
+						{
+							"name": "VerificationStatus"
+						},
+						{
+							"name": "VerificationType"
+						},
+						{
+							"name": "VerReqName"
+						},
+						{
+							"name": "VerReqUsageName"
+						},
+						{
+							"name": "WaiverType"
+						},
+						{
+							"name": "WebAddressType"
+						},
+						{
+							"name": "WorkAllocationFunction"
+						},
+						{
+							"name": "WorkflowDeadlineType"
+						},
+						{
+							"name": "WorkflowHistoryEvent"
+						},
+						{
+							"name": "WorkQueueSubsOrgObjType"
+						},
+						{
+							"name": "XSLTemplateType"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          TABLENAME as string,",
+						"          CODE as string,",
+						"          DESCRIPTION as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> vwCodeTables",
+						"vwCodeTables filter(TABLENAME=='ActionPageNameCode') ~> ActionPageNameCode",
+						"vwCodeTables filter(TABLENAME=='ActivityCategory') ~> ActivityCategory",
+						"vwCodeTables filter(TABLENAME=='AddressCountry') ~> AddressCountry",
+						"vwCodeTables filter(TABLENAME=='AddressLayoutType') ~> AddressLayoutType",
+						"vwCodeTables filter(TABLENAME=='AddressState') ~> AddressState",
+						"vwCodeTables filter(TABLENAME=='AddressType') ~> AddressType",
+						"vwCodeTables filter(TABLENAME=='AddressUSCounty') ~> AddressUSCounty",
+						"vwCodeTables filter(TABLENAME=='AdviceParameterType') ~> AdviceParameterType",
+						"vwCodeTables filter(TABLENAME=='AESShareSetStatus') ~> AESShareSetStatus",
+						"vwCodeTables filter(TABLENAME=='AESShareSetType') ~> AESShareSetType",
+						"vwCodeTables filter(TABLENAME=='AllocationStrategyCode') ~> AllocationStrategyCode",
+						"vwCodeTables filter(TABLENAME=='AlternateNameType') ~> AlternateNameType",
+						"vwCodeTables filter(TABLENAME=='ApplicantRole') ~> ApplicantRole",
+						"vwCodeTables filter(TABLENAME=='ApplicantStatus') ~> ApplicantStatus",
+						"vwCodeTables filter(TABLENAME=='APPLICATION_CODE') ~> APPLICATIONCODE",
+						"vwCodeTables filter(TABLENAME=='ApplicationCaseStatus') ~> ApplicationCaseStatus",
+						"vwCodeTables filter(TABLENAME=='ApplicationChannel') ~> ApplicationChannel",
+						"vwCodeTables filter(TABLENAME=='ApplicationFiledByType') ~> ApplicationFiledByType",
+						"vwCodeTables filter(TABLENAME=='ApplicationMethod') ~> ApplicationMethod",
+						"vwCodeTables filter(TABLENAME=='ApplicationReassignReason') ~> ApplicationReassignReason",
+						"vwCodeTables filter(TABLENAME=='ApplicationRoleStatus') ~> ApplicationRoleStatus",
+						"vwCodeTables filter(TABLENAME=='ApplicationRoleType') ~> ApplicationRoleType",
+						"vwCodeTables filter(TABLENAME=='ApplicationStatus') ~> ApplicationStatus",
+						"vwCodeTables filter(TABLENAME=='ApplicationType') ~> ApplicationType",
+						"vwCodeTables filter(TABLENAME=='AssessmentDateListType') ~> AssessmentDateListType",
+						"vwCodeTables filter(TABLENAME=='BranchOfService') ~> BranchOfService",
+						"vwCodeTables filter(TABLENAME=='CaseAssessmentDetReason') ~> CaseAssessmentDetReason",
+						"vwCodeTables filter(TABLENAME=='CaseCatTypeCode') ~> CaseCatTypeCode",
+						"vwCodeTables filter(TABLENAME=='CaseClassification') ~> CaseClassification",
+						"vwCodeTables filter(TABLENAME=='CaseDecisionStatusCode') ~> CaseDecisionStatusCode",
+						"vwCodeTables filter(TABLENAME=='CaseDeterminationStatus') ~> CaseDeterminationStatus",
+						"vwCodeTables filter(TABLENAME=='CaseDeterminationType') ~> CaseDeterminationType",
+						"vwCodeTables filter(TABLENAME=='CaseDetEvidenceUsed') ~> CaseDetEvidenceUsed",
+						"vwCodeTables filter(TABLENAME=='CaseObjective') ~> CaseObjective",
+						"vwCodeTables filter(TABLENAME=='CaseOutcome') ~> CaseOutcome",
+						"vwCodeTables filter(TABLENAME=='CaseParticipantRoleType') ~> CaseParticipantRoleType",
+						"vwCodeTables filter(TABLENAME=='CasePriority') ~> CasePriority",
+						"vwCodeTables filter(TABLENAME=='CaseSnapshoDetReason') ~> CaseSnapshoDetReason",
+						"vwCodeTables filter(TABLENAME=='CaseStatus') ~> CaseStatus",
+						"vwCodeTables filter(TABLENAME=='CaseTypeCode') ~> CaseTypeCode",
+						"vwCodeTables filter(TABLENAME=='CategoryActionState') ~> CategoryActionState",
+						"vwCodeTables filter(TABLENAME=='CategoryName') ~> CategoryName",
+						"vwCodeTables filter(TABLENAME=='CategoryTitle') ~> CategoryTitle",
+						"vwCodeTables filter(TABLENAME=='CIPreferredContact') ~> CIPreferredContact",
+						"vwCodeTables filter(TABLENAME=='CIReferralResason') ~> CIReferralResason",
+						"vwCodeTables filter(TABLENAME=='ClassDivisionType') ~> ClassDivisionType",
+						"vwCodeTables filter(TABLENAME=='ClientRegistration') ~> ClientRegistration",
+						"vwCodeTables filter(TABLENAME=='CommunicationMethod') ~> CommunicationMethod",
+						"vwCodeTables filter(TABLENAME=='CommunicationType') ~> CommunicationType",
+						"vwCodeTables filter(TABLENAME=='CompanyType') ~> CompanyType",
+						"vwCodeTables filter(TABLENAME=='ConcernRoleAlternateID') ~> ConcernRoleAlternateID",
+						"vwCodeTables filter(TABLENAME=='ConcernRoleStatus') ~> ConcernRoleStatus",
+						"vwCodeTables filter(TABLENAME=='ConcernRoleType') ~> ConcernRoleType",
+						"vwCodeTables filter(TABLENAME=='ConstraintType') ~> ConstraintType",
+						"vwCodeTables filter(TABLENAME=='ContractType') ~> ContractType",
+						"vwCodeTables filter(TABLENAME=='CopayCap') ~> CopayCap",
+						"vwCodeTables filter(TABLENAME=='Country') ~> Country",
+						"vwCodeTables filter(TABLENAME=='CountyDetailsLinkedType') ~> CountyDetailsLinkedType",
+						"vwCodeTables filter(TABLENAME=='CoverageEndReason') ~> CoverageEndReason",
+						"vwCodeTables filter(TABLENAME=='CoverageType') ~> CoverageType",
+						"vwCodeTables filter(TABLENAME=='CreoleValueState') ~> CreoleValueState",
+						"vwCodeTables filter(TABLENAME=='Currency') ~> Currency",
+						"vwCodeTables filter(TABLENAME=='DADisabilityConditionType') ~> DADisabilityConditionType",
+						"vwCodeTables filter(TABLENAME=='DeterminationCompStrategy') ~> DeterminationCompStrategy",
+						"vwCodeTables filter(TABLENAME=='DetIntSummarizerStrategy') ~> DetIntSummarizerStrategy",
+						"vwCodeTables filter(TABLENAME=='DETVersionStatus') ~> DETVersionStatus",
+						"vwCodeTables filter(TABLENAME=='EmailType') ~> EmailType",
+						"vwCodeTables filter(TABLENAME=='EthnicOrigin') ~> EthnicOrigin",
+						"vwCodeTables filter(TABLENAME=='EvidenceChangeReason') ~> EvidenceChangeReason",
+						"vwCodeTables filter(TABLENAME=='EvidenceDescriptorStatus') ~> EvidenceDescriptorStatus",
+						"vwCodeTables filter(TABLENAME=='EvidenceType') ~> EvidenceType",
+						"vwCodeTables filter(TABLENAME=='EvMaintenancePattern') ~> EvMaintenancePattern",
+						"vwCodeTables filter(TABLENAME=='ExpectedLengthOfStay') ~> ExpectedLengthOfStay",
+						"vwCodeTables filter(TABLENAME=='ExpiryDateFrom') ~> ExpiryDateFrom",
+						"vwCodeTables filter(TABLENAME=='FrequencyCode') ~> FrequencyCode",
+						"vwCodeTables filter(TABLENAME=='Gender') ~> Gender",
+						"vwCodeTables filter(TABLENAME=='GrantorType') ~> GrantorType",
+						"vwCodeTables filter(TABLENAME=='IndustryType') ~> IndustryType",
+						"vwCodeTables filter(TABLENAME=='IntakeClientType') ~> IntakeClientType",
+						"vwCodeTables filter(TABLENAME=='IntakeProcessDefntnState') ~> IntakeProcessDefntnState",
+						"vwCodeTables filter(TABLENAME=='IntakeProgApplDenyReason') ~> IntakeProgApplDenyReason",
+						"vwCodeTables filter(TABLENAME=='IntakeProgApplStatus') ~> IntakeProgApplStatus",
+						"vwCodeTables filter(TABLENAME=='Language') ~> Language",
+						"vwCodeTables filter(TABLENAME=='LevelOfCareType') ~> LevelOfCareType",
+						"vwCodeTables filter(TABLENAME=='LiabilityReassessmentType') ~> LiabilityReassessmentType",
+						"vwCodeTables filter(TABLENAME=='Locale') ~> Locale",
+						"vwCodeTables filter(TABLENAME=='LocationStatus') ~> LocationStatus",
+						"vwCodeTables filter(TABLENAME=='LocationType') ~> LocationType",
+						"vwCodeTables filter(TABLENAME=='MaritalStatus') ~> MaritalStatus",
+						"vwCodeTables filter(TABLENAME=='MedicalInstitutionType') ~> MedicalInstitutionType",
+						"vwCodeTables filter(TABLENAME=='MethodOfApplication') ~> MethodOfApplication",
+						"vwCodeTables filter(TABLENAME=='MethodOfDelivery') ~> MethodOfDelivery",
+						"vwCodeTables filter(TABLENAME=='MilitaryRank') ~> MilitaryRank",
+						"vwCodeTables filter(TABLENAME=='Nationality') ~> Nationality",
+						"vwCodeTables filter(TABLENAME=='OccupationType') ~> OccupationType",
+						"vwCodeTables filter(TABLENAME=='OutcomeAchieved') ~> OutcomeAchieved",
+						"vwCodeTables filter(TABLENAME=='OverUnderPmntProcessing') ~> OverUnderPmntProcessing",
+						"vwCodeTables filter(TABLENAME=='ParticipantRoleEndReason') ~> ParticipantRoleEndReason",
+						"vwCodeTables filter(TABLENAME=='PersonTitle') ~> PersonTitle",
+						"vwCodeTables filter(TABLENAME=='PersonType') ~> PersonType",
+						"vwCodeTables filter(TABLENAME=='PhoneType') ~> PhoneType",
+						"vwCodeTables filter(TABLENAME=='PlacedByFiledBy') ~> PlacedByFiledBy",
+						"vwCodeTables filter(TABLENAME=='PlacedByType') ~> PlacedByType",
+						"vwCodeTables filter(TABLENAME=='POIProgram') ~> POIProgram",
+						"vwCodeTables filter(TABLENAME=='PreferredSEMethod') ~> PreferredSEMethod",
+						"vwCodeTables filter(TABLENAME=='ProductAdminCategory') ~> ProductAdminCategory",
+						"vwCodeTables filter(TABLENAME=='ProductCategory') ~> ProductCategory",
+						"vwCodeTables filter(TABLENAME=='ProductCoverPeriod') ~> ProductCoverPeriod",
+						"vwCodeTables filter(TABLENAME=='ProductDeliveryCategory') ~> ProductDeliveryCategory",
+						"vwCodeTables filter(TABLENAME=='ProductName') ~> ProductName",
+						"vwCodeTables filter(TABLENAME=='ProductReassessmentStrat') ~> ProductReassessmentStrat",
+						"vwCodeTables filter(TABLENAME=='ProductRoundType') ~> ProductRoundType",
+						"vwCodeTables filter(TABLENAME=='ProductType') ~> ProductType",
+						"vwCodeTables filter(TABLENAME=='ProgAppStatusTransReason') ~> ProgAppStatusTransReason",
+						"vwCodeTables filter(TABLENAME=='ProgGrpDeterminationType') ~> ProgGrpDeterminationType",
+						"vwCodeTables filter(TABLENAME=='ProgramActionType') ~> ProgramActionType",
+						"vwCodeTables filter(TABLENAME=='ProgramName') ~> ProgramName",
+						"vwCodeTables filter(TABLENAME=='ProgramStatus') ~> ProgramStatus",
+						"vwCodeTables filter(TABLENAME=='ProgramStatusReason') ~> ProgramStatusReason",
+						"vwCodeTables filter(TABLENAME=='ProgramType') ~> ProgramType",
+						"vwCodeTables filter(TABLENAME=='ProgRecEligibilityStatus') ~> ProgRecEligibilityStatus",
+						"vwCodeTables filter(TABLENAME=='ProgRecEligibStartDate') ~> ProgRecEligibStartDate",
+						"vwCodeTables filter(TABLENAME=='ProgRecEvidenceUsed') ~> ProgRecEvidenceUsed",
+						"vwCodeTables filter(TABLENAME=='ProgRecExecutionStatus') ~> ProgRecExecutionStatus",
+						"vwCodeTables filter(TABLENAME=='PropertyCategory') ~> PropertyCategory",
+						"vwCodeTables filter(TABLENAME=='PropertyType') ~> PropertyType",
+						"vwCodeTables filter(TABLENAME=='ProviderCategory') ~> ProviderCategory",
+						"vwCodeTables filter(TABLENAME=='ProviderCategoryEndReason') ~> ProviderCategoryEndReason",
+						"vwCodeTables filter(TABLENAME=='ProviderStatus') ~> ProviderStatus",
+						"vwCodeTables filter(TABLENAME=='RateCellType') ~> RateCellType",
+						"vwCodeTables filter(TABLENAME=='RateColumnType') ~> RateColumnType",
+						"vwCodeTables filter(TABLENAME=='RateRowType') ~> RateRowType",
+						"vwCodeTables filter(TABLENAME=='RateStatus') ~> RateStatus",
+						"vwCodeTables filter(TABLENAME=='RateTableType') ~> RateTableType",
+						"vwCodeTables filter(TABLENAME=='RecordStatus') ~> RecordStatus",
+						"vwCodeTables filter(TABLENAME=='ReferralSource') ~> ReferralSource",
+						"vwCodeTables filter(TABLENAME=='ReimbursementType') ~> ReimbursementType",
+						"vwCodeTables filter(TABLENAME=='RelationshipEndReason') ~> RelationshipEndReason",
+						"vwCodeTables filter(TABLENAME=='RelationshipTypeCode') ~> RelationshipTypeCode",
+						"vwCodeTables filter(TABLENAME=='RepresentativeType') ~> RepresentativeType",
+						"vwCodeTables filter(TABLENAME=='ReverificationMode') ~> ReverificationMode",
+						"vwCodeTables filter(TABLENAME=='RshipToPolicyholder') ~> RshipToPolicyholder",
+						"vwCodeTables filter(TABLENAME=='SDAssessmentMethod') ~> SDAssessmentMethod",
+						"vwCodeTables filter(TABLENAME=='SDAssessmentReason') ~> SDAssessmentReason",
+						"vwCodeTables filter(TABLENAME=='SDCalculationRule') ~> SDCalculationRule",
+						"vwCodeTables filter(TABLENAME=='SDCREOLECaseDetAction') ~> SDCREOLECaseDetAction",
+						"vwCodeTables filter(TABLENAME=='SDCREOLECaseDetRecStatus') ~> SDCREOLECaseDetRecStatus",
+						"vwCodeTables filter(TABLENAME=='SDCREOLECaseDetStatus') ~> SDCREOLECaseDetStatus",
+						"vwCodeTables filter(TABLENAME=='SDIHSCoPayInd') ~> SDIHSCoPayInd",
+						"vwCodeTables filter(TABLENAME=='SDMAForcedEligReason') ~> SDMAForcedEligReason",
+						"vwCodeTables filter(TABLENAME=='SDMedAidPrgmCatClass') ~> SDMedAidPrgmCatClass",
+						"vwCodeTables filter(TABLENAME=='SDPolicyholderRole') ~> SDPolicyholderRole",
+						"vwCodeTables filter(TABLENAME=='SDProdHeirarchyCat') ~> SDProdHeirarchyCat",
+						"vwCodeTables filter(TABLENAME=='SDRecertificationStatus') ~> SDRecertificationStatus",
+						"vwCodeTables filter(TABLENAME=='SDRegionApplicationType') ~> SDRegionApplicationType",
+						"vwCodeTables filter(TABLENAME=='SDSuspensionReason') ~> SDSuspensionReason",
+						"vwCodeTables filter(TABLENAME=='SDTribalEnrollmentInd') ~> SDTribalEnrollmentInd",
+						"vwCodeTables filter(TABLENAME=='SDTribeCode') ~> SDTribeCode",
+						"vwCodeTables filter(TABLENAME=='SecretQuestionType') ~> SecretQuestionType",
+						"vwCodeTables filter(TABLENAME=='Sensitivity') ~> Sensitivity",
+						"vwCodeTables filter(TABLENAME=='ServCessReason') ~> ServCessReason",
+						"vwCodeTables filter(TABLENAME=='ServiceType') ~> ServiceType",
+						"vwCodeTables filter(TABLENAME=='SourceOfFund') ~> SourceOfFund",
+						"vwCodeTables filter(TABLENAME=='SpecialInterest') ~> SpecialInterest",
+						"vwCodeTables filter(TABLENAME=='StateCodes') ~> StateCodes",
+						"vwCodeTables filter(TABLENAME=='TargetItemType') ~> TargetItemType",
+						"vwCodeTables filter(TABLENAME=='TaskCategoryCode') ~> TaskCategoryCode",
+						"vwCodeTables filter(TABLENAME=='TaskChangeType') ~> TaskChangeType",
+						"vwCodeTables filter(TABLENAME=='TaskPriority') ~> TaskPriority",
+						"vwCodeTables filter(TABLENAME=='TaskStatus') ~> TaskStatus",
+						"vwCodeTables filter(TABLENAME=='TemplateIDCode') ~> TemplateIDCode",
+						"vwCodeTables filter(TABLENAME=='ThirdPartyProductType') ~> ThirdPartyProductType",
+						"vwCodeTables filter(TABLENAME=='TrustCategory') ~> TrustCategory",
+						"vwCodeTables filter(TABLENAME=='TrusteeType') ~> TrusteeType",
+						"vwCodeTables filter(TABLENAME=='TrustIncomeType') ~> TrustIncomeType",
+						"vwCodeTables filter(TABLENAME=='TrustType') ~> TrustType",
+						"vwCodeTables filter(TABLENAME=='UndueHardshipReason') ~> UndueHardshipReason",
+						"vwCodeTables filter(TABLENAME=='UnearnedIncomeType') ~> UnearnedIncomeType",
+						"vwCodeTables filter(TABLENAME=='UnearnedRentIncExpType') ~> UnearnedRentIncExpType",
+						"vwCodeTables filter(TABLENAME=='URATypeAction') ~> URATypeAction",
+						"vwCodeTables filter(TABLENAME=='UserGrade') ~> UserGrade",
+						"vwCodeTables filter(TABLENAME=='UserRecentActionType') ~> UserRecentActionType",
+						"vwCodeTables filter(TABLENAME=='UserSearchType') ~> UserSearchType",
+						"vwCodeTables filter(TABLENAME=='UtahCounties') ~> UtahCounties",
+						"vwCodeTables filter(TABLENAME=='UtilityExpenseType') ~> UtilityExpenseType",
+						"vwCodeTables filter(TABLENAME=='UtilityType') ~> UtilityType",
+						"vwCodeTables filter(TABLENAME=='VehicleMake') ~> VehicleMake",
+						"vwCodeTables filter(TABLENAME=='VehicleUsageCode') ~> VehicleUsageCode",
+						"vwCodeTables filter(TABLENAME=='VerifiableItemName') ~> VerifiableItemName",
+						"vwCodeTables filter(TABLENAME=='VerificationCatName') ~> VerificationCatName",
+						"vwCodeTables filter(TABLENAME=='VerificationDueDateFrom') ~> VerificationDueDateFrom",
+						"vwCodeTables filter(TABLENAME=='VerificationItemName') ~> VerificationItemName",
+						"vwCodeTables filter(TABLENAME=='VerificationItemType') ~> VerificationItemType",
+						"vwCodeTables filter(TABLENAME=='VerificationItemUsageType') ~> VerificationItemUsageType",
+						"vwCodeTables filter(TABLENAME=='VerificationLevel') ~> VerificationLevel",
+						"vwCodeTables filter(TABLENAME=='VerificationSkippedReason') ~> VerificationSkippedReason",
+						"vwCodeTables filter(TABLENAME=='VerificationStatus') ~> VerificationStatus",
+						"vwCodeTables filter(TABLENAME=='VerificationType') ~> VerificationType",
+						"vwCodeTables filter(TABLENAME=='VerReqName') ~> VerReqName",
+						"vwCodeTables filter(TABLENAME=='VerReqUsageName') ~> VerReqUsageName",
+						"vwCodeTables filter(TABLENAME=='WaiverType') ~> WaiverType",
+						"vwCodeTables filter(TABLENAME=='WebAddressType') ~> WebAddressType",
+						"vwCodeTables filter(TABLENAME=='WorkAllocationFunction') ~> WorkAllocationFunction",
+						"vwCodeTables filter(TABLENAME=='WorkflowDeadlineType') ~> WorkflowDeadlineType",
+						"vwCodeTables filter(TABLENAME=='WorkflowHistoryEvent') ~> WorkflowHistoryEvent",
+						"vwCodeTables filter(TABLENAME=='WorkQueueSubsOrgObjType') ~> WorkQueueSubsOrgObjType",
+						"vwCodeTables filter(TABLENAME=='XSLTemplateType') ~> XSLTemplateType",
+						"ActionPageNameCode sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> tgtDummyFile"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/ds_Dummy_Lookup')]"
 			]
 		},
 		{
@@ -6129,6 +7136,95 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/df_Simple_Error_Handling_POC')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Final df POCs"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DimAddress",
+								"type": "DatasetReference"
+							},
+							"name": "srcAddress"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "rowswritten",
+								"type": "DatasetReference"
+							},
+							"name": "tgtErrors"
+						},
+						{
+							"dataset": {
+								"referenceName": "rowswritten",
+								"type": "DatasetReference"
+							},
+							"name": "tgtValidRows"
+						}
+					],
+					"transformations": [
+						{
+							"name": "AssertCityBothell"
+						},
+						{
+							"name": "drvErrorColumns"
+						},
+						{
+							"name": "split1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          AddressID as integer,",
+						"          AddressLine1 as string,",
+						"          AddressLine2 as string,",
+						"          City as string,",
+						"          StateProvince as string,",
+						"          CountryRegion as string,",
+						"          PostalCode as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcAddress",
+						"srcAddress assert(expectTrue(City=='Bothell', false, 'assertIsBothell', null, 'City is  not Bothell')) ~> AssertCityBothell",
+						"AssertCityBothell derive(TotalErrors = assertErrorMessages(),",
+						"          CityError = at(assertErrorMessages(),'assertIsBothell')) ~> drvErrorColumns",
+						"drvErrorColumns split(hasError('assertIsBothell'),",
+						"     disjoint: false) ~> split1@(InvalidRecords, ValidRows)",
+						"split1@InvalidRecords sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['Error.txt'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     outputAssertFailedRows: true,",
+						"     assertFailure_container: 'newcontainer',",
+						"     partitionBy('hash', 1)) ~> tgtErrors",
+						"split1@ValidRows sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['ValidRows.txt'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtValidRows"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DimAddress')]",
+				"[concat(variables('factoryId'), '/datasets/rowswritten')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/df_StagePlaceHolder')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -6199,86 +7295,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]",
 				"[concat(variables('factoryId'), '/datasets/Dummy')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_FixedWidth_Email_SFTP_Server')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "df_Fixed_Width_Test",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:05:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_Fixed_Width_Test",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"srcDimCustomer": {},
-									"tgtEmailFile": {},
-									"tgtSFTPServer": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "SendEmailWithAttachment",
-						"type": "WebActivity",
-						"dependsOn": [
-							{
-								"activity": "df_Fixed_Width_Test",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.00:05:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://rpsendemails.azurewebsites.net:443/api/SendEmailsAttachment/triggers/manual/invoke?api-version=2022-05-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=utmn1rr58YwpbXvNns-CAvWjbj_KDQkfOtnJxcux8k4",
-							"method": "POST",
-							"headers": {},
-							"body": {
-								"value": "{\n \"title\":   \"@{pipeline().Pipeline} Succeeded!\",\n\"message\": \"Pipeline run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"pipeline().Pipeline\",\n    \"pipelineRunId\": \"pipeline().RunId\",\n     \"time\": \"@{utcnow()}\"\n\n\n}",
-								"type": "Expression"
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Final POCs"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_Fixed_Width_Test')]"
 			]
 		}
 	]
