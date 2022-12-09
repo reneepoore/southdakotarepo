@@ -1,0 +1,123 @@
+{
+	"name": "Location",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "LOCATIONID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "ADDRESSID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "DESCRIPTION",
+				"type": "varchar"
+			},
+			{
+				"name": "STATUSCODE",
+				"type": "char"
+			},
+			{
+				"name": "LOCATIONSTATUS",
+				"type": "char"
+			},
+			{
+				"name": "CREATIONDATE",
+				"type": "date"
+			},
+			{
+				"name": "LOCATIONTYPE",
+				"type": "char"
+			},
+			{
+				"name": "PARENTLOCATIONID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ORGANISATIONID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ADDRESSCOMMENTS",
+				"type": "varchar"
+			},
+			{
+				"name": "CREATELOCATIONSID",
+				"type": "varchar"
+			},
+			{
+				"name": "MAINTAINSID",
+				"type": "varchar"
+			},
+			{
+				"name": "READSID",
+				"type": "varchar"
+			},
+			{
+				"name": "LOCATIONSTRUCTUREID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "PUBLICOFFICEINDICATOR",
+				"type": "char"
+			},
+			{
+				"name": "PHONENUMBERID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FAXNUMBERID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "EMAILADDRESSID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ROOTLOCATIONINDICATOR",
+				"type": "char"
+			},
+			{
+				"name": "UPPERNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "VERSIONNO",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LASTWRITTEN",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "LOCATION"
+		}
+	}
+}

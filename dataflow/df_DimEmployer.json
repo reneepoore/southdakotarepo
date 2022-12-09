@@ -24,6 +24,20 @@
 						"type": "DatasetReference"
 					},
 					"name": "srcAddress"
+				},
+				{
+					"dataset": {
+						"referenceName": "Location",
+						"type": "DatasetReference"
+					},
+					"name": "srcLocation"
+				},
+				{
+					"dataset": {
+						"referenceName": "SDRegion",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
 				}
 			],
 			"sinks": [
@@ -59,6 +73,12 @@
 				},
 				{
 					"name": "select1"
+				},
+				{
+					"name": "srcSDRegion"
+				},
+				{
+					"name": "select2"
 				}
 			],
 			"scriptLines": [
@@ -135,6 +155,46 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcAddress",
+				"source(output(",
+				"          LOCATIONID as long,",
+				"          NAME as string,",
+				"          ADDRESSID as long,",
+				"          DESCRIPTION as string,",
+				"          STATUSCODE as string,",
+				"          LOCATIONSTATUS as string,",
+				"          CREATIONDATE as date,",
+				"          LOCATIONTYPE as string,",
+				"          PARENTLOCATIONID as long,",
+				"          ORGANISATIONID as long,",
+				"          ADDRESSCOMMENTS as string,",
+				"          CREATELOCATIONSID as string,",
+				"          MAINTAINSID as string,",
+				"          READSID as string,",
+				"          LOCATIONSTRUCTUREID as long,",
+				"          PUBLICOFFICEINDICATOR as string,",
+				"          PHONENUMBERID as long,",
+				"          FAXNUMBERID as long,",
+				"          EMAILADDRESSID as long,",
+				"          ROOTLOCATIONINDICATOR as string,",
+				"          UPPERNAME as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcLocation",
+				"source(output(",
+				"          SDREGIONID as long,",
+				"          SDLOCATIONID as long,",
+				"          SDREGIONNAME as string,",
+				"          SDAPPLICATIONTYPE as string,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
 				"srcEmployer select(mapColumn(",
 				"          CONCERNROLEID,",
 				"          COMPANYTYPE,",
@@ -196,6 +256,17 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
+				"srcLocation, source1 lookup(LOCATIONID == SDLOCATIONID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> srcSDRegion",
+				"srcSDRegion select(mapColumn(",
+				"          NAME,",
+				"          ADDRESSID,",
+				"          SDREGIONNAME",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",

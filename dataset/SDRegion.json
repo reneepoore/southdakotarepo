@@ -1,0 +1,41 @@
+{
+	"name": "SDRegion",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SDREGIONID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SDLOCATIONID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SDREGIONNAME",
+				"type": "char"
+			},
+			{
+				"name": "SDAPPLICATIONTYPE",
+				"type": "char"
+			},
+			{
+				"name": "LASTWRITTEN",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "SDREGION"
+		}
+	}
+}
