@@ -9,7 +9,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "db2CodeTableItem",
+						"referenceName": "CodeTableItem",
 						"type": "DatasetReference"
 					},
 					"name": "RptDB"
