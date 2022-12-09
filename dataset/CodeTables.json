@@ -25,8 +25,8 @@
 			}
 		],
 		"typeProperties": {
-			"schema": "dbo",
-			"table": "vw_CODETABLES"
+			"schema": "CURAPD01",
+			"table": "CODETABLEITEM"
 		}
 	}
 }
