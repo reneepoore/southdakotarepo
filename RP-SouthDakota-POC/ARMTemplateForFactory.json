@@ -1437,11 +1437,11 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "df_CodeTableItem",
+						"name": "df_DimTask",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
-							"timeout": "0.00:05:00",
+							"timeout": "0.00:15:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -1450,12 +1450,15 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_CodeTableItem",
+								"referenceName": "df_DimTask",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"RptDB": {},
-									"StgDB": {}
+									"vwCodeTables": {},
+									"srcTask": {},
+									"srcTaskDefinition": {},
+									"srcTaskAssignment": {},
+									"trgDimTask": {}
 								}
 							},
 							"staging": {},
@@ -1477,7 +1480,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_CodeTableItem')]"
+				"[concat(variables('factoryId'), '/dataflows/df_DimTask')]"
 			]
 		},
 		{
@@ -1798,6 +1801,30 @@
 				"typeProperties": {
 					"schema": "CURAPD01",
 					"table": "CASEHEADER"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CodeTableItem')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "DB2"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "CODETABLEITEM"
 				}
 			},
 			"dependsOn": [
@@ -2447,6 +2474,54 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DimensionTargetTesting')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Staging"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "newcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Dummy')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2622,6 +2697,316 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Task')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Task Table",
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "APPEALINDICATOR",
+						"type": "char"
+					},
+					{
+						"name": "CASEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "INTEGRATEDCASEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CASEREFERENCE",
+						"type": "char"
+					},
+					{
+						"name": "CASETYPECODE",
+						"type": "char"
+					},
+					{
+						"name": "CLASSIFICATIONCODE",
+						"type": "char"
+					},
+					{
+						"name": "EXPECTEDOUTCOME",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ACTUALOUTCOME",
+						"type": "char"
+					},
+					{
+						"name": "OWNERORGOBJECTLINKID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "INTEGRATEDCASETYPE",
+						"type": "char"
+					},
+					{
+						"name": "OBJECTIVECODE",
+						"type": "char"
+					},
+					{
+						"name": "OUTCOMECODE",
+						"type": "char"
+					},
+					{
+						"name": "PLANID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "PRIORITYCODE",
+						"type": "char"
+					},
+					{
+						"name": "RECEIVEDDATE",
+						"type": "date"
+					},
+					{
+						"name": "EFFECTIVEDATE",
+						"type": "date"
+					},
+					{
+						"name": "STATUSCODE",
+						"type": "char"
+					},
+					{
+						"name": "ENDDATE",
+						"type": "date"
+					},
+					{
+						"name": "EXPECTEDENDDATE",
+						"type": "date"
+					},
+					{
+						"name": "EXPECTEDSTARTDATE",
+						"type": "date"
+					},
+					{
+						"name": "FIRSTREVIEWDATE",
+						"type": "date"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "CONCERNROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "REGISTRATIONDATE",
+						"type": "date"
+					},
+					{
+						"name": "STARTDATE",
+						"type": "date"
+					},
+					{
+						"name": "DEFAULTCURRENCYTYPECODE",
+						"type": "char"
+					},
+					{
+						"name": "DEFAULTDELIVERYMETHODTYPE",
+						"type": "char"
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "TASK"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TaskAssignment')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Task Assignment",
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "TASKASSIGNMENTID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "TASKID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ASSIGNEETYPE",
+						"type": "char"
+					},
+					{
+						"name": "RELATEDID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "RELATEDNAME",
+						"type": "varchar"
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "TASKASSIGNMENT"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TaskDefinition')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Task Definition",
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "TASKDEFINITIONID",
+						"type": "varchar"
+					},
+					{
+						"name": "NAME",
+						"type": "char"
+					},
+					{
+						"name": "CATEGORYCODE",
+						"type": "char"
+					},
+					{
+						"name": "ALLOCATIONSTRATEGYCODE",
+						"type": "char"
+					},
+					{
+						"name": "ALLOCATIONITEMID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "WORKALLOCATIONRULESETID",
+						"type": "char"
+					},
+					{
+						"name": "DEADLINEFUNCTIONID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "DEADLINETIMEOUTINTERVAL",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ALLOWFORWARDIND",
+						"type": "char"
+					},
+					{
+						"name": "ACTIONPAGENAME",
+						"type": "varchar"
+					},
+					{
+						"name": "CASEIDPARAMETERNAME",
+						"type": "char"
+					},
+					{
+						"name": "PARTICIPANTIDPARAMETERNAME",
+						"type": "char"
+					},
+					{
+						"name": "ADMINISTRATIONSID",
+						"type": "varchar"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "ACTIONPAGENAMECODE",
+						"type": "char"
+					},
+					{
+						"name": "DEADLINETIMEOVERRIDEIND",
+						"type": "char"
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "TASKDEFINITION"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/TestDataForEmployee')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2702,30 +3087,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/db2CodeTableItem')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CURAPD01",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "DB2"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "CURAPD01",
-					"table": "CODETABLEITEM"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
 			]
 		},
 		{
@@ -3162,6 +3523,9 @@
 				"linkedServiceName": {
 					"referenceName": "AzureBlobStorage1",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Testing"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -4315,7 +4679,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "db2CodeTableItem",
+								"referenceName": "CodeTableItem",
 								"type": "DatasetReference"
 							},
 							"name": "RptDB"
@@ -4376,7 +4740,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/db2CodeTableItem')]",
+				"[concat(variables('factoryId'), '/datasets/CodeTableItem')]",
 				"[concat(variables('factoryId'), '/datasets/stgCodeTableItem')]"
 			]
 		},
@@ -4619,6 +4983,326 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]",
 				"[concat(variables('factoryId'), '/datasets/Dummy')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_DimTask')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Final df POCs"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CodeTables",
+								"type": "DatasetReference"
+							},
+							"name": "vwCodeTables"
+						},
+						{
+							"dataset": {
+								"referenceName": "Task",
+								"type": "DatasetReference"
+							},
+							"name": "srcTask"
+						},
+						{
+							"dataset": {
+								"referenceName": "TaskDefinition",
+								"type": "DatasetReference"
+							},
+							"name": "srcTaskDefinition"
+						},
+						{
+							"dataset": {
+								"referenceName": "TaskAssignment",
+								"type": "DatasetReference"
+							},
+							"name": "srcTaskAssignment"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DimensionTargetTesting",
+								"type": "DatasetReference"
+							},
+							"name": "trgDimTask"
+						}
+					],
+					"transformations": [
+						{
+							"name": "TargetItemType"
+						},
+						{
+							"name": "TaskCategoryCode"
+						},
+						{
+							"name": "TaskChangeType"
+						},
+						{
+							"name": "TaskPriority"
+						},
+						{
+							"name": "TaskStatus"
+						},
+						{
+							"name": "SelectColumns"
+						},
+						{
+							"name": "drvTrimStringFields"
+						},
+						{
+							"name": "LookupStatus",
+							"description": "Lookup Status Code"
+						},
+						{
+							"name": "LookupPriority"
+						},
+						{
+							"name": "SelectStatus"
+						},
+						{
+							"name": "SelectPriority"
+						},
+						{
+							"name": "LookupCategory"
+						},
+						{
+							"name": "SelectCategory"
+						},
+						{
+							"name": "LookupAssignment"
+						},
+						{
+							"name": "SelectAssignment"
+						},
+						{
+							"name": "LookupTaskAllocation"
+						},
+						{
+							"name": "SelectTaskAllocation"
+						},
+						{
+							"name": "drvNullValues"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          TABLENAME as string,",
+						"          CODE as string,",
+						"          DESCRIPTION as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> vwCodeTables",
+						"source(output(",
+						"          TASKID as long,",
+						"          WDOSNAPSHOT as string,",
+						"          CREATIONTIME as timestamp,",
+						"          ASSIGNEDDATETIME as timestamp,",
+						"          TOTALTIMEWORKED as integer,",
+						"          RESTARTTIME as timestamp,",
+						"          RESERVEDBY as string,",
+						"          STATUS as string,",
+						"          PRIORITY as string,",
+						"          CATEGORY as string,",
+						"          DEADTIMEOVERIND as string,",
+						"          ALLOWFORWARDIND as string,",
+						"          ADMINISTRATIONSID as string,",
+						"          OVERFLOWIND as string,",
+						"          VERSIONNO as integer,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcTask",
+						"source(output(",
+						"          TASKDEFINITIONID as string,",
+						"          NAME as string,",
+						"          CATEGORYCODE as string,",
+						"          ALLOCATIONSTRATEGYCODE as string,",
+						"          ALLOCATIONITEMID as long,",
+						"          WORKALLOCATIONRULESETID as string,",
+						"          DEADLINEFUNCTIONID as long,",
+						"          DEADLINETIMEOUTINTERVAL as long,",
+						"          ALLOWFORWARDIND as string,",
+						"          ACTIONPAGENAME as string,",
+						"          CASEIDPARAMETERNAME as string,",
+						"          PARTICIPANTIDPARAMETERNAME as string,",
+						"          ADMINISTRATIONSID as string,",
+						"          COMMENTS as string,",
+						"          ACTIONPAGENAMECODE as string,",
+						"          DEADLINETIMEOVERRIDEIND as string,",
+						"          VERSIONNO as integer,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcTaskDefinition",
+						"source(output(",
+						"          TASKASSIGNMENTID as long,",
+						"          TASKID as long,",
+						"          ASSIGNEETYPE as string,",
+						"          RELATEDID as long,",
+						"          RELATEDNAME as string,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcTaskAssignment",
+						"vwCodeTables filter(TABLENAME=='TargetItemType') ~> TargetItemType",
+						"vwCodeTables filter(TABLENAME=='TaskCategoryCode') ~> TaskCategoryCode",
+						"vwCodeTables filter(TABLENAME=='TaskChangeType') ~> TaskChangeType",
+						"vwCodeTables filter(TABLENAME=='TaskPriority') ~> TaskPriority",
+						"vwCodeTables filter(TABLENAME=='TaskStatus') ~> TaskStatus",
+						"srcTask select(mapColumn(",
+						"          TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          STATUS,",
+						"          PRIORITY,",
+						"          CATEGORY,",
+						"          LASTWRITTEN",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+						"SelectColumns derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimStringFields",
+						"drvTrimStringFields, TaskStatus lookup(STATUS_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupStatus",
+						"SelectStatus, TaskPriority lookup(PRIORITY_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupPriority",
+						"LookupStatus select(mapColumn(",
+						"          TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          STATUS,",
+						"          PRIORITY,",
+						"          CATEGORY,",
+						"          LASTWRITTEN,",
+						"          STATUS_Trim,",
+						"          PRIORITY_Trim,",
+						"          CATEGORY_Trim,",
+						"          StatusDescription = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectStatus",
+						"LookupPriority select(mapColumn(",
+						"          TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          STATUS,",
+						"          PRIORITY,",
+						"          CATEGORY,",
+						"          LASTWRITTEN,",
+						"          STATUS_Trim,",
+						"          PRIORITY_Trim,",
+						"          CATEGORY_Trim,",
+						"          StatusDescription,",
+						"          PriorityDescription = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectPriority",
+						"SelectPriority, TaskCategoryCode lookup(CATEGORY_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupCategory",
+						"LookupCategory select(mapColumn(",
+						"          TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          STATUS,",
+						"          PRIORITY,",
+						"          CATEGORY,",
+						"          LASTWRITTEN,",
+						"          STATUS_Trim,",
+						"          PRIORITY_Trim,",
+						"          CATEGORY_Trim,",
+						"          StatusDescription,",
+						"          PriorityDescription,",
+						"          CategoryDescription = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectCategory",
+						"SelectCategory, srcTaskAssignment lookup(SelectCategory@TASKID == srcTaskAssignment@TASKID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupAssignment",
+						"LookupAssignment select(mapColumn(",
+						"          TASKID = SelectCategory@TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          STATUS,",
+						"          PRIORITY,",
+						"          CATEGORY,",
+						"          LASTWRITTEN = SelectCategory@LASTWRITTEN,",
+						"          STATUS_Trim,",
+						"          PRIORITY_Trim,",
+						"          CATEGORY_Trim,",
+						"          StatusDescription,",
+						"          PriorityDescription,",
+						"          CategoryDescription,",
+						"          ASSIGNEETYPE",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectAssignment",
+						"SelectAssignment, TargetItemType lookup(trim(ASSIGNEETYPE) == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupTaskAllocation",
+						"LookupTaskAllocation select(mapColumn(",
+						"          TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          LASTWRITTEN,",
+						"          StatusDescription,",
+						"          PriorityDescription,",
+						"          CategoryDescription,",
+						"          TaskAllocationTargetDescription = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectTaskAllocation",
+						"SelectTaskAllocation derive(StatusDescription = iifNull(StatusDescription, 'NA'),",
+						"          PriorityDescription = iifNull(PriorityDescription, 'NA'),",
+						"          CategoryDescription = iifNull(CategoryDescription, 'NA'),",
+						"          TaskAllocationTargetDescription = iifNull(TaskAllocationTargetDescription, 'NA'),",
+						"          ModifiedDate = currentUTC(),",
+						"          each(match(regexMatch(name,'Description')), $$+'_null' = iifNull($$,'na'))) ~> drvNullValues",
+						"drvNullValues sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     partitionFileNames:['DimTask'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> trgDimTask"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/Task')]",
+				"[concat(variables('factoryId'), '/datasets/TaskDefinition')]",
+				"[concat(variables('factoryId'), '/datasets/TaskAssignment')]",
+				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
 			]
 		},
 		{

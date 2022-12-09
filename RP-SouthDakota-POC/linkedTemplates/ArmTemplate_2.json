@@ -13,6 +13,329 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/stgDynamicTarget')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "TargetSandbox",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Schema": {
+						"type": "string"
+					},
+					"TableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Staging"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().Schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().TableName",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/stgSourceEmployee')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AdventureWorksDW",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "FirstName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MiddleName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Title",
+						"type": "nvarchar"
+					},
+					{
+						"name": "HireDate",
+						"type": "date"
+					},
+					{
+						"name": "BirthDate",
+						"type": "date"
+					},
+					{
+						"name": "Phone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MaritalStatus",
+						"type": "nchar"
+					},
+					{
+						"name": "EmergencyContactName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EmergencyContactPhone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SalariedFlag",
+						"type": "bit"
+					},
+					{
+						"name": "Gender",
+						"type": "nchar"
+					},
+					{
+						"name": "DepartmentName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "StartDate",
+						"type": "date"
+					},
+					{
+						"name": "EndDate",
+						"type": "date"
+					},
+					{
+						"name": "Status",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "stgSourceEmployee"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/targetSalesOrderHeader')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AdventureWorksLT2019",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Fact"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "SalesOrderID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "OrderDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Status",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "SalesOrderNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PurchaseOrderNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AccountNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CustomerDescription",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ShipToAddressDescription",
+						"type": "nvarchar"
+					},
+					{
+						"name": "BillToAddressDesciption",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ShipMethod",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SubTotal",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "TaxAmt",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "Freight",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "TotalDue",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "SalesLT",
+					"table": "target_SalesOrderHeader"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/target_SalesOrderHeader')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AdventureWorksLT2019",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Testing"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "SalesOrderID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "OrderDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Status",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "SalesOrderNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PurchaseOrderNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AccountNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CustomerDescription",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ShipToAddressDescription",
+						"type": "nvarchar"
+					},
+					{
+						"name": "BillToAddressDesciption",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ShipMethod",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SubTotal",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "TaxAmt",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "Freight",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "TotalDue",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "CreatedDate",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "SalesLT",
+					"table": "target_SalesOrderHeader"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/target_SalesOrderHeader_wDate')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -490,7 +813,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "db2CodeTableItem",
+								"referenceName": "CodeTableItem",
 								"type": "DatasetReference"
 							},
 							"name": "RptDB"
@@ -789,6 +1112,320 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/df_DimTask')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Final df POCs"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CodeTables",
+								"type": "DatasetReference"
+							},
+							"name": "vwCodeTables"
+						},
+						{
+							"dataset": {
+								"referenceName": "Task",
+								"type": "DatasetReference"
+							},
+							"name": "srcTask"
+						},
+						{
+							"dataset": {
+								"referenceName": "TaskDefinition",
+								"type": "DatasetReference"
+							},
+							"name": "srcTaskDefinition"
+						},
+						{
+							"dataset": {
+								"referenceName": "TaskAssignment",
+								"type": "DatasetReference"
+							},
+							"name": "srcTaskAssignment"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DimensionTargetTesting",
+								"type": "DatasetReference"
+							},
+							"name": "trgDimTask"
+						}
+					],
+					"transformations": [
+						{
+							"name": "TargetItemType"
+						},
+						{
+							"name": "TaskCategoryCode"
+						},
+						{
+							"name": "TaskChangeType"
+						},
+						{
+							"name": "TaskPriority"
+						},
+						{
+							"name": "TaskStatus"
+						},
+						{
+							"name": "SelectColumns"
+						},
+						{
+							"name": "drvTrimStringFields"
+						},
+						{
+							"name": "LookupStatus",
+							"description": "Lookup Status Code"
+						},
+						{
+							"name": "LookupPriority"
+						},
+						{
+							"name": "SelectStatus"
+						},
+						{
+							"name": "SelectPriority"
+						},
+						{
+							"name": "LookupCategory"
+						},
+						{
+							"name": "SelectCategory"
+						},
+						{
+							"name": "LookupAssignment"
+						},
+						{
+							"name": "SelectAssignment"
+						},
+						{
+							"name": "LookupTaskAllocation"
+						},
+						{
+							"name": "SelectTaskAllocation"
+						},
+						{
+							"name": "drvNullValues"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          TABLENAME as string,",
+						"          CODE as string,",
+						"          DESCRIPTION as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> vwCodeTables",
+						"source(output(",
+						"          TASKID as long,",
+						"          WDOSNAPSHOT as string,",
+						"          CREATIONTIME as timestamp,",
+						"          ASSIGNEDDATETIME as timestamp,",
+						"          TOTALTIMEWORKED as integer,",
+						"          RESTARTTIME as timestamp,",
+						"          RESERVEDBY as string,",
+						"          STATUS as string,",
+						"          PRIORITY as string,",
+						"          CATEGORY as string,",
+						"          DEADTIMEOVERIND as string,",
+						"          ALLOWFORWARDIND as string,",
+						"          ADMINISTRATIONSID as string,",
+						"          OVERFLOWIND as string,",
+						"          VERSIONNO as integer,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcTask",
+						"source(output(",
+						"          TASKDEFINITIONID as string,",
+						"          NAME as string,",
+						"          CATEGORYCODE as string,",
+						"          ALLOCATIONSTRATEGYCODE as string,",
+						"          ALLOCATIONITEMID as long,",
+						"          WORKALLOCATIONRULESETID as string,",
+						"          DEADLINEFUNCTIONID as long,",
+						"          DEADLINETIMEOUTINTERVAL as long,",
+						"          ALLOWFORWARDIND as string,",
+						"          ACTIONPAGENAME as string,",
+						"          CASEIDPARAMETERNAME as string,",
+						"          PARTICIPANTIDPARAMETERNAME as string,",
+						"          ADMINISTRATIONSID as string,",
+						"          COMMENTS as string,",
+						"          ACTIONPAGENAMECODE as string,",
+						"          DEADLINETIMEOVERRIDEIND as string,",
+						"          VERSIONNO as integer,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcTaskDefinition",
+						"source(output(",
+						"          TASKASSIGNMENTID as long,",
+						"          TASKID as long,",
+						"          ASSIGNEETYPE as string,",
+						"          RELATEDID as long,",
+						"          RELATEDNAME as string,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcTaskAssignment",
+						"vwCodeTables filter(TABLENAME=='TargetItemType') ~> TargetItemType",
+						"vwCodeTables filter(TABLENAME=='TaskCategoryCode') ~> TaskCategoryCode",
+						"vwCodeTables filter(TABLENAME=='TaskChangeType') ~> TaskChangeType",
+						"vwCodeTables filter(TABLENAME=='TaskPriority') ~> TaskPriority",
+						"vwCodeTables filter(TABLENAME=='TaskStatus') ~> TaskStatus",
+						"srcTask select(mapColumn(",
+						"          TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          STATUS,",
+						"          PRIORITY,",
+						"          CATEGORY,",
+						"          LASTWRITTEN",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+						"SelectColumns derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimStringFields",
+						"drvTrimStringFields, TaskStatus lookup(STATUS_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupStatus",
+						"SelectStatus, TaskPriority lookup(PRIORITY_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupPriority",
+						"LookupStatus select(mapColumn(",
+						"          TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          STATUS,",
+						"          PRIORITY,",
+						"          CATEGORY,",
+						"          LASTWRITTEN,",
+						"          STATUS_Trim,",
+						"          PRIORITY_Trim,",
+						"          CATEGORY_Trim,",
+						"          StatusDescription = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectStatus",
+						"LookupPriority select(mapColumn(",
+						"          TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          STATUS,",
+						"          PRIORITY,",
+						"          CATEGORY,",
+						"          LASTWRITTEN,",
+						"          STATUS_Trim,",
+						"          PRIORITY_Trim,",
+						"          CATEGORY_Trim,",
+						"          StatusDescription,",
+						"          PriorityDescription = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectPriority",
+						"SelectPriority, TaskCategoryCode lookup(CATEGORY_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupCategory",
+						"LookupCategory select(mapColumn(",
+						"          TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          STATUS,",
+						"          PRIORITY,",
+						"          CATEGORY,",
+						"          LASTWRITTEN,",
+						"          STATUS_Trim,",
+						"          PRIORITY_Trim,",
+						"          CATEGORY_Trim,",
+						"          StatusDescription,",
+						"          PriorityDescription,",
+						"          CategoryDescription = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectCategory",
+						"SelectCategory, srcTaskAssignment lookup(SelectCategory@TASKID == srcTaskAssignment@TASKID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupAssignment",
+						"LookupAssignment select(mapColumn(",
+						"          TASKID = SelectCategory@TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          STATUS,",
+						"          PRIORITY,",
+						"          CATEGORY,",
+						"          LASTWRITTEN = SelectCategory@LASTWRITTEN,",
+						"          STATUS_Trim,",
+						"          PRIORITY_Trim,",
+						"          CATEGORY_Trim,",
+						"          StatusDescription,",
+						"          PriorityDescription,",
+						"          CategoryDescription,",
+						"          ASSIGNEETYPE",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectAssignment",
+						"SelectAssignment, TargetItemType lookup(trim(ASSIGNEETYPE) == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupTaskAllocation",
+						"LookupTaskAllocation select(mapColumn(",
+						"          TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          LASTWRITTEN,",
+						"          StatusDescription,",
+						"          PriorityDescription,",
+						"          CategoryDescription,",
+						"          TaskAllocationTargetDescription = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectTaskAllocation",
+						"SelectTaskAllocation derive(StatusDescription = iifNull(StatusDescription, 'NA'),",
+						"          PriorityDescription = iifNull(PriorityDescription, 'NA'),",
+						"          CategoryDescription = iifNull(CategoryDescription, 'NA'),",
+						"          TaskAllocationTargetDescription = iifNull(TaskAllocationTargetDescription, 'NA'),",
+						"          ModifiedDate = currentUTC(),",
+						"          each(match(regexMatch(name,'Description')), $$+'_null' = iifNull($$,'na'))) ~> drvNullValues",
+						"drvNullValues sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     partitionFileNames:['DimTask'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> trgDimTask"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/df_DynamicSelect')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -850,7 +1487,9 @@
 					]
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/stgDynamicTarget')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_FactSalesOrderHeader')]",
@@ -1113,7 +1752,9 @@
 					]
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/targetSalesOrderHeader')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_FactSalesOrderHeader_wo_CDC')]",
@@ -1376,7 +2017,9 @@
 					]
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/targetSalesOrderHeader')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_Fixed_Width_Test')]",
@@ -2673,7 +3316,9 @@
 					]
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/stgDynamicTarget')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_SCD1_Example')]",
@@ -2929,545 +3574,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/target_SalesOrderHeader_wDate')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_SCD1_Example_NoCDC')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "Facts"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "reportingSalesOrderHeader",
-								"type": "DatasetReference"
-							},
-							"name": "reportingSalesOrderHeader"
-						},
-						{
-							"dataset": {
-								"referenceName": "DimAddress",
-								"type": "DatasetReference"
-							},
-							"name": "DimAddress"
-						},
-						{
-							"dataset": {
-								"referenceName": "DimCustomer",
-								"type": "DatasetReference"
-							},
-							"name": "DimCustomer"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "target_SalesOrderHeader_wDate",
-								"type": "DatasetReference"
-							},
-							"name": "targetSalesOrders"
-						}
-					],
-					"transformations": [
-						{
-							"name": "SelectColumnsWShipToDescription"
-						},
-						{
-							"name": "LkpShipToAddress"
-						},
-						{
-							"name": "Upsert"
-						},
-						{
-							"name": "LkpCustomerDescip"
-						},
-						{
-							"name": "SelectColumnWCustDescrip"
-						},
-						{
-							"name": "LkpBillToAddressDescr"
-						},
-						{
-							"name": "SelectColumnsWBillToDescr"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          SalesOrderID as integer,",
-						"          RevisionNumber as integer,",
-						"          OrderDate as timestamp,",
-						"          DueDate as timestamp,",
-						"          ShipDate as timestamp,",
-						"          Status as integer,",
-						"          OnlineOrderFlag as boolean,",
-						"          SalesOrderNumber as string,",
-						"          PurchaseOrderNumber as string,",
-						"          AccountNumber as string,",
-						"          CustomerID as integer,",
-						"          ShipToAddressID as integer,",
-						"          BillToAddressID as integer,",
-						"          ShipMethod as string,",
-						"          CreditCardApprovalCode as string,",
-						"          SubTotal as decimal(19,4),",
-						"          TaxAmt as decimal(19,4),",
-						"          Freight as decimal(19,4),",
-						"          TotalDue as decimal(19,4),",
-						"          Comment as string,",
-						"          rowguid as string,",
-						"          ModifiedDate as timestamp",
-						"     ),",
-						"     allowSchemaDrift: false,",
-						"     validateSchema: false,",
-						"     waterMarkColumn: 'ModifiedDate',",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table',",
-						"     mode: 'read') ~> reportingSalesOrderHeader",
-						"source(output(",
-						"          AddressID as integer,",
-						"          AddressLine1 as string,",
-						"          AddressLine2 as string,",
-						"          City as string,",
-						"          StateProvince as string,",
-						"          CountryRegion as string,",
-						"          PostalCode as string,",
-						"          rowguid as string,",
-						"          ModifiedDate as timestamp",
-						"     ),",
-						"     allowSchemaDrift: false,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> DimAddress",
-						"source(output(",
-						"          CustomerID as integer,",
-						"          NameStyle as boolean,",
-						"          Title as string,",
-						"          FirstName as string,",
-						"          MiddleName as string,",
-						"          LastName as string,",
-						"          Suffix as string,",
-						"          CompanyName as string,",
-						"          SalesPerson as string,",
-						"          EmailAddress as string,",
-						"          Phone as string,",
-						"          PasswordHash as string,",
-						"          PasswordSalt as string,",
-						"          rowguid as string,",
-						"          ModifiedDate as timestamp",
-						"     ),",
-						"     allowSchemaDrift: false,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> DimCustomer",
-						"LkpShipToAddress select(mapColumn(",
-						"          SalesOrderID,",
-						"          OrderDate,",
-						"          Status,",
-						"          SalesOrderNumber,",
-						"          PurchaseOrderNumber,",
-						"          AccountNumber,",
-						"          ShipMethod,",
-						"          SubTotal,",
-						"          TaxAmt,",
-						"          Freight,",
-						"          TotalDue,",
-						"          ModifiedDate = reportingSalesOrderHeader@ModifiedDate,",
-						"          ShipToAddressDesscription = AddressLine1,",
-						"          CustomerID,",
-						"          BillToAddressID",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectColumnsWShipToDescription",
-						"reportingSalesOrderHeader, DimAddress lookup(ShipToAddressID == AddressID,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> LkpShipToAddress",
-						"SelectColumnsWBillToDescr alterRow(upsertIf(true())) ~> Upsert",
-						"SelectColumnsWShipToDescription, DimCustomer lookup(SelectColumnsWShipToDescription@CustomerID == DimCustomer@CustomerID,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> LkpCustomerDescip",
-						"LkpCustomerDescip select(mapColumn(",
-						"          SalesOrderID,",
-						"          OrderDate,",
-						"          Status,",
-						"          SalesOrderNumber,",
-						"          PurchaseOrderNumber,",
-						"          AccountNumber,",
-						"          ShipMethod,",
-						"          SubTotal,",
-						"          TaxAmt,",
-						"          Freight,",
-						"          TotalDue,",
-						"          ModifiedDate = SelectColumnsWShipToDescription@ModifiedDate,",
-						"          ShipToAddressDesscription,",
-						"          CustomerDescription = CompanyName,",
-						"          ModifiedDate = DimCustomer@ModifiedDate,",
-						"          BillToAddressID",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectColumnWCustDescrip",
-						"SelectColumnWCustDescrip, DimAddress lookup(BillToAddressID == AddressID,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> LkpBillToAddressDescr",
-						"LkpBillToAddressDescr select(mapColumn(",
-						"          SalesOrderID,",
-						"          OrderDate,",
-						"          Status,",
-						"          SalesOrderNumber,",
-						"          PurchaseOrderNumber,",
-						"          AccountNumber,",
-						"          ShipMethod,",
-						"          SubTotal,",
-						"          TaxAmt,",
-						"          Freight,",
-						"          TotalDue,",
-						"          ModifiedDate = SelectColumnWCustDescrip@ModifiedDate,",
-						"          ShipToAddressDesscription,",
-						"          BillToAddressDesciption = AddressLine1,",
-						"          CustomerDescription",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectColumnsWBillToDescr",
-						"Upsert sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          SalesOrderID as integer,",
-						"          OrderDate as timestamp,",
-						"          Status as integer,",
-						"          SalesOrderNumber as string,",
-						"          PurchaseOrderNumber as string,",
-						"          AccountNumber as string,",
-						"          CustomerDescription as string,",
-						"          ShipToAddressDescription as string,",
-						"          BillToAddressDesciption as string,",
-						"          ShipMethod as string,",
-						"          SubTotal as decimal(19,4),",
-						"          TaxAmt as decimal(19,4),",
-						"          Freight as decimal(19,4),",
-						"          TotalDue as decimal(19,4),",
-						"          ModifiedDate as timestamp,",
-						"          CreatedDate as timestamp",
-						"     ),",
-						"     deletable:false,",
-						"     insertable:false,",
-						"     updateable:false,",
-						"     upsertable:true,",
-						"     keys:['SalesOrderID'],",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError',",
-						"     mapColumn(",
-						"          SalesOrderID,",
-						"          OrderDate,",
-						"          Status,",
-						"          SalesOrderNumber,",
-						"          PurchaseOrderNumber,",
-						"          AccountNumber,",
-						"          ShipMethod,",
-						"          SubTotal,",
-						"          TaxAmt,",
-						"          Freight,",
-						"          TotalDue,",
-						"          ModifiedDate,",
-						"          ShipToAddressDescription = ShipToAddressDesscription,",
-						"          CustomerDescription,",
-						"          BillToAddressDesciption",
-						"     )) ~> targetSalesOrders"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/target_SalesOrderHeader_wDate')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_SCD2_Example')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "Dimensions"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "TestDataForEmployee",
-								"type": "DatasetReference"
-							},
-							"name": "srcEmployee"
-						},
-						{
-							"dataset": {
-								"referenceName": "TestDataForEmployeeDim",
-								"type": "DatasetReference"
-							},
-							"name": "srcEmployeeDim"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "TestDataForEmployeeDim",
-								"type": "DatasetReference"
-							},
-							"name": "SinkEmployeeDimInsert"
-						},
-						{
-							"dataset": {
-								"referenceName": "TestDataForEmployeeDim",
-								"type": "DatasetReference"
-							},
-							"name": "SinkEmployeeDimUpdate"
-						}
-					],
-					"transformations": [
-						{
-							"name": "HASHInput"
-						},
-						{
-							"name": "HASHRef"
-						},
-						{
-							"name": "SetToActive"
-						},
-						{
-							"name": "ExistsCheckforUpdates"
-						},
-						{
-							"name": "ExistsCheckforObsolete"
-						},
-						{
-							"name": "SetToInActive"
-						},
-						{
-							"name": "AlterRow1"
-						},
-						{
-							"name": "SelectColumns"
-						},
-						{
-							"name": "FilterForTesting"
-						}
-					],
-					"script": "source(output(\n\t\tEmpID as short,\n\t\tFirstName as string,\n\t\tLastName as string,\n\t\tMiddleName as string,\n\t\tTitle as string,\n\t\tHireDate as date,\n\t\tBirthDate as date,\n\t\tPhone as string,\n\t\tMaritalStatus as string,\n\t\tEmergencyContactName as string,\n\t\tEmergencyContactPhone as string,\n\t\tSalariedFlag as boolean,\n\t\tGender as string,\n\t\tDepartmentName as string,\n\t\tStartDate as date,\n\t\tEndDate as string,\n\t\tStatus as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\twildcardPaths:['2021/*.csv']) ~> srcEmployee\nsource(output(\n\t\tEmployeeKey as integer,\n\t\tEmpID as short,\n\t\tFirstName as string,\n\t\tLastName as string,\n\t\tMiddleName as string,\n\t\tTitle as string,\n\t\tHireDate as date,\n\t\tBirthDate as date,\n\t\tPhone as string,\n\t\tMaritalStatus as string,\n\t\tEmergencyContactName as string,\n\t\tEmergencyContactPhone as string,\n\t\tSalariedFlag as boolean,\n\t\tGender as string,\n\t\tDepartmentName as string,\n\t\tStartDate as date,\n\t\tEndDate as string,\n\t\tStatus as string,\n\t\tIsActive as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> srcEmployeeDim\nSelectColumns derive(inputhash = md5(EmpID,LastName,Title,Phone,MaritalStatus,SalariedFlag,DepartmentName)) ~> HASHInput\nsrcEmployeeDim derive(sqlhash = md5(EmpID,LastName,Title,Phone,MaritalStatus,SalariedFlag,DepartmentName)) ~> HASHRef\nExistsCheckforUpdates derive(IsActive = 1,\n\t\tEndDate = toDate('9999-12-31')) ~> SetToActive\nHASHInput, HASHRef exists(inputhash == sqlhash,\n\tnegate:true,\n\tbroadcast: 'auto')~> ExistsCheckforUpdates\nHASHRef, SetToActive exists(srcEmployeeDim@EmpID == SelectColumns@EmpID,\n\tnegate:false,\n\tbroadcast: 'auto')~> ExistsCheckforObsolete\nExistsCheckforObsolete derive(EndDate = toDate(currentUTC()),\n\t\tIsActive = 0,\n\t\tStatus = 'Termed') ~> SetToInActive\nSetToInActive alterRow(updateIf(true())) ~> AlterRow1\nFilterForTesting select(mapColumn(\n\t\tEmpID,\n\t\tFirstName,\n\t\tLastName,\n\t\tMiddleName,\n\t\tTitle,\n\t\tHireDate,\n\t\tBirthDate,\n\t\tPhone,\n\t\tMaritalStatus,\n\t\tEmergencyContactName,\n\t\tEmergencyContactPhone,\n\t\tSalariedFlag,\n\t\tGender,\n\t\tDepartmentName,\n\t\tStartDate,\n\t\tEndDate,\n\t\tStatus\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectColumns\nsrcEmployee filter(EmpID ==1002) ~> FilterForTesting\nSetToActive sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tEmpID,\n\t\tFirstName,\n\t\tLastName,\n\t\tMiddleName,\n\t\tTitle,\n\t\tHireDate,\n\t\tBirthDate,\n\t\tPhone,\n\t\tMaritalStatus,\n\t\tEmergencyContactName,\n\t\tEmergencyContactPhone,\n\t\tSalariedFlag,\n\t\tGender,\n\t\tDepartmentName,\n\t\tStartDate,\n\t\tEndDate,\n\t\tStatus,\n\t\tIsActive\n\t)) ~> SinkEmployeeDimInsert\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['EmployeeKey'],\n\tskipKeyWrites:true,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tEmployeeKey,\n\t\tEmpID,\n\t\tFirstName,\n\t\tLastName,\n\t\tMiddleName,\n\t\tTitle,\n\t\tHireDate,\n\t\tBirthDate,\n\t\tPhone,\n\t\tMaritalStatus,\n\t\tEmergencyContactName,\n\t\tEmergencyContactPhone,\n\t\tSalariedFlag,\n\t\tGender,\n\t\tDepartmentName,\n\t\tStartDate,\n\t\tEndDate,\n\t\tStatus,\n\t\tIsActive\n\t)) ~> SinkEmployeeDimUpdate"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_Simple_Error_Handling_POC')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "Final df POCs"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "DimAddress",
-								"type": "DatasetReference"
-							},
-							"name": "srcAddress"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "rowswritten",
-								"type": "DatasetReference"
-							},
-							"name": "tgtErrors"
-						},
-						{
-							"dataset": {
-								"referenceName": "rowswritten",
-								"type": "DatasetReference"
-							},
-							"name": "tgtValidRows"
-						}
-					],
-					"transformations": [
-						{
-							"name": "AssertCityBothell"
-						},
-						{
-							"name": "drvErrorColumns"
-						},
-						{
-							"name": "split1"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          AddressID as integer,",
-						"          AddressLine1 as string,",
-						"          AddressLine2 as string,",
-						"          City as string,",
-						"          StateProvince as string,",
-						"          CountryRegion as string,",
-						"          PostalCode as string,",
-						"          rowguid as string,",
-						"          ModifiedDate as timestamp",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> srcAddress",
-						"srcAddress assert(expectTrue(City=='Bothell', false, 'assertIsBothell', null, 'City is  not Bothell')) ~> AssertCityBothell",
-						"AssertCityBothell derive(TotalErrors = assertErrorMessages(),",
-						"          CityError = at(assertErrorMessages(),'assertIsBothell')) ~> drvErrorColumns",
-						"drvErrorColumns split(hasError('assertIsBothell'),",
-						"     disjoint: false) ~> split1@(InvalidRecords, ValidRows)",
-						"split1@InvalidRecords sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:['Error.txt'],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     outputAssertFailedRows: true,",
-						"     assertFailure_container: 'newcontainer',",
-						"     partitionBy('hash', 1)) ~> tgtErrors",
-						"split1@ValidRows sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:['ValidRows.txt'],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> tgtValidRows"
-					]
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_StagePlaceHolder')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "Staging"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "reportingSalesOrderHeader",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "Dummy",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [],
-					"scriptLines": [
-						"source(output(",
-						"          SalesOrderID as integer,",
-						"          RevisionNumber as integer,",
-						"          OrderDate as timestamp,",
-						"          DueDate as timestamp,",
-						"          ShipDate as timestamp,",
-						"          Status as integer,",
-						"          OnlineOrderFlag as boolean,",
-						"          SalesOrderNumber as string,",
-						"          PurchaseOrderNumber as string,",
-						"          AccountNumber as string,",
-						"          CustomerID as integer,",
-						"          ShipToAddressID as integer,",
-						"          BillToAddressID as integer,",
-						"          ShipMethod as string,",
-						"          CreditCardApprovalCode as string,",
-						"          SubTotal as decimal(19,4),",
-						"          TaxAmt as decimal(19,4),",
-						"          Freight as decimal(19,4),",
-						"          TotalDue as decimal(19,4),",
-						"          Comment as string,",
-						"          rowguid as string,",
-						"          ModifiedDate as timestamp",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> source1",
-						"source1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          Column_1 as string",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> sink1"
-					]
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_CaseHeader_Code_Research_POC')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "df_CaseHeader_Lookups_POC",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:05:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_CaseHeader_Lookups_POC",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"vwCodeTables": {},
-									"srcCaseHeader": {},
-									"DummyFile": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Final POCs"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_CaseHeader_Lookups_POC')]"
 			]
 		}
 	]

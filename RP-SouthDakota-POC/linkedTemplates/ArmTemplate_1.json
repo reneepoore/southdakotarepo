@@ -13,6 +13,55 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/EmailFile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "POCWork"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "emaillocation"
+					},
+					"columnDelimiter": "",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ErrorLogging')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AdventureWorksLT2019",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Testing/POCWork"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "errorlogging"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LookupDynamicAllTables')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -59,6 +108,310 @@
 						"type": "String"
 					}
 				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Task')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Task Table",
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "APPEALINDICATOR",
+						"type": "char"
+					},
+					{
+						"name": "CASEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "INTEGRATEDCASEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CASEREFERENCE",
+						"type": "char"
+					},
+					{
+						"name": "CASETYPECODE",
+						"type": "char"
+					},
+					{
+						"name": "CLASSIFICATIONCODE",
+						"type": "char"
+					},
+					{
+						"name": "EXPECTEDOUTCOME",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ACTUALOUTCOME",
+						"type": "char"
+					},
+					{
+						"name": "OWNERORGOBJECTLINKID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "INTEGRATEDCASETYPE",
+						"type": "char"
+					},
+					{
+						"name": "OBJECTIVECODE",
+						"type": "char"
+					},
+					{
+						"name": "OUTCOMECODE",
+						"type": "char"
+					},
+					{
+						"name": "PLANID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "PRIORITYCODE",
+						"type": "char"
+					},
+					{
+						"name": "RECEIVEDDATE",
+						"type": "date"
+					},
+					{
+						"name": "EFFECTIVEDATE",
+						"type": "date"
+					},
+					{
+						"name": "STATUSCODE",
+						"type": "char"
+					},
+					{
+						"name": "ENDDATE",
+						"type": "date"
+					},
+					{
+						"name": "EXPECTEDENDDATE",
+						"type": "date"
+					},
+					{
+						"name": "EXPECTEDSTARTDATE",
+						"type": "date"
+					},
+					{
+						"name": "FIRSTREVIEWDATE",
+						"type": "date"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "CONCERNROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "REGISTRATIONDATE",
+						"type": "date"
+					},
+					{
+						"name": "STARTDATE",
+						"type": "date"
+					},
+					{
+						"name": "DEFAULTCURRENCYTYPECODE",
+						"type": "char"
+					},
+					{
+						"name": "DEFAULTDELIVERYMETHODTYPE",
+						"type": "char"
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "TASK"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TaskAssignment')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Task Assignment",
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "TASKASSIGNMENTID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "TASKID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ASSIGNEETYPE",
+						"type": "char"
+					},
+					{
+						"name": "RELATEDID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "RELATEDNAME",
+						"type": "varchar"
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "TASKASSIGNMENT"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TaskDefinition')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Task Definition",
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "TASKDEFINITIONID",
+						"type": "varchar"
+					},
+					{
+						"name": "NAME",
+						"type": "char"
+					},
+					{
+						"name": "CATEGORYCODE",
+						"type": "char"
+					},
+					{
+						"name": "ALLOCATIONSTRATEGYCODE",
+						"type": "char"
+					},
+					{
+						"name": "ALLOCATIONITEMID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "WORKALLOCATIONRULESETID",
+						"type": "char"
+					},
+					{
+						"name": "DEADLINEFUNCTIONID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "DEADLINETIMEOUTINTERVAL",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ALLOWFORWARDIND",
+						"type": "char"
+					},
+					{
+						"name": "ACTIONPAGENAME",
+						"type": "varchar"
+					},
+					{
+						"name": "CASEIDPARAMETERNAME",
+						"type": "char"
+					},
+					{
+						"name": "PARTICIPANTIDPARAMETERNAME",
+						"type": "char"
+					},
+					{
+						"name": "ADMINISTRATIONSID",
+						"type": "varchar"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "ACTIONPAGENAMECODE",
+						"type": "char"
+					},
+					{
+						"name": "DEADLINETIMEOVERRIDEIND",
+						"type": "char"
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "TASKDEFINITION"
+				}
 			},
 			"dependsOn": []
 		},
@@ -136,28 +489,6 @@
 						"type": "String"
 					}
 				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/db2CodeTableItem')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CURAPD01",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "DB2"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "CURAPD01",
-					"table": "CODETABLEITEM"
-				}
 			},
 			"dependsOn": []
 		},
@@ -584,6 +915,9 @@
 					"referenceName": "AzureBlobStorage1",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "Testing"
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
@@ -797,329 +1131,6 @@
 				"typeProperties": {
 					"schema": "STG",
 					"table": "CODETABLEITEM"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/stgDynamicTarget')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "TargetSandbox",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Schema": {
-						"type": "string"
-					},
-					"TableName": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Staging"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().Schema",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@dataset().TableName",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/stgSourceEmployee')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AdventureWorksDW",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "FirstName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LastName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MiddleName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Title",
-						"type": "nvarchar"
-					},
-					{
-						"name": "HireDate",
-						"type": "date"
-					},
-					{
-						"name": "BirthDate",
-						"type": "date"
-					},
-					{
-						"name": "Phone",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MaritalStatus",
-						"type": "nchar"
-					},
-					{
-						"name": "EmergencyContactName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EmergencyContactPhone",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SalariedFlag",
-						"type": "bit"
-					},
-					{
-						"name": "Gender",
-						"type": "nchar"
-					},
-					{
-						"name": "DepartmentName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "StartDate",
-						"type": "date"
-					},
-					{
-						"name": "EndDate",
-						"type": "date"
-					},
-					{
-						"name": "Status",
-						"type": "nvarchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "stgSourceEmployee"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/targetSalesOrderHeader')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AdventureWorksLT2019",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Fact"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "SalesOrderID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "OrderDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "Status",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "SalesOrderNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PurchaseOrderNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "AccountNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CustomerDescription",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ShipToAddressDescription",
-						"type": "nvarchar"
-					},
-					{
-						"name": "BillToAddressDesciption",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ShipMethod",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SubTotal",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "TaxAmt",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "Freight",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "TotalDue",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "ModifiedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "SalesLT",
-					"table": "target_SalesOrderHeader"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/target_SalesOrderHeader')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AdventureWorksLT2019",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "SalesOrderID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "OrderDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "Status",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "SalesOrderNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PurchaseOrderNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "AccountNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CustomerDescription",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ShipToAddressDescription",
-						"type": "nvarchar"
-					},
-					{
-						"name": "BillToAddressDesciption",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ShipMethod",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SubTotal",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "TaxAmt",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "Freight",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "TotalDue",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "ModifiedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "CreatedDate",
-						"type": "smalldatetime",
-						"precision": 16,
-						"scale": 0
-					}
-				],
-				"typeProperties": {
-					"schema": "SalesLT",
-					"table": "target_SalesOrderHeader"
 				}
 			},
 			"dependsOn": []
