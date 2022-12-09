@@ -26,7 +26,15 @@
 					"name": "srcAddress"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DimensionTargetTesting",
+						"type": "DatasetReference"
+					},
+					"name": "tgtDimEmployer"
+				}
+			],
 			"transformations": [
 				{
 					"name": "SelectSourceColumns"
@@ -45,6 +53,12 @@
 				},
 				{
 					"name": "drvTrimColumns"
+				},
+				{
+					"name": "drvNullsDate"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -127,7 +141,8 @@
 				"          BUSINESSDESC,",
 				"          UPPERREGISTEREDNAME,",
 				"          PRIMARYALTERNATEID,",
-				"          NUMBERPERMANENTSTAFF",
+				"          NUMBERPERMANENTSTAFF,",
+				"          REGISTEREDNAME",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectSourceColumns",
@@ -140,7 +155,8 @@
 				"          COMPANYTYPE,",
 				"          BUSINESSDESC,",
 				"          UPPERREGISTEREDNAME,",
-				"          PRIMARYADDRESSID",
+				"          PRIMARYADDRESSID,",
+				"          REGISTEREDNAME",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectPrimaryAddressID",
@@ -152,6 +168,7 @@
 				"          CONCERNROLEID,",
 				"          COMPANYTYPE,",
 				"          BUSINESSDESC,",
+				"          REGISTEREDNAME,",
 				"          UPPERREGISTEREDNAME,",
 				"          ADDRESS1,",
 				"          ADDRESS2,",
@@ -163,7 +180,36 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectAddress",
-				"SelectAddress derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns"
+				"SelectAddress derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+				"drvTrimColumns derive(each(match(type=='string'), $$+'_null' = iifNull($$,'NA' )),",
+				"          {Modified Date} = currentUTC()) ~> drvNullsDate",
+				"drvNullsDate select(mapColumn(",
+				"          CONCERNROLEID,",
+				"          REGISTEREDNAME = REGISTEREDNAME_Trim_null,",
+				"          ADDRESS1 = ADDRESS1_Trim_null,",
+				"          ADDRESS2 = ADDRESS2_Trim_null,",
+				"          ADDRESS3 = ADDRESS3_Trim_null,",
+				"          CITY = CITY_Trim_null,",
+				"          STATE = STATE_Trim_null,",
+				"          USCOUNTY = USCOUNTY_Trim_null,",
+				"          ZIP = ZIP_Trim_null",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     partitionFileNames:['DimEmployer'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtDimEmployer"
 			]
 		}
 	}
