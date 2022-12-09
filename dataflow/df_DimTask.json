@@ -2,7 +2,7 @@
 	"name": "df_DimTask",
 	"properties": {
 		"folder": {
-			"name": "Final df POCs"
+			"name": "Dimensions"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -290,7 +290,7 @@
 				"          CategoryDescription = iifNull(CategoryDescription, 'NA'),",
 				"          TaskAllocationTargetDescription = iifNull(TaskAllocationTargetDescription, 'NA'),",
 				"          ModifiedDate = currentUTC(),",
-				"          each(match(regexMatch(name, 'Description')), $$+'_null' = iifNull($$,'na'))) ~> drvNullValues",
+				"          each(match(regexMatch(name,'Description')), $$+'_null' = iifNull($$,'na'))) ~> drvNullValues",
 				"drvNullValues sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
