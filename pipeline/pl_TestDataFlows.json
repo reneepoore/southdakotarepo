@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_DimTask",
+				"name": "df_DimEmployer",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_DimTask",
+						"referenceName": "df_DimEmployer",
 						"type": "DataFlowReference"
 					},
 					"compute": {
