@@ -34,6 +34,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "srcTaskAssignment"
+				},
+				{
+					"dataset": {
+						"referenceName": "CodeTableItem",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
 				}
 			],
 			"sinks": [
@@ -97,6 +104,12 @@
 				},
 				{
 					"name": "select2"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "select3"
 				}
 			],
 			"scriptLines": [
@@ -167,6 +180,24 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcTaskAssignment",
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string,",
+				"          ANNOTATION as string,",
+				"          ISENABLED as string,",
+				"          SORTORDER as integer,",
+				"          LOCALEIDENTIFIER as string,",
+				"          PARENTCODE as string,",
+				"          COMMENTS as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table',",
+				"     partitionBy('hash', 1)) ~> source1",
 				"vwCodeTables filter(TABLENAME=='TargetItemType') ~> TargetItemType",
 				"vwCodeTables filter(TABLENAME=='TaskCategoryCode') ~> TaskCategoryCode",
 				"vwCodeTables filter(TABLENAME=='TaskChangeType') ~> TaskChangeType",
@@ -274,13 +305,7 @@
 				"          TASKID,",
 				"          CREATIONTIME,",
 				"          TOTALTIMEWORKED,",
-				"          STATUS,",
-				"          PRIORITY,",
-				"          CATEGORY,",
 				"          LASTWRITTEN,",
-				"          STATUS_Trim,",
-				"          PRIORITY_Trim,",
-				"          CATEGORY_Trim,",
 				"          StatusDescription,",
 				"          PriorityDescription,",
 				"          CategoryDescription,",
@@ -289,6 +314,14 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select3 filter(TABLENAME=='ABAWDStatus') ~> filter1",
+				"source1 select(mapColumn(",
+				"          TABLENAME,",
+				"          CODE,",
+				"          DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
 				"select2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
