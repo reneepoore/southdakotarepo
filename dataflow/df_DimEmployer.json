@@ -1,6 +1,9 @@
 {
 	"name": "df_DimEmployer",
 	"properties": {
+		"folder": {
+			"name": "Dimensions"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
