@@ -39,13 +39,6 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "ds_Dummy_Lookup",
-						"type": "DatasetReference"
-					},
-					"name": "tgtDummyFile"
-				},
-				{
-					"dataset": {
 						"referenceName": "DimensionTargetTesting",
 						"type": "DatasetReference"
 					},
@@ -296,18 +289,6 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select2",
-				" sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     input(",
-				"          Column_1 as string,",
-				"          Column_2 as string,",
-				"          Column_3 as string,",
-				"          Column_4 as string,",
-				"          Column_5 as string,",
-				"          Column_6 as string",
-				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> tgtDummyFile",
 				"select2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
