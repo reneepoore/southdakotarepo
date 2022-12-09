@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_CaseHeader_Lookups_POC",
+				"name": "df_DimTask",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_CaseHeader_Lookups_POC",
+						"referenceName": "df_DimTask",
 						"type": "DataFlowReference"
 					},
 					"compute": {
