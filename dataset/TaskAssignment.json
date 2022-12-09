@@ -13,129 +13,33 @@
 		"type": "AzureSqlTable",
 		"schema": [
 			{
-				"name": "APPEALINDICATOR",
-				"type": "char"
-			},
-			{
-				"name": "CASEID",
+				"name": "TASKASSIGNMENTID",
 				"type": "bigint",
 				"precision": 19
 			},
 			{
-				"name": "INTEGRATEDCASEID",
+				"name": "TASKID",
 				"type": "bigint",
 				"precision": 19
 			},
 			{
-				"name": "CASEREFERENCE",
+				"name": "ASSIGNEETYPE",
 				"type": "char"
 			},
 			{
-				"name": "CASETYPECODE",
-				"type": "char"
-			},
-			{
-				"name": "CLASSIFICATIONCODE",
-				"type": "char"
-			},
-			{
-				"name": "EXPECTEDOUTCOME",
+				"name": "RELATEDID",
 				"type": "bigint",
 				"precision": 19
 			},
 			{
-				"name": "ACTUALOUTCOME",
-				"type": "char"
-			},
-			{
-				"name": "OWNERORGOBJECTLINKID",
-				"type": "bigint",
-				"precision": 19
-			},
-			{
-				"name": "VERSIONNO",
-				"type": "int",
-				"precision": 10
+				"name": "RELATEDNAME",
+				"type": "varchar"
 			},
 			{
 				"name": "LASTWRITTEN",
 				"type": "datetime",
 				"precision": 23,
 				"scale": 3
-			},
-			{
-				"name": "INTEGRATEDCASETYPE",
-				"type": "char"
-			},
-			{
-				"name": "OBJECTIVECODE",
-				"type": "char"
-			},
-			{
-				"name": "OUTCOMECODE",
-				"type": "char"
-			},
-			{
-				"name": "PLANID",
-				"type": "bigint",
-				"precision": 19
-			},
-			{
-				"name": "PRIORITYCODE",
-				"type": "char"
-			},
-			{
-				"name": "RECEIVEDDATE",
-				"type": "date"
-			},
-			{
-				"name": "EFFECTIVEDATE",
-				"type": "date"
-			},
-			{
-				"name": "STATUSCODE",
-				"type": "char"
-			},
-			{
-				"name": "ENDDATE",
-				"type": "date"
-			},
-			{
-				"name": "EXPECTEDENDDATE",
-				"type": "date"
-			},
-			{
-				"name": "EXPECTEDSTARTDATE",
-				"type": "date"
-			},
-			{
-				"name": "FIRSTREVIEWDATE",
-				"type": "date"
-			},
-			{
-				"name": "COMMENTS",
-				"type": "varchar"
-			},
-			{
-				"name": "CONCERNROLEID",
-				"type": "bigint",
-				"precision": 19
-			},
-			{
-				"name": "REGISTRATIONDATE",
-				"type": "date"
-			},
-			{
-				"name": "STARTDATE",
-				"type": "date"
-			},
-			{
-				"name": "DEFAULTCURRENCYTYPECODE",
-				"type": "char"
-			},
-			{
-				"name": "DEFAULTDELIVERYMETHODTYPE",
-				"type": "char"
 			}
 		],
 		"typeProperties": {
