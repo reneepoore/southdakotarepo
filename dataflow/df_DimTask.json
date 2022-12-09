@@ -42,7 +42,7 @@
 						"referenceName": "DimensionTargetTesting",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "trgDimTask"
 				}
 			],
 			"transformations": [
@@ -303,7 +303,7 @@
 				"     partitionFileNames:['DimTask'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     partitionBy('hash', 1)) ~> trgDimTask"
 			]
 		}
 	}
