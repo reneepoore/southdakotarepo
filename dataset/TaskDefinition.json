@@ -13,44 +13,71 @@
 		"type": "AzureSqlTable",
 		"schema": [
 			{
-				"name": "APPEALINDICATOR",
+				"name": "TASKDEFINITIONID",
+				"type": "varchar"
+			},
+			{
+				"name": "NAME",
 				"type": "char"
 			},
 			{
-				"name": "CASEID",
+				"name": "CATEGORYCODE",
+				"type": "char"
+			},
+			{
+				"name": "ALLOCATIONSTRATEGYCODE",
+				"type": "char"
+			},
+			{
+				"name": "ALLOCATIONITEMID",
 				"type": "bigint",
 				"precision": 19
 			},
 			{
-				"name": "INTEGRATEDCASEID",
+				"name": "WORKALLOCATIONRULESETID",
+				"type": "char"
+			},
+			{
+				"name": "DEADLINEFUNCTIONID",
 				"type": "bigint",
 				"precision": 19
 			},
 			{
-				"name": "CASEREFERENCE",
-				"type": "char"
-			},
-			{
-				"name": "CASETYPECODE",
-				"type": "char"
-			},
-			{
-				"name": "CLASSIFICATIONCODE",
-				"type": "char"
-			},
-			{
-				"name": "EXPECTEDOUTCOME",
+				"name": "DEADLINETIMEOUTINTERVAL",
 				"type": "bigint",
 				"precision": 19
 			},
 			{
-				"name": "ACTUALOUTCOME",
+				"name": "ALLOWFORWARDIND",
 				"type": "char"
 			},
 			{
-				"name": "OWNERORGOBJECTLINKID",
-				"type": "bigint",
-				"precision": 19
+				"name": "ACTIONPAGENAME",
+				"type": "varchar"
+			},
+			{
+				"name": "CASEIDPARAMETERNAME",
+				"type": "char"
+			},
+			{
+				"name": "PARTICIPANTIDPARAMETERNAME",
+				"type": "char"
+			},
+			{
+				"name": "ADMINISTRATIONSID",
+				"type": "varchar"
+			},
+			{
+				"name": "COMMENTS",
+				"type": "varchar"
+			},
+			{
+				"name": "ACTIONPAGENAMECODE",
+				"type": "char"
+			},
+			{
+				"name": "DEADLINETIMEOVERRIDEIND",
+				"type": "char"
 			},
 			{
 				"name": "VERSIONNO",
@@ -62,80 +89,6 @@
 				"type": "datetime",
 				"precision": 23,
 				"scale": 3
-			},
-			{
-				"name": "INTEGRATEDCASETYPE",
-				"type": "char"
-			},
-			{
-				"name": "OBJECTIVECODE",
-				"type": "char"
-			},
-			{
-				"name": "OUTCOMECODE",
-				"type": "char"
-			},
-			{
-				"name": "PLANID",
-				"type": "bigint",
-				"precision": 19
-			},
-			{
-				"name": "PRIORITYCODE",
-				"type": "char"
-			},
-			{
-				"name": "RECEIVEDDATE",
-				"type": "date"
-			},
-			{
-				"name": "EFFECTIVEDATE",
-				"type": "date"
-			},
-			{
-				"name": "STATUSCODE",
-				"type": "char"
-			},
-			{
-				"name": "ENDDATE",
-				"type": "date"
-			},
-			{
-				"name": "EXPECTEDENDDATE",
-				"type": "date"
-			},
-			{
-				"name": "EXPECTEDSTARTDATE",
-				"type": "date"
-			},
-			{
-				"name": "FIRSTREVIEWDATE",
-				"type": "date"
-			},
-			{
-				"name": "COMMENTS",
-				"type": "varchar"
-			},
-			{
-				"name": "CONCERNROLEID",
-				"type": "bigint",
-				"precision": 19
-			},
-			{
-				"name": "REGISTRATIONDATE",
-				"type": "date"
-			},
-			{
-				"name": "STARTDATE",
-				"type": "date"
-			},
-			{
-				"name": "DEFAULTCURRENCYTYPECODE",
-				"type": "char"
-			},
-			{
-				"name": "DEFAULTDELIVERYMETHODTYPE",
-				"type": "char"
 			}
 		],
 		"typeProperties": {
