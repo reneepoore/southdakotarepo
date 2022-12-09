@@ -1,0 +1,74 @@
+{
+	"name": "df_DimTask",
+	"properties": {
+		"folder": {
+			"name": "Final df POCs"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CodeTables",
+						"type": "DatasetReference"
+					},
+					"name": "vwCodeTables"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_Dummy_Lookup",
+						"type": "DatasetReference"
+					},
+					"name": "tgtDummyFile"
+				}
+			],
+			"transformations": [
+				{
+					"name": "TargetItemType"
+				},
+				{
+					"name": "TaskCategoryCode"
+				},
+				{
+					"name": "TaskChangeType"
+				},
+				{
+					"name": "TaskPriority"
+				},
+				{
+					"name": "TaskStatus"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwCodeTables",
+				"vwCodeTables filter(TABLENAME=='TargetItemType') ~> TargetItemType",
+				"vwCodeTables filter(TABLENAME=='TaskCategoryCode') ~> TaskCategoryCode",
+				"vwCodeTables filter(TABLENAME=='TaskChangeType') ~> TaskChangeType",
+				"vwCodeTables filter(TABLENAME=='TaskPriority') ~> TaskPriority",
+				"vwCodeTables filter(TABLENAME=='TaskStatus') ~> TaskStatus",
+				" sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> tgtDummyFile"
+			]
+		}
+	}
+}
