@@ -37,7 +37,7 @@
 						"referenceName": "SDRegion",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "srcSDRegion"
 				}
 			],
 			"sinks": [
@@ -75,10 +75,16 @@
 					"name": "select1"
 				},
 				{
-					"name": "srcSDRegion"
+					"name": "LookupSDRegion"
 				},
 				{
-					"name": "select2"
+					"name": "SelectRegion"
+				},
+				{
+					"name": "SelectJoin"
+				},
+				{
+					"name": "lookup1"
 				}
 			],
 			"scriptLines": [
@@ -194,7 +200,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source1",
+				"     format: 'table') ~> srcSDRegion",
 				"srcEmployer select(mapColumn(",
 				"          CONCERNROLEID,",
 				"          COMPANYTYPE,",
@@ -227,6 +233,7 @@
 				"LookupAddress select(mapColumn(",
 				"          CONCERNROLEID,",
 				"          COMPANYTYPE,",
+				"          ADDRESSID,",
 				"          BUSINESSDESC,",
 				"          REGISTEREDNAME,",
 				"          UPPERREGISTEREDNAME,",
@@ -240,7 +247,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectAddress",
-				"SelectAddress derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+				"SelectJoin derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
 				"drvTrimColumns derive(each(match(type=='string'), $$+'_null' = iifNull($$,'NA' )),",
 				"          {Modified Date} = currentUTC()) ~> drvNullsDate",
 				"drvNullsDate select(mapColumn(",
@@ -252,21 +259,45 @@
 				"          CITY = CITY_Trim_null,",
 				"          STATE = STATE_Trim_null,",
 				"          USCOUNTY = USCOUNTY_Trim_null,",
-				"          ZIP = ZIP_Trim_null",
+				"          ZIP = ZIP_Trim_null,",
+				"          LOCATION = LOCATION_Trim_null,",
+				"          REGION = SDREGIONNAME_Trim_null",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"srcLocation, source1 lookup(LOCATIONID == SDLOCATIONID,",
+				"srcLocation, srcSDRegion lookup(LOCATIONID == SDLOCATIONID,",
 				"     multiple: false,",
 				"     pickup: 'any',",
-				"     broadcast: 'auto')~> srcSDRegion",
-				"srcSDRegion select(mapColumn(",
+				"     broadcast: 'auto')~> LookupSDRegion",
+				"LookupSDRegion select(mapColumn(",
 				"          NAME,",
 				"          ADDRESSID,",
 				"          SDREGIONNAME",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select2",
+				"     skipDuplicateMapOutputs: true) ~> SelectRegion",
+				"lookup1 select(mapColumn(",
+				"          CONCERNROLEID,",
+				"          COMPANYTYPE,",
+				"          BUSINESSDESC,",
+				"          REGISTEREDNAME,",
+				"          UPPERREGISTEREDNAME,",
+				"          ADDRESS1,",
+				"          ADDRESS2,",
+				"          ADDRESS3,",
+				"          CITY,",
+				"          STATE,",
+				"          USCOUNTY,",
+				"          ZIP,",
+				"          LOCATION = NAME,",
+				"          SDREGIONNAME",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectJoin",
+				"SelectAddress, SelectRegion lookup(SelectAddress@ADDRESSID == SelectRegion@ADDRESSID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
