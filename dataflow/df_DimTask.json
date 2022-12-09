@@ -13,6 +13,20 @@
 						"type": "DatasetReference"
 					},
 					"name": "vwCodeTables"
+				},
+				{
+					"dataset": {
+						"referenceName": "Task",
+						"type": "DatasetReference"
+					},
+					"name": "srcTask"
+				},
+				{
+					"dataset": {
+						"referenceName": "TaskDefinition",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
 				}
 			],
 			"sinks": [
@@ -39,6 +53,16 @@
 				},
 				{
 					"name": "TaskStatus"
+				},
+				{
+					"name": "SelectColumns"
+				},
+				{
+					"name": "drvTrimStringFields"
+				},
+				{
+					"name": "LookupStatus",
+					"description": "Lookup Status Code"
 				}
 			],
 			"scriptLines": [
@@ -51,11 +75,84 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> vwCodeTables",
+				"source(output(",
+				"          TASKID as long,",
+				"          WDOSNAPSHOT as string,",
+				"          CREATIONTIME as timestamp,",
+				"          ASSIGNEDDATETIME as timestamp,",
+				"          TOTALTIMEWORKED as integer,",
+				"          RESTARTTIME as timestamp,",
+				"          RESERVEDBY as string,",
+				"          STATUS as string,",
+				"          PRIORITY as string,",
+				"          CATEGORY as string,",
+				"          DEADTIMEOVERIND as string,",
+				"          ALLOWFORWARDIND as string,",
+				"          ADMINISTRATIONSID as string,",
+				"          OVERFLOWIND as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcTask",
+				"source(output(",
+				"          APPEALINDICATOR as string,",
+				"          CASEID as long,",
+				"          INTEGRATEDCASEID as long,",
+				"          CASEREFERENCE as string,",
+				"          CASETYPECODE as string,",
+				"          CLASSIFICATIONCODE as string,",
+				"          EXPECTEDOUTCOME as long,",
+				"          ACTUALOUTCOME as string,",
+				"          OWNERORGOBJECTLINKID as long,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp,",
+				"          INTEGRATEDCASETYPE as string,",
+				"          OBJECTIVECODE as string,",
+				"          OUTCOMECODE as string,",
+				"          PLANID as long,",
+				"          PRIORITYCODE as string,",
+				"          RECEIVEDDATE as date,",
+				"          EFFECTIVEDATE as date,",
+				"          STATUSCODE as string,",
+				"          ENDDATE as date,",
+				"          EXPECTEDENDDATE as date,",
+				"          EXPECTEDSTARTDATE as date,",
+				"          FIRSTREVIEWDATE as date,",
+				"          COMMENTS as string,",
+				"          CONCERNROLEID as long,",
+				"          REGISTRATIONDATE as date,",
+				"          STARTDATE as date,",
+				"          DEFAULTCURRENCYTYPECODE as string,",
+				"          DEFAULTDELIVERYMETHODTYPE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source2",
 				"vwCodeTables filter(TABLENAME=='TargetItemType') ~> TargetItemType",
 				"vwCodeTables filter(TABLENAME=='TaskCategoryCode') ~> TaskCategoryCode",
 				"vwCodeTables filter(TABLENAME=='TaskChangeType') ~> TaskChangeType",
 				"vwCodeTables filter(TABLENAME=='TaskPriority') ~> TaskPriority",
 				"vwCodeTables filter(TABLENAME=='TaskStatus') ~> TaskStatus",
+				"srcTask select(mapColumn(",
+				"          TASKID,",
+				"          CREATIONTIME,",
+				"          TOTALTIMEWORKED,",
+				"          STATUS,",
+				"          PRIORITY,",
+				"          CATEGORY,",
+				"          LASTWRITTEN",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+				"SelectColumns derive(each(match(type=='string'), $$+'Trim' = trim($$))) ~> drvTrimStringFields",
+				"drvTrimStringFields, TaskStatus lookup(STATUS == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupStatus",
 				" sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
