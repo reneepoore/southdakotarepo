@@ -1,0 +1,114 @@
+{
+	"name": "Employer",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "CONCERNROLEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "REGISTEREDNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "TRADINGNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "INDUSTRYTYPE",
+				"type": "char"
+			},
+			{
+				"name": "COMPANYTYPE",
+				"type": "char"
+			},
+			{
+				"name": "BUSINESSDESC",
+				"type": "varchar"
+			},
+			{
+				"name": "UPPERTRADINGNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "UPPERREGISTEREDNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "VERSIONNO",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LASTWRITTEN",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "NUMBERCASUALSTAFF",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PINNUMBER",
+				"type": "char"
+			},
+			{
+				"name": "PAYMENTFREQUENCY",
+				"type": "char"
+			},
+			{
+				"name": "NEXTPAYMENTDATE",
+				"type": "date"
+			},
+			{
+				"name": "CURRENCYTYPE",
+				"type": "char"
+			},
+			{
+				"name": "METHODOFPMTCODE",
+				"type": "char"
+			},
+			{
+				"name": "SPECIALINTERESTCODE",
+				"type": "char"
+			},
+			{
+				"name": "EXEMPTIONIND",
+				"type": "char"
+			},
+			{
+				"name": "STATUSCODE",
+				"type": "char"
+			},
+			{
+				"name": "COMMENTS",
+				"type": "varchar"
+			},
+			{
+				"name": "PRIMARYALTERNATEID",
+				"type": "char"
+			},
+			{
+				"name": "NUMBERPERMANENTSTAFF",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "EMPLOYER"
+		}
+	}
+}
