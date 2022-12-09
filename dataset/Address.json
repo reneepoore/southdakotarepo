@@ -12,8 +12,8 @@
 		"type": "AzureSqlTable",
 		"schema": [],
 		"typeProperties": {
-			"schema": "CURAPD01",
-			"table": "ADDRESS"
+			"schema": "dbo",
+			"table": "vw_Address"
 		}
 	}
 }
