@@ -34,13 +34,6 @@
 						"type": "DatasetReference"
 					},
 					"name": "srcTaskAssignment"
-				},
-				{
-					"dataset": {
-						"referenceName": "CodeTableItem",
-						"type": "DatasetReference"
-					},
-					"name": "source1"
 				}
 			],
 			"sinks": [
@@ -94,22 +87,19 @@
 					"name": "SelectCategory"
 				},
 				{
-					"name": "lookup1"
+					"name": "LookupAssignment"
 				},
 				{
-					"name": "select1"
+					"name": "SelectAssignment"
 				},
 				{
-					"name": "lookup2"
+					"name": "LookupTaskAllocation"
 				},
 				{
-					"name": "select2"
+					"name": "SelectTaskAllocation"
 				},
 				{
-					"name": "filter1"
-				},
-				{
-					"name": "select3"
+					"name": "drvNullValues"
 				}
 			],
 			"scriptLines": [
@@ -180,24 +170,6 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcTaskAssignment",
-				"source(output(",
-				"          TABLENAME as string,",
-				"          CODE as string,",
-				"          DESCRIPTION as string,",
-				"          ANNOTATION as string,",
-				"          ISENABLED as string,",
-				"          SORTORDER as integer,",
-				"          LOCALEIDENTIFIER as string,",
-				"          PARENTCODE as string,",
-				"          COMMENTS as string,",
-				"          VERSIONNO as integer,",
-				"          LASTWRITTEN as timestamp",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table',",
-				"     partitionBy('hash', 1)) ~> source1",
 				"vwCodeTables filter(TABLENAME=='TargetItemType') ~> TargetItemType",
 				"vwCodeTables filter(TABLENAME=='TaskCategoryCode') ~> TaskCategoryCode",
 				"vwCodeTables filter(TABLENAME=='TaskChangeType') ~> TaskChangeType",
@@ -278,8 +250,8 @@
 				"SelectCategory, srcTaskAssignment lookup(SelectCategory@TASKID == srcTaskAssignment@TASKID,",
 				"     multiple: false,",
 				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookup1",
-				"lookup1 select(mapColumn(",
+				"     broadcast: 'auto')~> LookupAssignment",
+				"LookupAssignment select(mapColumn(",
 				"          TASKID = SelectCategory@TASKID,",
 				"          CREATIONTIME,",
 				"          TOTALTIMEWORKED,",
@@ -296,12 +268,12 @@
 				"          ASSIGNEETYPE",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1, TargetItemType lookup(trim(ASSIGNEETYPE) == CODE,",
+				"     skipDuplicateMapOutputs: true) ~> SelectAssignment",
+				"SelectAssignment, TargetItemType lookup(trim(ASSIGNEETYPE) == CODE,",
 				"     multiple: false,",
 				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookup2",
-				"lookup2 select(mapColumn(",
+				"     broadcast: 'auto')~> LookupTaskAllocation",
+				"LookupTaskAllocation select(mapColumn(",
 				"          TASKID,",
 				"          CREATIONTIME,",
 				"          TOTALTIMEWORKED,",
@@ -309,20 +281,15 @@
 				"          StatusDescription,",
 				"          PriorityDescription,",
 				"          CategoryDescription,",
-				"          ASSIGNEETYPE,",
-				"          TaskAllocationTarget = DESCRIPTION",
+				"          TaskAllocationTargetDescription = DESCRIPTION",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select2",
-				"select3 filter(TABLENAME=='ABAWDStatus') ~> filter1",
-				"source1 select(mapColumn(",
-				"          TABLENAME,",
-				"          CODE,",
-				"          DESCRIPTION",
-				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select3",
-				"select2 sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectTaskAllocation",
+				"SelectTaskAllocation derive(StatusDescription = iifNull(StatusDescription, 'NA'),",
+				"          PriorityDescription = iifNull(PriorityDescription, 'NA'),",
+				"          CategoryDescription = iifNull(CategoryDescription, 'NA'),",
+				"          TaskAllocationTargetDescription = iifNull(TaskAllocationTargetDescription, 'NA')) ~> drvNullValues",
+				"drvNullValues sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          Column_1 as string,",
