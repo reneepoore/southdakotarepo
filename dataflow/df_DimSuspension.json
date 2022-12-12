@@ -55,6 +55,9 @@
 				},
 				{
 					"name": "SelectProgram"
+				},
+				{
+					"name": "derivedColumn1"
 				}
 			],
 			"scriptLines": [
@@ -129,7 +132,8 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectProgram",
-				"SelectProgram sink(allowSchemaDrift: true,",
+				"SelectProgram derive(each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          Column_1 as string,",
