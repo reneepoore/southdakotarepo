@@ -54,9 +54,6 @@
 					"name": "SelectProgram"
 				},
 				{
-					"name": "derivedColumn1"
-				},
-				{
 					"name": "SDSuspensionReason"
 				}
 			],
@@ -138,9 +135,8 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectProgram",
-				"SelectProgram derive(each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> derivedColumn1",
 				"vwCodeTables filter(TABLENAME=='SDSuspensionReason') ~> SDSuspensionReason",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"SelectProgram sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          Column_1 as string,",
