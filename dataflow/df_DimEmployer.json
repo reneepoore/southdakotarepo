@@ -72,9 +72,6 @@
 					"name": "drvTrimColumns"
 				},
 				{
-					"name": "drvNullsDate"
-				},
-				{
 					"name": "SelectTgtColumns"
 				},
 				{
@@ -250,10 +247,9 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectAddress",
-				"SelectRegionLocation derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
-				"drvTrimColumns derive(each(match(type=='string'), $$+'_null' = iifNull($$,'NA' )),",
-				"          {Modified Date} = currentUTC()) ~> drvNullsDate",
-				"drvNullsDate select(mapColumn(",
+				"SelectRegionLocation derive(each(match(type=='string'), $$+'_Trim_Null' = iifNull(trim($$),'NA') ),",
+				"          {Modified Date} = currentUTC()) ~> drvTrimColumns",
+				"drvTrimColumns select(mapColumn(",
 				"          CONCERNROLEID,",
 				"          REGISTEREDNAME = REGISTEREDNAME_Trim_null,",
 				"          ADDRESS1 = ADDRESS1_Trim_null,",
