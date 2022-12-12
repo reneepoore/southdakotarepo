@@ -2,7 +2,7 @@
 	"name": "df_DimSuspension",
 	"properties": {
 		"folder": {
-			"name": "Final df POCs"
+			"name": "Dimensions"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
