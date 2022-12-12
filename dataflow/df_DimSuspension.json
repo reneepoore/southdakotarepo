@@ -9,7 +9,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "CodeTables",
+						"referenceName": "CodeTableItem",
 						"type": "DatasetReference"
 					},
 					"name": "vwCodeTables"
@@ -64,7 +64,15 @@
 				"source(output(",
 				"          TABLENAME as string,",
 				"          CODE as string,",
-				"          DESCRIPTION as string",
+				"          DESCRIPTION as string,",
+				"          ANNOTATION as string,",
+				"          ISENABLED as string,",
+				"          SORTORDER as integer,",
+				"          LOCALEIDENTIFIER as string,",
+				"          PARENTCODE as string,",
+				"          COMMENTS as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
@@ -88,7 +96,7 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcSuspension",
 				"vwCodeTables filter(TABLENAME=='POIProgram') ~> POIProgram",
-				"vwCodeTables filter(TABLENAME=='SDSuspensionReason') ~> SDSuspensionReason",
+				"vwCodeTables filter(ERROR_FUNCTION('')) ~> SDSuspensionReason",
 				"srcSuspension select(mapColumn(",
 				"          SDSUSPENSIONID,",
 				"          ENDDATE,",
