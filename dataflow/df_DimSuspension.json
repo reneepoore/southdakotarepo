@@ -39,9 +39,6 @@
 					"name": "SelectSrcColumns"
 				},
 				{
-					"name": "drvTrimColumns"
-				},
-				{
 					"name": "LookupReason"
 				},
 				{
@@ -103,9 +100,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns",
-				"SelectSrcColumns derive(each(match(type=='string'), $$+'_Trim_Null' = iifNull(trim($$),'NA')),",
-				"          ModifedDate = currentUTC()) ~> drvTrimColumns",
-				"drvTrimColumns, POIProgram lookup(REASON_Trim_Null == CODE,",
+				"SelectSrcColumns, POIProgram lookup(REASON == CODE,",
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LookupReason",
@@ -114,14 +109,12 @@
 				"          ENDDATE,",
 				"          STARTDATE,",
 				"          STATUSCODE,",
-				"          STATUSCODE_Trim_Null,",
-				"          PROGRAM_Trim_Null,",
-				"          ModifedDate,",
+				"          PROGRAM,",
 				"          ReasonDescriptoin = DESCRIPTION",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectReason",
-				"SelectReason, vwCodeTables lookup(PROGRAM_Trim_Null == CODE,",
+				"SelectReason, vwCodeTables lookup(PROGRAM == CODE,",
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LookupProgram",
@@ -129,7 +122,6 @@
 				"          SDSUSPENSIONID,",
 				"          ENDDATE,",
 				"          STARTDATE,",
-				"          ModifedDate,",
 				"          ReasonDescriptoin,",
 				"          ProgramTypeDescription = DESCRIPTION",
 				"     ),",
