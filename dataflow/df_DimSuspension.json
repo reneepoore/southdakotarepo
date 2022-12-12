@@ -36,9 +36,6 @@
 					"name": "POIProgram"
 				},
 				{
-					"name": "SDSuspensionReason"
-				},
-				{
 					"name": "SelectSrcColumns"
 				},
 				{
@@ -58,6 +55,9 @@
 				},
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "SDSuspensionReason"
 				}
 			],
 			"scriptLines": [
@@ -96,7 +96,6 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcSuspension",
 				"vwCodeTables filter(TABLENAME=='POIProgram') ~> POIProgram",
-				"vwCodeTables filter(ERROR_FUNCTION('')) ~> SDSuspensionReason",
 				"srcSuspension select(mapColumn(",
 				"          SDSUSPENSIONID,",
 				"          ENDDATE,",
@@ -125,7 +124,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectReason",
-				"SelectReason, SDSuspensionReason lookup(PROGRAM_Trim_Null == CODE,",
+				"SelectReason, vwCodeTables lookup(PROGRAM_Trim_Null == CODE,",
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LookupProgram",
@@ -140,6 +139,7 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectProgram",
 				"SelectProgram derive(each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> derivedColumn1",
+				"vwCodeTables filter(TABLENAME=='SDSuspensionReason') ~> SDSuspensionReason",
 				"derivedColumn1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
