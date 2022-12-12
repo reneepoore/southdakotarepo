@@ -195,6 +195,30 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Address')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "vw_Address"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CaseHeader')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -549,6 +573,142 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "vw_CODETABLES"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ConcernRole')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CONCERNID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CONCERNROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CONCERNROLETYPE",
+						"type": "char"
+					},
+					{
+						"name": "CREATIONDATE",
+						"type": "date"
+					},
+					{
+						"name": "REGISTRATIONDATE",
+						"type": "date"
+					},
+					{
+						"name": "STARTDATE",
+						"type": "date"
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "SENSITIVITY",
+						"type": "char"
+					},
+					{
+						"name": "PREFCOMMMETHOD",
+						"type": "char"
+					},
+					{
+						"name": "PREFCOMMFROMDATE",
+						"type": "date"
+					},
+					{
+						"name": "PREFCOMMTODATE",
+						"type": "date"
+					},
+					{
+						"name": "PRIMARYWEBADDRESSID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PRIMARYPHONENUMBERID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "PRIMARYEMAILADDRESSID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "PRIMARYBANKACCOUNTID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "REGUSERNAME",
+						"type": "varchar"
+					},
+					{
+						"name": "PREFPUBLICOFFICEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "PREFERREDLANGUAGE",
+						"type": "char"
+					},
+					{
+						"name": "ENDDATE",
+						"type": "date"
+					},
+					{
+						"name": "STATUSCODE",
+						"type": "char"
+					},
+					{
+						"name": "CONCERNROLENAME",
+						"type": "varchar"
+					},
+					{
+						"name": "PRIMARYADDRESSID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "PRIMARYALTERNATEID",
+						"type": "char"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "CONCERNROLE"
 				}
 			},
 			"dependsOn": [
@@ -1199,74 +1359,6 @@
 					{
 						"type": "String"
 					},
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Dummy')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Testing"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "dfdummy.txt",
-						"container": "newcontainer"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Dummy1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "POCWork"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "dfdummy.txt",
-						"container": "newcontainer"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
 					{
 						"type": "String"
 					}
