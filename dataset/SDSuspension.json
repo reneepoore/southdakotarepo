@@ -1,5 +1,5 @@
 {
-	"name": "df_DimSuspension",
+	"name": "SDSuspension",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CURAPD01",
