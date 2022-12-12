@@ -141,7 +141,8 @@
 				"     ),",
 				"     partitionFileNames:['DimSuspension'],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> tgtDimSuspension"
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtDimSuspension"
 			]
 		}
 	}
