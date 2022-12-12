@@ -1,0 +1,66 @@
+{
+	"name": "df_DimSuspension",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SDSUSPENSIONID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "COMMENTS",
+				"type": "varchar"
+			},
+			{
+				"name": "CONCERNROLEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "CREATEDBY",
+				"type": "varchar"
+			},
+			{
+				"name": "ENDDATE",
+				"type": "date"
+			},
+			{
+				"name": "STARTDATE",
+				"type": "date"
+			},
+			{
+				"name": "STATUSCODE",
+				"type": "char"
+			},
+			{
+				"name": "REASON",
+				"type": "char"
+			},
+			{
+				"name": "PROGRAM",
+				"type": "char"
+			},
+			{
+				"name": "CASEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "LASTWRITTEN",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "SDSUSPENSION"
+		}
+	}
+}

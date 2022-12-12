@@ -1,0 +1,79 @@
+{
+	"name": "df_DimSuspension",
+	"properties": {
+		"folder": {
+			"name": "Final df POCs"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CodeTables",
+						"type": "DatasetReference"
+					},
+					"name": "vwCodeTables"
+				},
+				{
+					"dataset": {
+						"referenceName": "df_DimSuspension",
+						"type": "DatasetReference"
+					},
+					"name": "srcSuspension"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "POIProgram"
+				},
+				{
+					"name": "SDSuspensionReason"
+				},
+				{
+					"name": "SelectSrcColumns"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwCodeTables",
+				"source(output(",
+				"          SDSUSPENSIONID as long,",
+				"          COMMENTS as string,",
+				"          CONCERNROLEID as long,",
+				"          CREATEDBY as string,",
+				"          ENDDATE as date,",
+				"          STARTDATE as date,",
+				"          STATUSCODE as string,",
+				"          REASON as string,",
+				"          PROGRAM as string,",
+				"          CASEID as long,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcSuspension",
+				"vwCodeTables filter(TABLENAME=='POIProgram') ~> POIProgram",
+				"vwCodeTables filter(TABLENAME=='SDSuspensionReason') ~> SDSuspensionReason",
+				"srcSuspension select(mapColumn(",
+				"          SDSUSPENSIONID,",
+				"          ENDDATE,",
+				"          STARTDATE,",
+				"          STATUSCODE,",
+				"          REASON,",
+				"          PROGRAM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns"
+			]
+		}
+	}
+}
