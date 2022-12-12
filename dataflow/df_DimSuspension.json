@@ -125,7 +125,6 @@
 				"          SDSUSPENSIONID,",
 				"          ENDDATE,",
 				"          STARTDATE,",
-				"          STATUSCODE_Trim_Null,",
 				"          ModifedDate,",
 				"          ReasonDescriptoin,",
 				"          ProgramTypeDescription = DESCRIPTION",
