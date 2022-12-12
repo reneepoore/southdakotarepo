@@ -35,6 +35,18 @@
 				},
 				{
 					"name": "drvTrimColumns"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "lookup2"
+				},
+				{
+					"name": "select2"
 				}
 			],
 			"scriptLines": [
@@ -77,7 +89,38 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns",
 				"SelectSrcColumns derive(each(match(type=='string'), $$+'_Trim_Null' = iifNull(trim($$),'NA')),",
-				"          ModifedDate = currentUTC()) ~> drvTrimColumns"
+				"          ModifedDate = currentUTC()) ~> drvTrimColumns",
+				"drvTrimColumns, POIProgram lookup(REASON_Trim_Null == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 select(mapColumn(",
+				"          SDSUSPENSIONID,",
+				"          ENDDATE,",
+				"          STARTDATE,",
+				"          STATUSCODE,",
+				"          STATUSCODE_Trim_Null,",
+				"          PROGRAM_Trim_Null,",
+				"          ModifedDate,",
+				"          ReasonDescriptoin = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1, SDSuspensionReason lookup(PROGRAM_Trim_Null == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup2",
+				"lookup2 select(mapColumn(",
+				"          SDSUSPENSIONID,",
+				"          ENDDATE,",
+				"          STARTDATE,",
+				"          STATUSCODE_Trim_Null,",
+				"          ModifedDate,",
+				"          ReasonDescriptoin,",
+				"          ProgramTypeDescription = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2"
 			]
 		}
 	}
