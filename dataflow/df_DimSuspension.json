@@ -16,7 +16,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "df_DimSuspension",
+						"referenceName": "SDSuspension",
 						"type": "DatasetReference"
 					},
 					"name": "srcSuspension"
@@ -32,6 +32,9 @@
 				},
 				{
 					"name": "SelectSrcColumns"
+				},
+				{
+					"name": "drvTrimColumns"
 				}
 			],
 			"scriptLines": [
@@ -72,7 +75,9 @@
 				"          PROGRAM",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns"
+				"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns",
+				"SelectSrcColumns derive(each(match(type=='string'), $$+'_Trim_Null' = iifNull(trim($$),'NA')),",
+				"          ModifedDate = currentUTC()) ~> drvTrimColumns"
 			]
 		}
 	}
