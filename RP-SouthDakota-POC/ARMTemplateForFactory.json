@@ -1437,11 +1437,11 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "df_DimSanction",
+						"name": "df_DimDisability",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
-							"timeout": "0.00:15:00",
+							"timeout": "0.12:00:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -1450,13 +1450,13 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_DimSanction",
+								"referenceName": "df_DimDisability",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
 									"vwCodeTables": {},
-									"srcSantion": {},
-									"tgtDimSanction": {}
+									"srcDisability": {},
+									"tgtDimDisability": {}
 								}
 							},
 							"staging": {},
@@ -1478,7 +1478,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_DimSanction')]"
+				"[concat(variables('factoryId'), '/dataflows/df_DimDisability')]"
 			]
 		},
 		{
@@ -2677,6 +2677,104 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Disability')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "EVIDENCEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CASEPARTICIPANTROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "DISABILITYTYPE",
+						"type": "char"
+					},
+					{
+						"name": "DISABILITYDURATION",
+						"type": "char"
+					},
+					{
+						"name": "DISABILITYSTARTDATE",
+						"type": "date"
+					},
+					{
+						"name": "DISABILITYENDDATE",
+						"type": "date"
+					},
+					{
+						"name": "ESTABLISHEDDISABILITYMODE",
+						"type": "char"
+					},
+					{
+						"name": "BLINDREGISTERIND",
+						"type": "char"
+					},
+					{
+						"name": "BLINDREGISTERENDDATE",
+						"type": "date"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "PREVCHILDCRITERIAIND",
+						"type": "char"
+					},
+					{
+						"name": "IS1619BRECIPIENTIND",
+						"type": "char"
+					},
+					{
+						"name": "COMPETENCYSTATUS",
+						"type": "char"
+					},
+					{
+						"name": "DATECOMPETENCYDETERMINED",
+						"type": "date"
+					},
+					{
+						"name": "CATEGORIESOFBRAININJURY",
+						"type": "char"
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "DISABILITY"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
 			]
 		},
 		{
@@ -5462,6 +5560,239 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/CaseHeader')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_DimDisability')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Disability Dimension",
+				"folder": {
+					"name": "Dimensions"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CodeTables",
+								"type": "DatasetReference"
+							},
+							"name": "vwCodeTables"
+						},
+						{
+							"dataset": {
+								"referenceName": "Disability",
+								"type": "DatasetReference"
+							},
+							"name": "srcDisability"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DimensionTargetTesting",
+								"type": "DatasetReference"
+							},
+							"name": "tgtDimDisability"
+						}
+					],
+					"transformations": [
+						{
+							"name": "DisabilityType"
+						},
+						{
+							"name": "DisabilityMode"
+						},
+						{
+							"name": "CompetencyStatus"
+						},
+						{
+							"name": "SelectSrcColumns"
+						},
+						{
+							"name": "drvTrimColumns"
+						},
+						{
+							"name": "SelectTrimColumns"
+						},
+						{
+							"name": "LookupType"
+						},
+						{
+							"name": "SelectType"
+						},
+						{
+							"name": "LookupMode"
+						},
+						{
+							"name": "SelectMode"
+						},
+						{
+							"name": "LookupStatus"
+						},
+						{
+							"name": "SelectStatus"
+						},
+						{
+							"name": "drvNullValues"
+						},
+						{
+							"name": "SelectNullValues"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          TABLENAME as string,",
+						"          CODE as string,",
+						"          DESCRIPTION as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> vwCodeTables",
+						"source(output(",
+						"          EVIDENCEID as long,",
+						"          CASEPARTICIPANTROLEID as long,",
+						"          DISABILITYTYPE as string,",
+						"          DISABILITYDURATION as string,",
+						"          DISABILITYSTARTDATE as date,",
+						"          DISABILITYENDDATE as date,",
+						"          ESTABLISHEDDISABILITYMODE as string,",
+						"          BLINDREGISTERIND as string,",
+						"          BLINDREGISTERENDDATE as date,",
+						"          COMMENTS as string,",
+						"          PREVCHILDCRITERIAIND as string,",
+						"          IS1619BRECIPIENTIND as string,",
+						"          COMPETENCYSTATUS as string,",
+						"          DATECOMPETENCYDETERMINED as date,",
+						"          CATEGORIESOFBRAININJURY as string,",
+						"          VERSIONNO as integer,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcDisability",
+						"vwCodeTables filter(TABLENAME=='DisabilityType') ~> DisabilityType",
+						"vwCodeTables filter(TABLENAME=='DisabilityMode') ~> DisabilityMode",
+						"vwCodeTables filter(TABLENAME=='CompetencyStatus') ~> CompetencyStatus",
+						"srcDisability select(mapColumn(",
+						"          EVIDENCEID,",
+						"          CASEPARTICIPANTROLEID,",
+						"          DISABILITYTYPE,",
+						"          DISABILITYDURATION,",
+						"          DISABILITYSTARTDATE,",
+						"          DISABILITYENDDATE,",
+						"          ESTABLISHEDDISABILITYMODE,",
+						"          IS1619BRECIPIENTIND,",
+						"          COMPETENCYSTATUS",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns",
+						"SelectSrcColumns derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+						"drvTrimColumns select(mapColumn(",
+						"          EVIDENCEID,",
+						"          CASEPARTICIPANTROLEID,",
+						"          DISABILITYSTARTDATE,",
+						"          DISABILITYENDDATE,",
+						"          DISABILITYTYPE_Trim,",
+						"          DISABILITYDURATION_Trim,",
+						"          ESTABLISHEDDISABILITYMODE_Trim,",
+						"          IS1619BRECIPIENTIND_Trim,",
+						"          COMPETENCYSTATUS_Trim",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectTrimColumns",
+						"SelectTrimColumns, DisabilityType lookup(DISABILITYTYPE_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupType",
+						"LookupType select(mapColumn(",
+						"          EVIDENCEID,",
+						"          CASEPARTICIPANTROLEID,",
+						"          DISABILITYSTARTDATE,",
+						"          DISABILITYENDDATE,",
+						"          DISABILITYDURATION_Trim,",
+						"          ESTABLISHEDDISABILITYMODE_Trim,",
+						"          IS1619BRECIPIENTIND_Trim,",
+						"          COMPETENCYSTATUS_Trim,",
+						"          DisablilityType = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectType",
+						"SelectType, DisabilityMode lookup(ESTABLISHEDDISABILITYMODE_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupMode",
+						"LookupMode select(mapColumn(",
+						"          EVIDENCEID,",
+						"          CASEPARTICIPANTROLEID,",
+						"          DISABILITYSTARTDATE,",
+						"          DISABILITYENDDATE,",
+						"          DISABILITYDURATION_Trim,",
+						"          IS1619BRECIPIENTIND_Trim,",
+						"          COMPETENCYSTATUS_Trim,",
+						"          DisablilityType,",
+						"          DisabilityEstablishedMode = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectMode",
+						"SelectMode, CompetencyStatus lookup(COMPETENCYSTATUS_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupStatus",
+						"LookupStatus select(mapColumn(",
+						"          EVIDENCEID,",
+						"          CASEPARTICIPANTROLEID,",
+						"          DISABILITYSTARTDATE,",
+						"          DISABILITYENDDATE,",
+						"          DISABILITYDURATION_Trim,",
+						"          IS1619BRECIPIENTIND_Trim,",
+						"          DisablilityType,",
+						"          DisabilityEstablishedMode,",
+						"          DisabilityCompetencyStatus = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectStatus",
+						"SelectStatus derive(ModifiedDate = currentUTC(),",
+						"          each(match(type=='string'), $$+'_null' = trim($$))) ~> drvNullValues",
+						"drvNullValues select(mapColumn(",
+						"          EvidenceID = EVIDENCEID,",
+						"          CaseParticipantRoleID = CASEPARTICIPANTROLEID,",
+						"          DisabilityStartDate = DISABILITYSTARTDATE,",
+						"          DisabilityEndDate = DISABILITYENDDATE,",
+						"          ModifiedDate,",
+						"          DisabilityDuration = DISABILITYDURATION_Trim_null,",
+						"          Disability1619BFlag = IS1619BRECIPIENTIND_Trim_null,",
+						"          DisablilityType = DisablilityType_null,",
+						"          DisabilityEstablishedMode = DisabilityEstablishedMode_null,",
+						"          DisabilityCompetencyStatus = DisabilityCompetencyStatus_null",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectNullValues",
+						"SelectNullValues sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     partitionFileNames:['DimDisability.txt'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtDimDisability"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/Disability')]",
+				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
 			]
 		},
 		{

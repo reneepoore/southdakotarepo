@@ -13,6 +13,452 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/df_DimSanction')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Dimensions"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CodeTables",
+								"type": "DatasetReference"
+							},
+							"name": "vwCodeTables"
+						},
+						{
+							"dataset": {
+								"referenceName": "Sanction",
+								"type": "DatasetReference"
+							},
+							"name": "srcSantion"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DimensionTargetTesting",
+								"type": "DatasetReference"
+							},
+							"name": "tgtDimSanction"
+						}
+					],
+					"transformations": [
+						{
+							"name": "SanctionReason"
+						},
+						{
+							"name": "SanctionLevel"
+						},
+						{
+							"name": "RecordStatus"
+						},
+						{
+							"name": "SanctionProgram"
+						},
+						{
+							"name": "SelectSrcColumns"
+						},
+						{
+							"name": "drvTrimFields"
+						},
+						{
+							"name": "SelectTrimColumns"
+						},
+						{
+							"name": "LookupProgram"
+						},
+						{
+							"name": "SelectProgram"
+						},
+						{
+							"name": "LookupRecordStatus"
+						},
+						{
+							"name": "SelectRecordStatus"
+						},
+						{
+							"name": "LookupLevel"
+						},
+						{
+							"name": "SelectLevel"
+						},
+						{
+							"name": "LookupReason"
+						},
+						{
+							"name": "SelectReason"
+						},
+						{
+							"name": "drvNullValues"
+						},
+						{
+							"name": "SelectNullValues"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          TABLENAME as string,",
+						"          CODE as string,",
+						"          DESCRIPTION as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> vwCodeTables",
+						"source(output(",
+						"          SANCTIONID as long,",
+						"          CONCERNROLEID as long,",
+						"          SANCTIONREASON as string,",
+						"          SANCTIONLEVEL as string,",
+						"          SANCTIONSTARTDATE as timestamp,",
+						"          SANCTIONENDDATE as timestamp,",
+						"          COMMENTS as string,",
+						"          STATUSCODE as string,",
+						"          PROGRAM as string,",
+						"          NUMBEROFMONTHS as integer,",
+						"          CASEID as long,",
+						"          NONCOMPLIANTCONCERNROLEID as long,",
+						"          CONCILIATIONPROCIND as string,",
+						"          CREATEDBY as string,",
+						"          CREATEDON as timestamp,",
+						"          VERSIONNO as integer,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcSantion",
+						"vwCodeTables filter(TABLENAME=='SanctionReason') ~> SanctionReason",
+						"vwCodeTables filter(TABLENAME=='SanctionLevel') ~> SanctionLevel",
+						"vwCodeTables filter(TABLENAME=='RecordStatus') ~> RecordStatus",
+						"vwCodeTables filter(TABLENAME=='SanctionProgram') ~> SanctionProgram",
+						"srcSantion select(mapColumn(",
+						"          SANCTIONID,",
+						"          CONCERNROLEID,",
+						"          SANCTIONREASON,",
+						"          SANCTIONLEVEL,",
+						"          SANCTIONSTARTDATE,",
+						"          SANCTIONENDDATE,",
+						"          STATUSCODE,",
+						"          PROGRAM,",
+						"          SanctionConciliationFlag = CONCILIATIONPROCIND",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns",
+						"SelectSrcColumns derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimFields",
+						"drvTrimFields select(mapColumn(",
+						"          SANCTIONID,",
+						"          CONCERNROLEID,",
+						"          SanctionConciliationFlag,",
+						"          SANCTIONSTARTDATE,",
+						"          SANCTIONENDDATE,",
+						"          SANCTIONREASON_Trim,",
+						"          SANCTIONLEVEL_Trim,",
+						"          STATUSCODE_Trim,",
+						"          PROGRAM_Trim",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectTrimColumns",
+						"SelectTrimColumns, SanctionProgram lookup(PROGRAM_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupProgram",
+						"LookupProgram select(mapColumn(",
+						"          SANCTIONID,",
+						"          CONCERNROLEID,",
+						"          SanctionConciliationFlag,",
+						"          SANCTIONSTARTDATE,",
+						"          SANCTIONENDDATE,",
+						"          SANCTIONREASON_Trim,",
+						"          SANCTIONLEVEL_Trim,",
+						"          STATUSCODE_Trim,",
+						"          SanctionProgramType = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectProgram",
+						"SelectProgram, RecordStatus lookup(STATUSCODE_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupRecordStatus",
+						"LookupRecordStatus select(mapColumn(",
+						"          SANCTIONID,",
+						"          CONCERNROLEID,",
+						"          SanctionConciliationFlag,",
+						"          SANCTIONSTARTDATE,",
+						"          SANCTIONENDDATE,",
+						"          SANCTIONREASON_Trim,",
+						"          SANCTIONLEVEL_Trim,",
+						"          STATUSCODE_Trim,",
+						"          SanctionProgramType,",
+						"          SanctionRecordStatus = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectRecordStatus",
+						"SelectRecordStatus, SanctionLevel lookup(SANCTIONLEVEL_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupLevel",
+						"LookupLevel select(mapColumn(",
+						"          SANCTIONID,",
+						"          CONCERNROLEID,",
+						"          SanctionConciliationFlag,",
+						"          SANCTIONSTARTDATE,",
+						"          SANCTIONENDDATE,",
+						"          SANCTIONREASON_Trim,",
+						"          SANCTIONLEVEL_Trim,",
+						"          STATUSCODE_Trim,",
+						"          SanctionProgramType,",
+						"          SanctionRecordStatus,",
+						"          SanctionLevel = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectLevel",
+						"SelectLevel, SanctionReason lookup(SANCTIONREASON_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupReason",
+						"LookupReason select(mapColumn(",
+						"          SANCTIONID,",
+						"          CONCERNROLEID,",
+						"          SanctionConciliationFlag,",
+						"          SANCTIONSTARTDATE,",
+						"          SANCTIONENDDATE,",
+						"          SANCTIONREASON_Trim,",
+						"          SANCTIONLEVEL_Trim,",
+						"          STATUSCODE_Trim,",
+						"          SanctionProgramType,",
+						"          SanctionRecordStatus,",
+						"          SanctionLevel,",
+						"          SanctionReason = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectReason",
+						"SelectReason derive(ModifiedDate = currentUTC(),",
+						"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvNullValues",
+						"drvNullValues select(mapColumn(",
+						"          SanctionID = SANCTIONID,",
+						"          ConcernRoleID = CONCERNROLEID,",
+						"          SanctionConciliationFlag,",
+						"          SanctionStartDate = SANCTIONSTARTDATE,",
+						"          SanctionEndDate = SANCTIONENDDATE,",
+						"          ModifiedDate,",
+						"          SanctionProgramType = SanctionProgramType_null,",
+						"          SanctionRecordStatus = SanctionRecordStatus_null,",
+						"          SanctionLevel = SanctionLevel_null,",
+						"          SanctionReason = SanctionReason_null",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectNullValues",
+						"SelectNullValues sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     partitionFileNames:['DimSanction.txt'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtDimSanction"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_DimSuspension')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Dimensions"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CodeTableItem",
+								"type": "DatasetReference"
+							},
+							"name": "vwCodeTables"
+						},
+						{
+							"dataset": {
+								"referenceName": "SDSuspension",
+								"type": "DatasetReference"
+							},
+							"name": "srcSuspension"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DimensionTargetTesting",
+								"type": "DatasetReference"
+							},
+							"name": "tgtDimSuspension"
+						}
+					],
+					"transformations": [
+						{
+							"name": "POIProgram"
+						},
+						{
+							"name": "SelectSrcColumns"
+						},
+						{
+							"name": "LookupReason"
+						},
+						{
+							"name": "SelectReason"
+						},
+						{
+							"name": "LookupProgram"
+						},
+						{
+							"name": "SelectProgram"
+						},
+						{
+							"name": "SDSuspensionReason"
+						},
+						{
+							"name": "drvTrimColumns"
+						},
+						{
+							"name": "SelectDrvColumns"
+						},
+						{
+							"name": "drvNullValues"
+						},
+						{
+							"name": "SelectNullColumns"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          TABLENAME as string,",
+						"          CODE as string,",
+						"          DESCRIPTION as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> vwCodeTables",
+						"source(output(",
+						"          SDSUSPENSIONID as long,",
+						"          COMMENTS as string,",
+						"          CONCERNROLEID as long,",
+						"          CREATEDBY as string,",
+						"          ENDDATE as date,",
+						"          STARTDATE as date,",
+						"          STATUSCODE as string,",
+						"          REASON as string,",
+						"          PROGRAM as string,",
+						"          CASEID as long,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcSuspension",
+						"vwCodeTables filter(TABLENAME=='POIProgram') ~> POIProgram",
+						"srcSuspension select(mapColumn(",
+						"          SDSUSPENSIONID,",
+						"          ENDDATE,",
+						"          STARTDATE,",
+						"          STATUSCODE,",
+						"          REASON,",
+						"          PROGRAM",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns",
+						"SelectDrvColumns, SDSuspensionReason lookup(REASON_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupReason",
+						"LookupReason select(mapColumn(",
+						"          SDSUSPENSIONID,",
+						"          ENDDATE,",
+						"          STARTDATE,",
+						"          STATUSCODE,",
+						"          REASON,",
+						"          PROGRAM,",
+						"          STATUSCODE_Trim,",
+						"          REASON_Trim,",
+						"          PROGRAM_Trim,",
+						"          ReasonDescription = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectReason",
+						"SelectReason, POIProgram lookup(PROGRAM_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupProgram",
+						"LookupProgram select(mapColumn(",
+						"          SuspensionID = SDSUSPENSIONID,",
+						"          SuspensionEndDate = ENDDATE,",
+						"          SuspensionStartDate = STARTDATE,",
+						"          SuspensionReason = ReasonDescription,",
+						"          SuspensionProgramType = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectProgram",
+						"vwCodeTables filter(TABLENAME=='SDSuspensionReason') ~> SDSuspensionReason",
+						"SelectSrcColumns derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+						"drvTrimColumns select(mapColumn(",
+						"          SDSUSPENSIONID,",
+						"          ENDDATE,",
+						"          STARTDATE,",
+						"          STATUSCODE,",
+						"          REASON,",
+						"          PROGRAM,",
+						"          STATUSCODE_Trim,",
+						"          REASON_Trim,",
+						"          PROGRAM_Trim",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectDrvColumns",
+						"SelectProgram derive(each(match(type=='string'), $$+'_null' = iifNull($$,'NA')),",
+						"          ModifiedDate = currentUTC()) ~> drvNullValues",
+						"drvNullValues select(mapColumn(",
+						"          SuspensionID,",
+						"          SuspensionEndDate,",
+						"          SuspensionStartDate,",
+						"          SuspensionReason = SuspensionReason_null,",
+						"          SuspensionProgramType = SuspensionProgramType_null,",
+						"          ModifiedDate",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectNullColumns",
+						"SelectNullColumns sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     partitionFileNames:['DimSuspension'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtDimSuspension"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/df_DimTask')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -3410,112 +3856,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/df_DynamicSelect')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_MasterDimension')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "df_StagePlaceHolder",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_StagePlaceHolder",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Dimensions"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_StagePlaceHolder')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_MasterFact')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "This is the Main pipeline that will execute all pipelines.",
-				"activities": [
-					{
-						"name": "df_StagePlaceHolder",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_StagePlaceHolder",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"variables": {
-					"failure": {
-						"type": "String"
-					}
-				},
-				"folder": {
-					"name": "Facts"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_StagePlaceHolder')]"
 			]
 		}
 	]
