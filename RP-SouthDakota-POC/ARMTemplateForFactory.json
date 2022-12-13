@@ -1437,7 +1437,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "df_DimEmployer",
+						"name": "df_DimSuspension",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -1450,16 +1450,13 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_DimEmployer",
+								"referenceName": "df_DimSuspension",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"srcEmployer": {},
-									"srcConcernRole": {},
-									"srcAddress": {},
-									"srcLocation": {},
-									"srcSDRegion": {},
-									"tgtDimEmployer": {}
+									"vwCodeTables": {},
+									"srcSuspension": {},
+									"tgtDimSuspension": {}
 								}
 							},
 							"staging": {},
@@ -1481,7 +1478,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_DimEmployer')]"
+				"[concat(variables('factoryId'), '/dataflows/df_DimSuspension')]"
 			]
 		},
 		{
@@ -1842,14 +1839,14 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "DB2"
+					"name": "Curam"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
 				"typeProperties": {
-					"schema": "CURAPD01",
-					"table": "CODETABLEITEM"
+					"schema": "dbo",
+					"table": "vw_CODETABLES"
 				}
 			},
 			"dependsOn": [
@@ -3080,6 +3077,9 @@
 					"referenceName": "CURAPD01",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "Curam"
+				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [
@@ -3111,6 +3111,80 @@
 				"typeProperties": {
 					"schema": "CURAPD01",
 					"table": "SDREGION"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SDSuspension')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "SDSUSPENSIONID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "CONCERNROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CREATEDBY",
+						"type": "varchar"
+					},
+					{
+						"name": "ENDDATE",
+						"type": "date"
+					},
+					{
+						"name": "STARTDATE",
+						"type": "date"
+					},
+					{
+						"name": "STATUSCODE",
+						"type": "char"
+					},
+					{
+						"name": "REASON",
+						"type": "char"
+					},
+					{
+						"name": "PROGRAM",
+						"type": "char"
+					},
+					{
+						"name": "CASEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "SDSUSPENSION"
 				}
 			},
 			"dependsOn": [
@@ -5442,9 +5516,6 @@
 							"name": "drvTrimColumns"
 						},
 						{
-							"name": "drvNullsDate"
-						},
-						{
 							"name": "SelectTgtColumns"
 						},
 						{
@@ -5620,21 +5691,37 @@
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> SelectAddress",
-						"SelectRegionLocation derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
-						"drvTrimColumns derive(each(match(type=='string'), $$+'_null' = iifNull($$,'NA' )),",
-						"          {Modified Date} = currentUTC()) ~> drvNullsDate",
-						"drvNullsDate select(mapColumn(",
+						"SelectRegionLocation derive(each(match(type=='string'), $$+'_Trim_Null' = iifNull(trim($$),'NA')),",
+						"          {Modified Date} = currentUTC()) ~> drvTrimColumns",
+						"drvTrimColumns select(mapColumn(",
 						"          CONCERNROLEID,",
-						"          REGISTEREDNAME = REGISTEREDNAME_Trim_null,",
-						"          ADDRESS1 = ADDRESS1_Trim_null,",
-						"          ADDRESS2 = ADDRESS2_Trim_null,",
-						"          ADDRESS3 = ADDRESS3_Trim_null,",
-						"          CITY = CITY_Trim_null,",
-						"          STATE = STATE_Trim_null,",
-						"          USCOUNTY = USCOUNTY_Trim_null,",
-						"          ZIP = ZIP_Trim_null,",
-						"          LOCATION = LOCATION_Trim_null,",
-						"          REGION = SDREGIONNAME_Trim_null",
+						"          COMPANYTYPE,",
+						"          BUSINESSDESC,",
+						"          REGISTEREDNAME,",
+						"          UPPERREGISTEREDNAME,",
+						"          ADDRESS1,",
+						"          ADDRESS2,",
+						"          ADDRESS3,",
+						"          CITY,",
+						"          STATE,",
+						"          USCOUNTY,",
+						"          ZIP,",
+						"          LOCATION,",
+						"          SDREGIONNAME,",
+						"          COMPANYTYPE_Trim_Null,",
+						"          BUSINESSDESC_Trim_Null,",
+						"          REGISTEREDNAME_Trim_Null,",
+						"          UPPERREGISTEREDNAME_Trim_Null,",
+						"          ADDRESS1_Trim_Null,",
+						"          ADDRESS2_Trim_Null,",
+						"          ADDRESS3_Trim_Null,",
+						"          CITY_Trim_Null,",
+						"          STATE_Trim_Null,",
+						"          USCOUNTY_Trim_Null,",
+						"          ZIP_Trim_Null,",
+						"          LOCATION_Trim_Null,",
+						"          SDREGIONNAME_Trim_Null,",
+						"          {Modified Date}",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
@@ -5768,6 +5855,177 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]",
 				"[concat(variables('factoryId'), '/datasets/Dummy')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_DimSuspension')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Dimensions"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CodeTableItem",
+								"type": "DatasetReference"
+							},
+							"name": "vwCodeTables"
+						},
+						{
+							"dataset": {
+								"referenceName": "SDSuspension",
+								"type": "DatasetReference"
+							},
+							"name": "srcSuspension"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DimensionTargetTesting",
+								"type": "DatasetReference"
+							},
+							"name": "tgtDimSuspension"
+						}
+					],
+					"transformations": [
+						{
+							"name": "POIProgram"
+						},
+						{
+							"name": "SelectSrcColumns"
+						},
+						{
+							"name": "LookupReason"
+						},
+						{
+							"name": "SelectReason"
+						},
+						{
+							"name": "LookupProgram"
+						},
+						{
+							"name": "SelectProgram"
+						},
+						{
+							"name": "SDSuspensionReason"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "SelectDrvColumns"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          TABLENAME as string,",
+						"          CODE as string,",
+						"          DESCRIPTION as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> vwCodeTables",
+						"source(output(",
+						"          SDSUSPENSIONID as long,",
+						"          COMMENTS as string,",
+						"          CONCERNROLEID as long,",
+						"          CREATEDBY as string,",
+						"          ENDDATE as date,",
+						"          STARTDATE as date,",
+						"          STATUSCODE as string,",
+						"          REASON as string,",
+						"          PROGRAM as string,",
+						"          CASEID as long,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcSuspension",
+						"vwCodeTables filter(TABLENAME=='POIProgram') ~> POIProgram",
+						"srcSuspension select(mapColumn(",
+						"          SDSUSPENSIONID,",
+						"          ENDDATE,",
+						"          STARTDATE,",
+						"          STATUSCODE,",
+						"          REASON,",
+						"          PROGRAM",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns",
+						"SelectDrvColumns, SDSuspensionReason lookup(REASON_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupReason",
+						"LookupReason select(mapColumn(",
+						"          SDSUSPENSIONID,",
+						"          ENDDATE,",
+						"          STARTDATE,",
+						"          STATUSCODE,",
+						"          REASON,",
+						"          PROGRAM,",
+						"          STATUSCODE_Trim,",
+						"          REASON_Trim,",
+						"          PROGRAM_Trim,",
+						"          ReasonDescription = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectReason",
+						"SelectReason, POIProgram lookup(PROGRAM_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupProgram",
+						"LookupProgram select(mapColumn(",
+						"          SuspensionID = SDSUSPENSIONID,",
+						"          SuspensionEndDate = ENDDATE,",
+						"          SuspensionStartDate = STARTDATE,",
+						"          SuspensionReasonDescription = ReasonDescription,",
+						"          SuspensionProgramTypeDescription = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectProgram",
+						"vwCodeTables filter(TABLENAME=='SDSuspensionReason') ~> SDSuspensionReason",
+						"SelectSrcColumns derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> derivedColumn1",
+						"derivedColumn1 select(mapColumn(",
+						"          SDSUSPENSIONID,",
+						"          ENDDATE,",
+						"          STARTDATE,",
+						"          STATUSCODE,",
+						"          REASON,",
+						"          PROGRAM,",
+						"          STATUSCODE_Trim,",
+						"          REASON_Trim,",
+						"          PROGRAM_Trim",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectDrvColumns",
+						"SelectProgram sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     partitionFileNames:['DimSuspension'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtDimSuspension"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CodeTableItem')]",
+				"[concat(variables('factoryId'), '/datasets/SDSuspension')]",
+				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
 			]
 		},
 		{

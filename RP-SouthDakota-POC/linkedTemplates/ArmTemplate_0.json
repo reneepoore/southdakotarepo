@@ -528,14 +528,14 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "DB2"
+					"name": "Curam"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
 				"typeProperties": {
-					"schema": "CURAPD01",
-					"table": "CODETABLEITEM"
+					"schema": "dbo",
+					"table": "vw_CODETABLES"
 				}
 			},
 			"dependsOn": [
