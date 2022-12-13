@@ -13,12 +13,400 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/df_FactSalesOrderHeader')]",
+			"name": "[concat(parameters('factoryName'), '/df_DimTask')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"folder": {
 					"name": "Dimensions"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CodeTables",
+								"type": "DatasetReference"
+							},
+							"name": "vwCodeTables"
+						},
+						{
+							"dataset": {
+								"referenceName": "Task",
+								"type": "DatasetReference"
+							},
+							"name": "srcTask"
+						},
+						{
+							"dataset": {
+								"referenceName": "TaskDefinition",
+								"type": "DatasetReference"
+							},
+							"name": "srcTaskDefinition"
+						},
+						{
+							"dataset": {
+								"referenceName": "TaskAssignment",
+								"type": "DatasetReference"
+							},
+							"name": "srcTaskAssignment"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DimensionTargetTesting",
+								"type": "DatasetReference"
+							},
+							"name": "trgDimTask"
+						}
+					],
+					"transformations": [
+						{
+							"name": "TargetItemType"
+						},
+						{
+							"name": "TaskCategoryCode"
+						},
+						{
+							"name": "TaskChangeType"
+						},
+						{
+							"name": "TaskPriority"
+						},
+						{
+							"name": "TaskStatus"
+						},
+						{
+							"name": "SelectColumns"
+						},
+						{
+							"name": "drvTrimStringFields"
+						},
+						{
+							"name": "LookupStatus",
+							"description": "Lookup Status Code"
+						},
+						{
+							"name": "LookupPriority"
+						},
+						{
+							"name": "SelectStatus"
+						},
+						{
+							"name": "SelectPriority"
+						},
+						{
+							"name": "LookupCategory"
+						},
+						{
+							"name": "SelectCategory"
+						},
+						{
+							"name": "LookupAssignment"
+						},
+						{
+							"name": "SelectAssignment"
+						},
+						{
+							"name": "LookupTaskAllocation"
+						},
+						{
+							"name": "SelectTaskAllocation"
+						},
+						{
+							"name": "drvNullValues"
+						},
+						{
+							"name": "SelectNullValues"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          TABLENAME as string,",
+						"          CODE as string,",
+						"          DESCRIPTION as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> vwCodeTables",
+						"source(output(",
+						"          TASKID as long,",
+						"          WDOSNAPSHOT as string,",
+						"          CREATIONTIME as timestamp,",
+						"          ASSIGNEDDATETIME as timestamp,",
+						"          TOTALTIMEWORKED as integer,",
+						"          RESTARTTIME as timestamp,",
+						"          RESERVEDBY as string,",
+						"          STATUS as string,",
+						"          PRIORITY as string,",
+						"          CATEGORY as string,",
+						"          DEADTIMEOVERIND as string,",
+						"          ALLOWFORWARDIND as string,",
+						"          ADMINISTRATIONSID as string,",
+						"          OVERFLOWIND as string,",
+						"          VERSIONNO as integer,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcTask",
+						"source(output(",
+						"          TASKDEFINITIONID as string,",
+						"          NAME as string,",
+						"          CATEGORYCODE as string,",
+						"          ALLOCATIONSTRATEGYCODE as string,",
+						"          ALLOCATIONITEMID as long,",
+						"          WORKALLOCATIONRULESETID as string,",
+						"          DEADLINEFUNCTIONID as long,",
+						"          DEADLINETIMEOUTINTERVAL as long,",
+						"          ALLOWFORWARDIND as string,",
+						"          ACTIONPAGENAME as string,",
+						"          CASEIDPARAMETERNAME as string,",
+						"          PARTICIPANTIDPARAMETERNAME as string,",
+						"          ADMINISTRATIONSID as string,",
+						"          COMMENTS as string,",
+						"          ACTIONPAGENAMECODE as string,",
+						"          DEADLINETIMEOVERRIDEIND as string,",
+						"          VERSIONNO as integer,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcTaskDefinition",
+						"source(output(",
+						"          TASKASSIGNMENTID as long,",
+						"          TASKID as long,",
+						"          ASSIGNEETYPE as string,",
+						"          RELATEDID as long,",
+						"          RELATEDNAME as string,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcTaskAssignment",
+						"vwCodeTables filter(TABLENAME=='TargetItemType') ~> TargetItemType",
+						"vwCodeTables filter(TABLENAME=='TaskCategoryCode') ~> TaskCategoryCode",
+						"vwCodeTables filter(TABLENAME=='TaskChangeType') ~> TaskChangeType",
+						"vwCodeTables filter(TABLENAME=='TaskPriority') ~> TaskPriority",
+						"vwCodeTables filter(TABLENAME=='TaskStatus') ~> TaskStatus",
+						"srcTask select(mapColumn(",
+						"          TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          STATUS,",
+						"          PRIORITY,",
+						"          CATEGORY,",
+						"          LASTWRITTEN",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+						"SelectColumns derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimStringFields",
+						"drvTrimStringFields, TaskStatus lookup(STATUS_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupStatus",
+						"SelectStatus, TaskPriority lookup(PRIORITY_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupPriority",
+						"LookupStatus select(mapColumn(",
+						"          TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          STATUS,",
+						"          PRIORITY,",
+						"          CATEGORY,",
+						"          LASTWRITTEN,",
+						"          STATUS_Trim,",
+						"          PRIORITY_Trim,",
+						"          CATEGORY_Trim,",
+						"          StatusDescription = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectStatus",
+						"LookupPriority select(mapColumn(",
+						"          TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          STATUS,",
+						"          PRIORITY,",
+						"          CATEGORY,",
+						"          LASTWRITTEN,",
+						"          STATUS_Trim,",
+						"          PRIORITY_Trim,",
+						"          CATEGORY_Trim,",
+						"          StatusDescription,",
+						"          PriorityDescription = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectPriority",
+						"SelectPriority, TaskCategoryCode lookup(CATEGORY_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupCategory",
+						"LookupCategory select(mapColumn(",
+						"          TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          STATUS,",
+						"          PRIORITY,",
+						"          CATEGORY,",
+						"          LASTWRITTEN,",
+						"          STATUS_Trim,",
+						"          PRIORITY_Trim,",
+						"          CATEGORY_Trim,",
+						"          StatusDescription,",
+						"          PriorityDescription,",
+						"          CategoryDescription = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectCategory",
+						"SelectCategory, srcTaskAssignment lookup(SelectCategory@TASKID == srcTaskAssignment@TASKID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupAssignment",
+						"LookupAssignment select(mapColumn(",
+						"          TASKID = SelectCategory@TASKID,",
+						"          CREATIONTIME,",
+						"          TOTALTIMEWORKED,",
+						"          STATUS,",
+						"          PRIORITY,",
+						"          CATEGORY,",
+						"          LASTWRITTEN = SelectCategory@LASTWRITTEN,",
+						"          STATUS_Trim,",
+						"          PRIORITY_Trim,",
+						"          CATEGORY_Trim,",
+						"          StatusDescription,",
+						"          PriorityDescription,",
+						"          CategoryDescription,",
+						"          ASSIGNEETYPE",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectAssignment",
+						"SelectAssignment, TargetItemType lookup(trim(ASSIGNEETYPE) == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupTaskAllocation",
+						"LookupTaskAllocation select(mapColumn(",
+						"          TaskID = TASKID,",
+						"          TaskCreationTime = CREATIONTIME,",
+						"          TaskTotalTimeWorked = TOTALTIMEWORKED,",
+						"          TaskStatus = StatusDescription,",
+						"          TaskPriority = PriorityDescription,",
+						"          TaskCategory = CategoryDescription,",
+						"          TaskAllocationTarget = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectTaskAllocation",
+						"SelectTaskAllocation derive(ModifiedDate = currentUTC(),",
+						"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvNullValues",
+						"drvNullValues select(mapColumn(",
+						"          TaskID,",
+						"          TaskCreationTime,",
+						"          TaskTotalTimeWorked,",
+						"          ModifiedDate,",
+						"          TaskStatus = TaskStatus_null,",
+						"          TaskPriority = TaskPriority_null,",
+						"          TaskCategory = TaskCategory_null,",
+						"          TaskAllocationTarget = TaskAllocationTarget_null",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectNullValues",
+						"SelectNullValues sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     partitionFileNames:['DimTask.txt'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> trgDimTask"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_DynamicSelect')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Staging"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "db2DynamicSource",
+								"type": "DatasetReference"
+							},
+							"name": "RptDBTEST"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "stgDynamicTarget",
+								"type": "DatasetReference"
+							},
+							"name": "StgDBTEST"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Upsert"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     ptblTableName as string,",
+						"     ptblLastWritten as string,",
+						"     ptblPrimaryKeyColumn as string,",
+						"     ptblSchema as string",
+						"}",
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     waterMarkColumn: 'LastWritten',",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: (\"SELECT * FROM CURAPD01.\"+$ptblTableName+\" where Lastwritten>='\"+$ptblLastWritten+\"'\"                    ),",
+						"     format: 'query',",
+						"     mode: 'read') ~> RptDBTEST",
+						"RptDBTEST alterRow(upsertIf(true())) ~> Upsert",
+						"Upsert sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:false,",
+						"     updateable:false,",
+						"     upsertable:true,",
+						"     keys:[($ptblPrimaryKeyColumn)],",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> StgDBTEST"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_FactSalesOrderHeader')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Final df POCs"
 				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
@@ -281,7 +669,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"folder": {
-					"name": "Dimensions"
+					"name": "Final df POCs"
 				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
@@ -2349,7 +2737,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"folder": {
-					"name": "Dimensions"
+					"name": "Final df POCs"
 				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
@@ -3020,7 +3408,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_DynamicSelect')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pl_MasterDimension')]",
@@ -3126,113 +3516,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/df_StagePlaceHolder')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_SCD1_POC_Example')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "df_SCD1_Example",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:05:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_SCD1_Example",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"reportingSalesOrderHeader": {},
-									"DimAddress": {},
-									"DimCustomer": {},
-									"targetSalesOrders": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine",
-							"continuationSettings": {
-								"customizedCheckpointKey": "b646b04b-86c5-49a5-a9a4-c5073a53bc78"
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Facts"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_SCD1_Example')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_SCD2_POC_Example')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "SCD2_Example",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:10:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_SCD2_Example",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"srcEmployee": {},
-									"srcEmployeeDim": {},
-									"SinkEmployeeDimInsert": {},
-									"SinkEmployeeDimUpdate": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Dimensions"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_SCD2_Example')]"
 			]
 		}
 	]
