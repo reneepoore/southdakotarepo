@@ -23,7 +23,15 @@
 					"name": "srcDisability"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DimensionTargetTesting",
+						"type": "DatasetReference"
+					},
+					"name": "tgtDimDisability"
+				}
+			],
 			"transformations": [
 				{
 					"name": "DisabilityType"
@@ -54,6 +62,18 @@
 				},
 				{
 					"name": "SelectMode"
+				},
+				{
+					"name": "LookupStatus"
+				},
+				{
+					"name": "SelectStatus"
+				},
+				{
+					"name": "drvNullValues"
+				},
+				{
+					"name": "SelectNullValues"
 				}
 			],
 			"scriptLines": [
@@ -152,7 +172,59 @@
 				"          DisabilityEstablishedMode = DESCRIPTION",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectMode"
+				"     skipDuplicateMapOutputs: true) ~> SelectMode",
+				"SelectMode, CompetencyStatus lookup(COMPETENCYSTATUS_Trim == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupStatus",
+				"LookupStatus select(mapColumn(",
+				"          EVIDENCEID,",
+				"          CASEPARTICIPANTROLEID,",
+				"          DISABILITYSTARTDATE,",
+				"          DISABILITYENDDATE,",
+				"          DISABILITYDURATION_Trim,",
+				"          IS1619BRECIPIENTIND_Trim,",
+				"          DisablilityType,",
+				"          DisabilityEstablishedMode,",
+				"          DisabilityCompetencyStatus = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectStatus",
+				"SelectStatus derive(column1 = ERROR_FUNCTION(''),",
+				"          each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvNullValues",
+				"drvNullValues select(mapColumn(",
+				"          EvidenceID = EVIDENCEID,",
+				"          CaseParticipantRoleID = CASEPARTICIPANTROLEID,",
+				"          DisabilityStartDate = DISABILITYSTARTDATE,",
+				"          DisabilityEndDate = DISABILITYENDDATE,",
+				"          DisabilityDuration = DISABILITYDURATION_Trim,",
+				"          Disability1619BFlag = IS1619BRECIPIENTIND_Trim,",
+				"          DisablilityType,",
+				"          DisabilityEstablishedMode,",
+				"          DisabilityCompetencyStatus,",
+				"          column1,",
+				"          DISABILITYDURATION_Trim_Trim,",
+				"          IS1619BRECIPIENTIND_Trim_Trim,",
+				"          DisablilityType_Trim,",
+				"          DisabilityEstablishedMode_Trim,",
+				"          DisabilityCompetencyStatus_Trim",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectNullValues",
+				"SelectNullValues sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     partitionFileNames:['DimDisability.txt'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtDimDisability"
 			]
 		}
 	}
