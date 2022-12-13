@@ -1,0 +1,61 @@
+{
+	"name": "df_Sanctions",
+	"properties": {
+		"folder": {
+			"name": "Final df POCs"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CodeTables",
+						"type": "DatasetReference"
+					},
+					"name": "vwCodeTables"
+				},
+				{
+					"dataset": {
+						"referenceName": "Sanction",
+						"type": "DatasetReference"
+					},
+					"name": "srcSantion"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "SanctionReason"
+				},
+				{
+					"name": "SanctionLevel"
+				},
+				{
+					"name": "RecordStatus"
+				},
+				{
+					"name": "SanctionProgram"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwCodeTables",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcSantion",
+				"vwCodeTables filter(TABLENAME=='SanctionReason') ~> SanctionReason",
+				"vwCodeTables filter(TABLENAME=='SanctionLevel') ~> SanctionLevel",
+				"vwCodeTables filter(TABLENAME=='RecordStatus') ~> RecordStatus",
+				"vwCodeTables filter(TABLENAME=='SanctionProgram') ~> SanctionProgram"
+			]
+		}
+	}
+}
