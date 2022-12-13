@@ -14,6 +14,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "vwCodeTables"
+				},
+				{
+					"dataset": {
+						"referenceName": "Disability",
+						"type": "DatasetReference"
+					},
+					"name": "srcDisability"
 				}
 			],
 			"sinks": [],
@@ -26,6 +33,27 @@
 				},
 				{
 					"name": "CompetencyStatus"
+				},
+				{
+					"name": "SelectSrcColumns"
+				},
+				{
+					"name": "drvTrimColumns"
+				},
+				{
+					"name": "SelectTrimColumns"
+				},
+				{
+					"name": "LookupType"
+				},
+				{
+					"name": "SelectType"
+				},
+				{
+					"name": "LookupMode"
+				},
+				{
+					"name": "SelectMode"
 				}
 			],
 			"scriptLines": [
@@ -38,9 +66,93 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> vwCodeTables",
+				"source(output(",
+				"          EVIDENCEID as long,",
+				"          CASEPARTICIPANTROLEID as long,",
+				"          DISABILITYTYPE as string,",
+				"          DISABILITYDURATION as string,",
+				"          DISABILITYSTARTDATE as date,",
+				"          DISABILITYENDDATE as date,",
+				"          ESTABLISHEDDISABILITYMODE as string,",
+				"          BLINDREGISTERIND as string,",
+				"          BLINDREGISTERENDDATE as date,",
+				"          COMMENTS as string,",
+				"          PREVCHILDCRITERIAIND as string,",
+				"          IS1619BRECIPIENTIND as string,",
+				"          COMPETENCYSTATUS as string,",
+				"          DATECOMPETENCYDETERMINED as date,",
+				"          CATEGORIESOFBRAININJURY as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcDisability",
 				"vwCodeTables filter(TABLENAME=='DisabilityType') ~> DisabilityType",
 				"vwCodeTables filter(TABLENAME=='DisabilityMode') ~> DisabilityMode",
-				"vwCodeTables filter(TABLENAME=='CompetencyStatus') ~> CompetencyStatus"
+				"vwCodeTables filter(TABLENAME=='CompetencyStatus') ~> CompetencyStatus",
+				"srcDisability select(mapColumn(",
+				"          EVIDENCEID,",
+				"          CASEPARTICIPANTROLEID,",
+				"          DISABILITYTYPE,",
+				"          DISABILITYDURATION,",
+				"          DISABILITYSTARTDATE,",
+				"          DISABILITYENDDATE,",
+				"          ESTABLISHEDDISABILITYMODE,",
+				"          IS1619BRECIPIENTIND,",
+				"          COMPETENCYSTATUS",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns",
+				"SelectSrcColumns derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+				"drvTrimColumns select(mapColumn(",
+				"          EVIDENCEID,",
+				"          CASEPARTICIPANTROLEID,",
+				"          DISABILITYSTARTDATE,",
+				"          DISABILITYENDDATE,",
+				"          DISABILITYTYPE_Trim,",
+				"          DISABILITYDURATION_Trim,",
+				"          ESTABLISHEDDISABILITYMODE_Trim,",
+				"          IS1619BRECIPIENTIND_Trim,",
+				"          COMPETENCYSTATUS_Trim",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectTrimColumns",
+				"SelectTrimColumns, DisabilityType lookup(DISABILITYTYPE_Trim == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupType",
+				"LookupType select(mapColumn(",
+				"          EVIDENCEID,",
+				"          CASEPARTICIPANTROLEID,",
+				"          DISABILITYSTARTDATE,",
+				"          DISABILITYENDDATE,",
+				"          DISABILITYDURATION_Trim,",
+				"          ESTABLISHEDDISABILITYMODE_Trim,",
+				"          IS1619BRECIPIENTIND_Trim,",
+				"          COMPETENCYSTATUS_Trim,",
+				"          DisablilityType = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectType",
+				"SelectType, DisabilityMode lookup(ESTABLISHEDDISABILITYMODE_Trim == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupMode",
+				"LookupMode select(mapColumn(",
+				"          EVIDENCEID,",
+				"          CASEPARTICIPANTROLEID,",
+				"          DISABILITYSTARTDATE,",
+				"          DISABILITYENDDATE,",
+				"          DISABILITYDURATION_Trim,",
+				"          IS1619BRECIPIENTIND_Trim,",
+				"          COMPETENCYSTATUS_Trim,",
+				"          DisablilityType,",
+				"          DisabilityEstablishedMode = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectMode"
 			]
 		}
 	}
