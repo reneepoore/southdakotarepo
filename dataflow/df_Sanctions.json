@@ -81,7 +81,7 @@
 					"name": "drvNullValues"
 				},
 				{
-					"name": "select1"
+					"name": "SelectNullValues"
 				}
 			],
 			"scriptLines": [
@@ -129,7 +129,8 @@
 				"          SANCTIONSTARTDATE,",
 				"          SANCTIONENDDATE,",
 				"          STATUSCODE,",
-				"          PROGRAM",
+				"          PROGRAM,",
+				"          SanctionConciliationFlag = CONCILIATIONPROCIND",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns",
@@ -137,6 +138,7 @@
 				"drvTrimFields select(mapColumn(",
 				"          SANCTIONID,",
 				"          CONCERNROLEID,",
+				"          SanctionConciliationFlag,",
 				"          SANCTIONSTARTDATE,",
 				"          SANCTIONENDDATE,",
 				"          SANCTIONREASON_Trim,",
@@ -153,6 +155,7 @@
 				"LookupProgram select(mapColumn(",
 				"          SANCTIONID,",
 				"          CONCERNROLEID,",
+				"          SanctionConciliationFlag,",
 				"          SANCTIONSTARTDATE,",
 				"          SANCTIONENDDATE,",
 				"          SANCTIONREASON_Trim,",
@@ -169,6 +172,7 @@
 				"LookupRecordStatus select(mapColumn(",
 				"          SANCTIONID,",
 				"          CONCERNROLEID,",
+				"          SanctionConciliationFlag,",
 				"          SANCTIONSTARTDATE,",
 				"          SANCTIONENDDATE,",
 				"          SANCTIONREASON_Trim,",
@@ -186,6 +190,7 @@
 				"LookupLevel select(mapColumn(",
 				"          SANCTIONID,",
 				"          CONCERNROLEID,",
+				"          SanctionConciliationFlag,",
 				"          SANCTIONSTARTDATE,",
 				"          SANCTIONENDDATE,",
 				"          SANCTIONREASON_Trim,",
@@ -204,6 +209,7 @@
 				"LookupReason select(mapColumn(",
 				"          SANCTIONID,",
 				"          CONCERNROLEID,",
+				"          SanctionConciliationFlag,",
 				"          SANCTIONSTARTDATE,",
 				"          SANCTIONENDDATE,",
 				"          SANCTIONREASON_Trim,",
@@ -221,6 +227,7 @@
 				"drvNullValues select(mapColumn(",
 				"          SanctionID = SANCTIONID,",
 				"          ConcernRoleID = CONCERNROLEID,",
+				"          SanctionConciliationFlag,",
 				"          SanctionStartDate = SANCTIONSTARTDATE,",
 				"          SanctionEndDate = SANCTIONENDDATE,",
 				"          ModifiedDate,",
@@ -230,8 +237,8 @@
 				"          SanctionReason = SanctionReason_null",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectNullValues",
+				"SelectNullValues sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          Column_1 as string,",
