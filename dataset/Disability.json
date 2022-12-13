@@ -1,0 +1,93 @@
+{
+	"name": "Disability",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "EVIDENCEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "CASEPARTICIPANTROLEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "DISABILITYTYPE",
+				"type": "char"
+			},
+			{
+				"name": "DISABILITYDURATION",
+				"type": "char"
+			},
+			{
+				"name": "DISABILITYSTARTDATE",
+				"type": "date"
+			},
+			{
+				"name": "DISABILITYENDDATE",
+				"type": "date"
+			},
+			{
+				"name": "ESTABLISHEDDISABILITYMODE",
+				"type": "char"
+			},
+			{
+				"name": "BLINDREGISTERIND",
+				"type": "char"
+			},
+			{
+				"name": "BLINDREGISTERENDDATE",
+				"type": "date"
+			},
+			{
+				"name": "COMMENTS",
+				"type": "varchar"
+			},
+			{
+				"name": "PREVCHILDCRITERIAIND",
+				"type": "char"
+			},
+			{
+				"name": "IS1619BRECIPIENTIND",
+				"type": "char"
+			},
+			{
+				"name": "COMPETENCYSTATUS",
+				"type": "char"
+			},
+			{
+				"name": "DATECOMPETENCYDETERMINED",
+				"type": "date"
+			},
+			{
+				"name": "CATEGORIESOFBRAININJURY",
+				"type": "char"
+			},
+			{
+				"name": "VERSIONNO",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LASTWRITTEN",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "DISABILITY"
+		}
+	}
+}
