@@ -2,7 +2,7 @@
 	"name": "df_DimPlaceHolder",
 	"properties": {
 		"folder": {
-			"name": "Dimensions"
+			"name": "Final df POCs"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {

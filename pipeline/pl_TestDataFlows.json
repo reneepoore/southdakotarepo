@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_Sanctions",
+				"name": "df_DimSanction",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_Sanctions",
+						"referenceName": "df_DimSanction",
 						"type": "DataFlowReference"
 					},
 					"compute": {
