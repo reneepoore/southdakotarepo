@@ -1,0 +1,47 @@
+{
+	"name": "df_DimDisability",
+	"properties": {
+		"description": "Disability Dimension",
+		"folder": {
+			"name": "Dimensions"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CodeTables",
+						"type": "DatasetReference"
+					},
+					"name": "vwCodeTables"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "DisabilityType"
+				},
+				{
+					"name": "DisabilityMode"
+				},
+				{
+					"name": "CompetencyStatus"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwCodeTables",
+				"vwCodeTables filter(TABLENAME=='DisabilityType') ~> DisabilityType",
+				"vwCodeTables filter(TABLENAME=='DisabilityMode') ~> DisabilityMode",
+				"vwCodeTables filter(TABLENAME=='CompetencyStatus') ~> CompetencyStatus"
+			]
+		}
+	}
+}
