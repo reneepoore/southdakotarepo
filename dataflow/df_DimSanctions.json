@@ -1,5 +1,5 @@
 {
-	"name": "df_Sanctions",
+	"name": "df_DimSanctions",
 	"properties": {
 		"folder": {
 			"name": "Dimensions"
@@ -134,7 +134,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns",
-				"SelectSrcColumns derive(each(match(type=='string'), $$+'_Trim' = $$)) ~> drvTrimFields",
+				"SelectSrcColumns derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimFields",
 				"drvTrimFields select(mapColumn(",
 				"          SANCTIONID,",
 				"          CONCERNROLEID,",
