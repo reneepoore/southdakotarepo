@@ -22,7 +22,15 @@
 					"name": "srcSantion"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DimensionTargetTesting",
+						"type": "DatasetReference"
+					},
+					"name": "tgtDimSanction"
+				}
+			],
 			"transformations": [
 				{
 					"name": "SanctionReason"
@@ -68,6 +76,9 @@
 				},
 				{
 					"name": "SelectReason"
+				},
+				{
+					"name": "drvNullValues"
 				}
 			],
 			"scriptLines": [
@@ -201,7 +212,23 @@
 				"          SanctionReason = DESCRIPTION",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectReason"
+				"     skipDuplicateMapOutputs: true) ~> SelectReason",
+				"SelectReason derive(ModifiedDate = currentUTC(),",
+				"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvNullValues",
+				"drvNullValues sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     partitionFileNames:['DimSanction.txt'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtDimSanction"
 			]
 		}
 	}
