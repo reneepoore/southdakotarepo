@@ -54,10 +54,16 @@
 					"name": "SDSuspensionReason"
 				},
 				{
-					"name": "derivedColumn1"
+					"name": "drvTrimColumns"
 				},
 				{
 					"name": "SelectDrvColumns"
+				},
+				{
+					"name": "drvNullValues"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -130,8 +136,8 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectProgram",
 				"vwCodeTables filter(TABLENAME=='SDSuspensionReason') ~> SDSuspensionReason",
-				"SelectSrcColumns derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> derivedColumn1",
-				"derivedColumn1 select(mapColumn(",
+				"SelectSrcColumns derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+				"drvTrimColumns select(mapColumn(",
 				"          SDSUSPENSIONID,",
 				"          ENDDATE,",
 				"          STARTDATE,",
@@ -144,7 +150,19 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectDrvColumns",
-				"SelectProgram sink(allowSchemaDrift: true,",
+				"SelectProgram derive(each(match(type=='string'), $$+'_null' = iifNull($$,'NA')),",
+				"          ModifiedDate = currentUTC()) ~> drvNullValues",
+				"drvNullValues select(mapColumn(",
+				"          SuspensionID,",
+				"          SuspensionEndDate,",
+				"          SuspensionStartDate,",
+				"          SuspensionReason = SuspensionReason_null,",
+				"          SuspensionProgramType = SuspensionProgramType_null,",
+				"          ModifiedDate",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          Column_1 as string,",
