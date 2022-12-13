@@ -1437,11 +1437,11 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "df_DimSuspension",
+						"name": "df_DimEmployer",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
-							"timeout": "0.00:15:00",
+							"timeout": "0.00:07:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -1450,13 +1450,16 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_DimSuspension",
+								"referenceName": "df_DimEmployer",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"vwCodeTables": {},
-									"srcSuspension": {},
-									"tgtDimSuspension": {}
+									"srcEmployer": {},
+									"srcConcernRole": {},
+									"srcAddress": {},
+									"srcLocation": {},
+									"srcSDRegion": {},
+									"tgtDimEmployer": {}
 								}
 							},
 							"staging": {},
@@ -1478,7 +1481,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_DimSuspension')]"
+				"[concat(variables('factoryId'), '/dataflows/df_DimEmployer')]"
 			]
 		},
 		{
@@ -5692,36 +5695,20 @@
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> SelectAddress",
 						"SelectRegionLocation derive(each(match(type=='string'), $$+'_Trim_Null' = iifNull(trim($$),'NA')),",
-						"          {Modified Date} = currentUTC()) ~> drvTrimColumns",
+						"          ModifiedDate = currentUTC()) ~> drvTrimColumns",
 						"drvTrimColumns select(mapColumn(",
-						"          CONCERNROLEID,",
-						"          COMPANYTYPE,",
-						"          BUSINESSDESC,",
-						"          REGISTEREDNAME,",
-						"          UPPERREGISTEREDNAME,",
-						"          ADDRESS1,",
-						"          ADDRESS2,",
-						"          ADDRESS3,",
-						"          CITY,",
-						"          STATE,",
-						"          USCOUNTY,",
-						"          ZIP,",
-						"          LOCATION,",
-						"          SDREGIONNAME,",
-						"          COMPANYTYPE_Trim_Null,",
-						"          BUSINESSDESC_Trim_Null,",
-						"          REGISTEREDNAME_Trim_Null,",
-						"          UPPERREGISTEREDNAME_Trim_Null,",
-						"          ADDRESS1_Trim_Null,",
-						"          ADDRESS2_Trim_Null,",
-						"          ADDRESS3_Trim_Null,",
-						"          CITY_Trim_Null,",
-						"          STATE_Trim_Null,",
-						"          USCOUNTY_Trim_Null,",
-						"          ZIP_Trim_Null,",
-						"          LOCATION_Trim_Null,",
-						"          SDREGIONNAME_Trim_Null,",
-						"          {Modified Date}",
+						"          ConcernRoleID = CONCERNROLEID,",
+						"          AddressID = ADDRESSID,",
+						"          EmployerName = REGISTEREDNAME_Trim_Null,",
+						"          EmployerAddress1 = ADDRESS1_Trim_Null,",
+						"          EmployerAddress2 = ADDRESS2_Trim_Null,",
+						"          EmployerCity = CITY_Trim_Null,",
+						"          EmployerState = STATE_Trim_Null,",
+						"          EmployerUSCounty = USCOUNTY_Trim_Null,",
+						"          EmployerZip = ZIP_Trim_Null,",
+						"          EmployerLocation = LOCATION_Trim_Null,",
+						"          EmployerRegion = SDREGIONNAME_Trim_Null,",
+						"          ModifiedDate",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
@@ -5738,6 +5725,7 @@
 						"     skipDuplicateMapOutputs: true) ~> SelectRegion",
 						"LookupRegion select(mapColumn(",
 						"          CONCERNROLEID,",
+						"          ADDRESSID = SelectAddress@ADDRESSID,",
 						"          COMPANYTYPE,",
 						"          BUSINESSDESC,",
 						"          REGISTEREDNAME,",
