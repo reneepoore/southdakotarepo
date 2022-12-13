@@ -63,7 +63,7 @@
 					"name": "drvNullValues"
 				},
 				{
-					"name": "select1"
+					"name": "SelectNullColumns"
 				}
 			],
 			"scriptLines": [
@@ -161,8 +161,8 @@
 				"          ModifiedDate",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectNullColumns",
+				"SelectNullColumns sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          Column_1 as string,",
