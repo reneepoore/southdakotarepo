@@ -2,7 +2,7 @@
 	"name": "df_FactSalesOrderHeader_wo_CDC",
 	"properties": {
 		"folder": {
-			"name": "Dimensions"
+			"name": "Final df POCs"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {

@@ -2,7 +2,7 @@
 	"name": "df_Sanctions",
 	"properties": {
 		"folder": {
-			"name": "Final df POCs"
+			"name": "Dimensions"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
