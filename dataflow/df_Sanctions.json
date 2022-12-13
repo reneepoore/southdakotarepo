@@ -79,6 +79,9 @@
 				},
 				{
 					"name": "drvNullValues"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -215,7 +218,20 @@
 				"     skipDuplicateMapOutputs: true) ~> SelectReason",
 				"SelectReason derive(ModifiedDate = currentUTC(),",
 				"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvNullValues",
-				"drvNullValues sink(allowSchemaDrift: true,",
+				"drvNullValues select(mapColumn(",
+				"          SanctionID = SANCTIONID,",
+				"          ConcernRoleID = CONCERNROLEID,",
+				"          SanctionStartDate = SANCTIONSTARTDATE,",
+				"          SanctionEndDate = SANCTIONENDDATE,",
+				"          ModifiedDate,",
+				"          SanctionProgramType = SanctionProgramType_null,",
+				"          SanctionRecordStatus = SanctionRecordStatus_null,",
+				"          SanctionLevel = SanctionLevel_null,",
+				"          SanctionReason = SanctionReason_null",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          Column_1 as string,",
