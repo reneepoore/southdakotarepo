@@ -1,5 +1,5 @@
 {
-	"name": "df_Program",
+	"name": "df_DimProgramType",
 	"properties": {
 		"description": "Medical Assistance Program",
 		"folder": {
@@ -66,7 +66,7 @@
 				"          Column_5 as string,",
 				"          Column_6 as string",
 				"     ),",
-				"     partitionFileNames:['DimProgramType'],",
+				"     partitionFileNames:['DimProgram.txt'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     partitionBy('hash', 1)) ~> tgtDimProgram"
