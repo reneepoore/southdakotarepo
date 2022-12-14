@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_DimDisability",
+				"name": "df_DimAidCategory",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_DimDisability",
+						"referenceName": "df_DimAidCategory",
 						"type": "DataFlowReference"
 					},
 					"compute": {
