@@ -1,5 +1,5 @@
 {
-	"name": "df_DimProgramType",
+	"name": "df_DimProgram",
 	"properties": {
 		"description": "Medical Assistance Program",
 		"folder": {
