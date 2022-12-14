@@ -1,0 +1,76 @@
+{
+	"name": "df_DimAidCategory",
+	"properties": {
+		"description": "Aid Category Dimension",
+		"folder": {
+			"name": "Dimensions"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CodeTables",
+						"type": "DatasetReference"
+					},
+					"name": "vwCodeTables"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DimensionTargetTesting",
+						"type": "DatasetReference"
+					},
+					"name": "tgtAidCategory"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SDMedAidPrgmCatClass"
+				},
+				{
+					"name": "drvTrimColumns"
+				},
+				{
+					"name": "SelectTgtColumns"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwCodeTables",
+				"vwCodeTables filter(TABLENAME=='SDMedAidPrgmCatClass') ~> SDMedAidPrgmCatClass",
+				"SDMedAidPrgmCatClass derive(ModifiedDate = currentUTC(),",
+				"          each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+				"drvTrimColumns select(mapColumn(",
+				"          ModifiedDate,",
+				"          AidCategoryID = CODE_Trim,",
+				"          AidCategoryClass = DESCRIPTION_Trim",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
+				"SelectTgtColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     partitionFileNames:['DimAidCategory.txt'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtAidCategory"
+			]
+		}
+	}
+}
