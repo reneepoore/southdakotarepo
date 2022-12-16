@@ -35,7 +35,7 @@
 						"referenceName": "DimensionTargetTesting",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "tgtDimRegion"
 				}
 			],
 			"transformations": [
@@ -55,10 +55,10 @@
 					"name": "LookupStatus"
 				},
 				{
-					"name": "SelectStatus"
+					"name": "SelectTgtColumns"
 				},
 				{
-					"name": "derivedColumn1"
+					"name": "drvModifiedDate"
 				}
 			],
 			"scriptLines": [
@@ -129,15 +129,16 @@
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LookupStatus",
-				"LookupStatus select(mapColumn(",
+				"drvModifiedDate select(mapColumn(",
 				"          RegionID = SDREGIONID,",
 				"          RegionName = SDREGIONNAME_Trim,",
-				"          RegionStatus = DESCRIPTION",
+				"          RegionStatus = DESCRIPTION,",
+				"          ModifiedDate",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectStatus",
-				"SelectStatus derive(ModifiedDate = currentUTC()) ~> derivedColumn1",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
+				"LookupStatus derive(ModifiedDate = currentUTC()) ~> drvModifiedDate",
+				"SelectTgtColumns sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          Column_1 as string,",
@@ -150,7 +151,7 @@
 				"     partitionFileNames:['DimRegion.txt'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     partitionBy('hash', 1)) ~> tgtDimRegion"
 			]
 		}
 	}
