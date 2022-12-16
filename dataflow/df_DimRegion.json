@@ -1,6 +1,7 @@
 {
 	"name": "df_DimRegion",
 	"properties": {
+		"description": "Region Dimension",
 		"folder": {
 			"name": "Dimensions"
 		},
