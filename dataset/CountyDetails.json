@@ -1,0 +1,48 @@
+{
+	"name": "CountyDetails",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "COUNTYDETAILSID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "COUNTYCODE",
+				"type": "char"
+			},
+			{
+				"name": "STATECODE",
+				"type": "char"
+			},
+			{
+				"name": "STATUSCODE",
+				"type": "char"
+			},
+			{
+				"name": "VERSIONNO",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LASTWRITTEN",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "COUNTYDETAILS"
+		}
+	}
+}
