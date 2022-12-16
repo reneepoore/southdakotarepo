@@ -29,7 +29,15 @@
 					"name": "vwCodeTable"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DimensionTargetTesting",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "LookupSDRegion"
@@ -38,10 +46,19 @@
 					"name": "SelectRegion"
 				},
 				{
-					"name": "filter1"
+					"name": "LocationStatus"
 				},
 				{
-					"name": "filter2"
+					"name": "drvTrimColumns"
+				},
+				{
+					"name": "LookupStatus"
+				},
+				{
+					"name": "SelectStatus"
+				},
+				{
+					"name": "derivedColumn1"
 				}
 			],
 			"scriptLines": [
@@ -94,44 +111,46 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> vwCodeTable",
-				"srcLocation, srcSDRegion lookup(LOCATIONID == SDLOCATIONID,",
+				"srcSDRegion, srcLocation lookup(SDLOCATIONID == LOCATIONID,",
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LookupSDRegion",
 				"LookupSDRegion select(mapColumn(",
-				"          LOCATIONID,",
-				"          NAME,",
-				"          ADDRESSID,",
-				"          DESCRIPTION,",
-				"          STATUSCODE,",
 				"          LOCATIONSTATUS,",
-				"          CREATIONDATE,",
-				"          LOCATIONTYPE,",
-				"          PARENTLOCATIONID,",
-				"          ORGANISATIONID,",
-				"          ADDRESSCOMMENTS,",
-				"          CREATELOCATIONSID,",
-				"          MAINTAINSID,",
-				"          READSID,",
-				"          LOCATIONSTRUCTUREID,",
-				"          PUBLICOFFICEINDICATOR,",
-				"          PHONENUMBERID,",
-				"          FAXNUMBERID,",
-				"          EMAILADDRESSID,",
-				"          ROOTLOCATIONINDICATOR,",
-				"          UPPERNAME,",
-				"          VERSIONNO,",
-				"          LASTWRITTEN = srcLocation@LASTWRITTEN,",
 				"          SDREGIONID,",
 				"          SDLOCATIONID,",
-				"          SDREGIONNAME,",
-				"          SDAPPLICATIONTYPE,",
-				"          LASTWRITTEN = srcSDRegion@LASTWRITTEN",
+				"          SDREGIONNAME",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectRegion",
-				"filter2 filter(ERROR_FUNCTION('')) ~> filter1",
-				"vwCodeTable filter(ERROR_FUNCTION('')) ~> filter2"
+				"vwCodeTable filter(TABLENAME=='LocationStatus') ~> LocationStatus",
+				"SelectRegion derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+				"drvTrimColumns, LocationStatus lookup(LOCATIONSTATUS_Trim == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupStatus",
+				"LookupStatus select(mapColumn(",
+				"          RegionID = SDREGIONID,",
+				"          RegionName = SDREGIONNAME_Trim,",
+				"          RegionStatus = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectStatus",
+				"SelectStatus derive(ModifiedDate = currentUTC()) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     partitionFileNames:['DimRegion.txt'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
 	}
