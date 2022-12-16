@@ -1,0 +1,31 @@
+{
+	"name": "df_County",
+	"properties": {
+		"description": "County Dimension",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CodeTables",
+						"type": "DatasetReference"
+					},
+					"name": "vwCodeTable"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwCodeTable"
+			]
+		}
+	}
+}
