@@ -1,0 +1,187 @@
+{
+	"name": "df_Application",
+	"properties": {
+		"description": "Dimension Application\n",
+		"folder": {
+			"name": "Dimensions"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CodeTables",
+						"type": "DatasetReference"
+					},
+					"name": "vwCodeTables"
+				},
+				{
+					"dataset": {
+						"referenceName": "Application",
+						"type": "DatasetReference"
+					},
+					"name": "srcApplication"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "ProgramStatus"
+				},
+				{
+					"name": "RecordStatus"
+				},
+				{
+					"name": "ApplicationMethod"
+				},
+				{
+					"name": "ApplicationType"
+				},
+				{
+					"name": "SelectTrim"
+				},
+				{
+					"name": "drvTrimColumns"
+				},
+				{
+					"name": "LookupAppType"
+				},
+				{
+					"name": "SelectAppType"
+				},
+				{
+					"name": "LookAppMethod"
+				},
+				{
+					"name": "SelectAppMethod"
+				},
+				{
+					"name": "LookupAppStatus"
+				},
+				{
+					"name": "SelectAppStatus"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwCodeTables",
+				"source(output(",
+				"          APPLICATIONID as long,",
+				"          SUBMITTEDDATETIME as timestamp,",
+				"          FILINGDATE as date,",
+				"          REFERENCE as string,",
+				"          APPLICATIONMETHOD as string,",
+				"          ROOTENTITYID as long,",
+				"          ASSIGNEE as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp,",
+				"          CURRENTAPPLICATIONSTATUSID as long,",
+				"          PDFID as long,",
+				"          CASEID as long,",
+				"          REFERENCEADDENDUM as string,",
+				"          IEGEXECUTIONID as long,",
+				"          RECORDSTATUS as string,",
+				"          SCHEMANAME as string,",
+				"          INTERPRETERREQIND as string,",
+				"          INTERPRETERLANGUAGECODE as string,",
+				"          SPECIALASSISTANCEIND as string,",
+				"          SPECIALASSISTANCEREQUIREMENTS as string,",
+				"          APPLICATIONTYPE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcApplication",
+				"vwCodeTables filter(TABLENAME=='ProgramStatus') ~> ProgramStatus",
+				"vwCodeTables filter(TABLENAME=='RecordStatus') ~> RecordStatus",
+				"vwCodeTables filter(TABLENAME=='ApplicationMethod') ~> ApplicationMethod",
+				"vwCodeTables filter(TABLENAME== 'ApplicationType') ~> ApplicationType",
+				"drvTrimColumns select(mapColumn(",
+				"          APPLICATIONID,",
+				"          SUBMITTEDDATETIME,",
+				"          FILINGDATE,",
+				"          CURRENTAPPLICATIONSTATUSID,",
+				"          CASEID,",
+				"          RECORDSTATUS,",
+				"          APPLICATIONTYPE,",
+				"          REFERENCE_Trim,",
+				"          APPLICATIONMETHOD_Trim,",
+				"          ASSIGNEE_Trim,",
+				"          RECORDSTATUS_Trim,",
+				"          APPLICATIONTYPE_Trim",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectTrim",
+				"srcApplication derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+				"SelectTrim, ApplicationType lookup(APPLICATIONTYPE_Trim == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupAppType",
+				"LookupAppType select(mapColumn(",
+				"          APPLICATIONID,",
+				"          SUBMITTEDDATETIME,",
+				"          FILINGDATE,",
+				"          CURRENTAPPLICATIONSTATUSID,",
+				"          CASEID,",
+				"          RECORDSTATUS,",
+				"          APPLICATIONTYPE,",
+				"          REFERENCE_Trim,",
+				"          APPLICATIONMETHOD_Trim,",
+				"          ASSIGNEE_Trim,",
+				"          RECORDSTATUS_Trim,",
+				"          APPLICATIONTYPE_Trim,",
+				"          ApplicationType = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectAppType",
+				"SelectAppType, ApplicationMethod lookup(APPLICATIONMETHOD_Trim == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookAppMethod",
+				"LookAppMethod select(mapColumn(",
+				"          APPLICATIONID,",
+				"          SUBMITTEDDATETIME,",
+				"          FILINGDATE,",
+				"          CURRENTAPPLICATIONSTATUSID,",
+				"          CASEID,",
+				"          RECORDSTATUS,",
+				"          APPLICATIONTYPE = SelectAppType@APPLICATIONTYPE,",
+				"          REFERENCE_Trim,",
+				"          ASSIGNEE_Trim,",
+				"          RECORDSTATUS_Trim,",
+				"          APPLICATIONTYPE_Trim,",
+				"          ApplicationType = SelectAppType@ApplicationType,",
+				"          ApplicationMethod = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectAppMethod",
+				"SelectAppMethod, RecordStatus lookup(RECORDSTATUS_Trim == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupAppStatus",
+				"LookupAppStatus select(mapColumn(",
+				"          APPLICATIONID,",
+				"          SUBMITTEDDATETIME,",
+				"          FILINGDATE,",
+				"          CURRENTAPPLICATIONSTATUSID,",
+				"          CASEID,",
+				"          RECORDSTATUS,",
+				"          REFERENCE_Trim,",
+				"          ASSIGNEE_Trim,",
+				"          ApplicationType = SelectAppMethod@ApplicationType,",
+				"          ApplicationCurrentStatus = DESCRIPTION,",
+				"          ApplicationMethod",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectAppStatus"
+			]
+		}
+	}
+}
