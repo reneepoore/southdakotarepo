@@ -1,0 +1,319 @@
+{
+	"name": "df_DimRegion",
+	"properties": {
+		"folder": {
+			"name": "Dimensions"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Employer",
+						"type": "DatasetReference"
+					},
+					"name": "srcEmployer"
+				},
+				{
+					"dataset": {
+						"referenceName": "ConcernRole",
+						"type": "DatasetReference"
+					},
+					"name": "srcConcernRole"
+				},
+				{
+					"dataset": {
+						"referenceName": "Address",
+						"type": "DatasetReference"
+					},
+					"name": "srcAddress"
+				},
+				{
+					"dataset": {
+						"referenceName": "Location",
+						"type": "DatasetReference"
+					},
+					"name": "srcLocation"
+				},
+				{
+					"dataset": {
+						"referenceName": "SDRegion",
+						"type": "DatasetReference"
+					},
+					"name": "srcSDRegion"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DimensionTargetTesting",
+						"type": "DatasetReference"
+					},
+					"name": "tgtDimEmployer"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SelectSourceColumns"
+				},
+				{
+					"name": "LookupPrimaryAddressID"
+				},
+				{
+					"name": "SelectPrimaryAddressID"
+				},
+				{
+					"name": "LookupAddress"
+				},
+				{
+					"name": "SelectAddress"
+				},
+				{
+					"name": "drvTrimColumns"
+				},
+				{
+					"name": "SelectTgtColumns"
+				},
+				{
+					"name": "LookupSDRegion"
+				},
+				{
+					"name": "SelectRegion"
+				},
+				{
+					"name": "SelectRegionLocation"
+				},
+				{
+					"name": "LookupRegion"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CONCERNROLEID as long,",
+				"          REGISTEREDNAME as string,",
+				"          TRADINGNAME as string,",
+				"          INDUSTRYTYPE as string,",
+				"          COMPANYTYPE as string,",
+				"          BUSINESSDESC as string,",
+				"          UPPERTRADINGNAME as string,",
+				"          UPPERREGISTEREDNAME as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp,",
+				"          NUMBERCASUALSTAFF as integer,",
+				"          PINNUMBER as string,",
+				"          PAYMENTFREQUENCY as string,",
+				"          NEXTPAYMENTDATE as date,",
+				"          CURRENCYTYPE as string,",
+				"          METHODOFPMTCODE as string,",
+				"          SPECIALINTERESTCODE as string,",
+				"          EXEMPTIONIND as string,",
+				"          STATUSCODE as string,",
+				"          COMMENTS as string,",
+				"          PRIMARYALTERNATEID as string,",
+				"          NUMBERPERMANENTSTAFF as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcEmployer",
+				"source(output(",
+				"          CONCERNID as long,",
+				"          CONCERNROLEID as long,",
+				"          CONCERNROLETYPE as string,",
+				"          CREATIONDATE as date,",
+				"          REGISTRATIONDATE as date,",
+				"          STARTDATE as date,",
+				"          LASTWRITTEN as timestamp,",
+				"          SENSITIVITY as string,",
+				"          PREFCOMMMETHOD as string,",
+				"          PREFCOMMFROMDATE as date,",
+				"          PREFCOMMTODATE as date,",
+				"          PRIMARYWEBADDRESSID as long,",
+				"          VERSIONNO as integer,",
+				"          PRIMARYPHONENUMBERID as long,",
+				"          PRIMARYEMAILADDRESSID as long,",
+				"          PRIMARYBANKACCOUNTID as long,",
+				"          REGUSERNAME as string,",
+				"          PREFPUBLICOFFICEID as long,",
+				"          PREFERREDLANGUAGE as string,",
+				"          ENDDATE as date,",
+				"          STATUSCODE as string,",
+				"          CONCERNROLENAME as string,",
+				"          PRIMARYADDRESSID as long,",
+				"          PRIMARYALTERNATEID as string,",
+				"          COMMENTS as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcConcernRole",
+				"source(output(",
+				"          ADDRESSID as long,",
+				"          ADDRESS1 as string,",
+				"          ADDRESS2 as string,",
+				"          ADDRESS3 as string,",
+				"          CITY as string,",
+				"          STATE as string,",
+				"          USCOUNTY as string,",
+				"          ZIP as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcAddress",
+				"source(output(",
+				"          LOCATIONID as long,",
+				"          NAME as string,",
+				"          ADDRESSID as long,",
+				"          DESCRIPTION as string,",
+				"          STATUSCODE as string,",
+				"          LOCATIONSTATUS as string,",
+				"          CREATIONDATE as date,",
+				"          LOCATIONTYPE as string,",
+				"          PARENTLOCATIONID as long,",
+				"          ORGANISATIONID as long,",
+				"          ADDRESSCOMMENTS as string,",
+				"          CREATELOCATIONSID as string,",
+				"          MAINTAINSID as string,",
+				"          READSID as string,",
+				"          LOCATIONSTRUCTUREID as long,",
+				"          PUBLICOFFICEINDICATOR as string,",
+				"          PHONENUMBERID as long,",
+				"          FAXNUMBERID as long,",
+				"          EMAILADDRESSID as long,",
+				"          ROOTLOCATIONINDICATOR as string,",
+				"          UPPERNAME as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcLocation",
+				"source(output(",
+				"          SDREGIONID as long,",
+				"          SDLOCATIONID as long,",
+				"          SDREGIONNAME as string,",
+				"          SDAPPLICATIONTYPE as string,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcSDRegion",
+				"srcEmployer select(mapColumn(",
+				"          CONCERNROLEID,",
+				"          COMPANYTYPE,",
+				"          BUSINESSDESC,",
+				"          UPPERREGISTEREDNAME,",
+				"          PRIMARYALTERNATEID,",
+				"          NUMBERPERMANENTSTAFF,",
+				"          REGISTEREDNAME",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectSourceColumns",
+				"SelectSourceColumns, srcConcernRole lookup(SelectSourceColumns@CONCERNROLEID == srcConcernRole@CONCERNROLEID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupPrimaryAddressID",
+				"LookupPrimaryAddressID select(mapColumn(",
+				"          CONCERNROLEID = SelectSourceColumns@CONCERNROLEID,",
+				"          COMPANYTYPE,",
+				"          BUSINESSDESC,",
+				"          UPPERREGISTEREDNAME,",
+				"          PRIMARYADDRESSID,",
+				"          REGISTEREDNAME",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectPrimaryAddressID",
+				"SelectPrimaryAddressID, srcAddress lookup(PRIMARYADDRESSID == ADDRESSID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupAddress",
+				"LookupAddress select(mapColumn(",
+				"          CONCERNROLEID,",
+				"          COMPANYTYPE,",
+				"          ADDRESSID,",
+				"          BUSINESSDESC,",
+				"          REGISTEREDNAME,",
+				"          UPPERREGISTEREDNAME,",
+				"          ADDRESS1,",
+				"          ADDRESS2,",
+				"          ADDRESS3,",
+				"          CITY,",
+				"          STATE,",
+				"          USCOUNTY,",
+				"          ZIP",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectAddress",
+				"SelectRegionLocation derive(each(match(type=='string'), $$+'_Trim_Null' = iifNull(trim($$),'NA')),",
+				"          ModifiedDate = currentUTC()) ~> drvTrimColumns",
+				"drvTrimColumns select(mapColumn(",
+				"          ConcernRoleID = CONCERNROLEID,",
+				"          AddressID = ADDRESSID,",
+				"          EmployerName = REGISTEREDNAME_Trim_Null,",
+				"          EmployerAddress1 = ADDRESS1_Trim_Null,",
+				"          EmployerAddress2 = ADDRESS2_Trim_Null,",
+				"          EmployerCity = CITY_Trim_Null,",
+				"          EmployerState = STATE_Trim_Null,",
+				"          EmployerUSCounty = USCOUNTY_Trim_Null,",
+				"          EmployerZip = ZIP_Trim_Null,",
+				"          EmployerLocation = LOCATION_Trim_Null,",
+				"          EmployerRegion = SDREGIONNAME_Trim_Null,",
+				"          ModifiedDate",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
+				"srcLocation, srcSDRegion lookup(LOCATIONID == SDLOCATIONID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupSDRegion",
+				"LookupSDRegion select(mapColumn(",
+				"          NAME,",
+				"          ADDRESSID,",
+				"          SDREGIONNAME",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectRegion",
+				"LookupRegion select(mapColumn(",
+				"          CONCERNROLEID,",
+				"          ADDRESSID = SelectAddress@ADDRESSID,",
+				"          COMPANYTYPE,",
+				"          BUSINESSDESC,",
+				"          REGISTEREDNAME,",
+				"          UPPERREGISTEREDNAME,",
+				"          ADDRESS1,",
+				"          ADDRESS2,",
+				"          ADDRESS3,",
+				"          CITY,",
+				"          STATE,",
+				"          USCOUNTY,",
+				"          ZIP,",
+				"          LOCATION = NAME,",
+				"          SDREGIONNAME",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectRegionLocation",
+				"SelectAddress, SelectRegion lookup(SelectAddress@ADDRESSID == SelectRegion@ADDRESSID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupRegion",
+				"SelectTgtColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     partitionFileNames:['DimEmployer.txt'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtDimEmployer"
+			]
+		}
+	}
+}
