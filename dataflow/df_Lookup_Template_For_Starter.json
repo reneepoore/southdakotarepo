@@ -1,0 +1,75 @@
+{
+	"name": "df_Lookup_Template_For_Starter",
+	"properties": {
+		"folder": {
+			"name": "Final df POCs"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CodeTables",
+						"type": "DatasetReference"
+					},
+					"name": "vwCodeTables"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Dummy1",
+						"type": "DatasetReference"
+					},
+					"name": "DummyFile"
+				}
+			],
+			"transformations": [
+				{
+					"name": "CaseObjective"
+				},
+				{
+					"name": "CaseStatus"
+				},
+				{
+					"name": "CasePriority"
+				},
+				{
+					"name": "CaseOutcome"
+				},
+				{
+					"name": "CaseClassification"
+				},
+				{
+					"name": "CaseTypeCode"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwCodeTables",
+				"vwCodeTables filter(TABLENAME=='CaseObjective') ~> CaseObjective",
+				"vwCodeTables filter(TABLENAME=='CaseStatus') ~> CaseStatus",
+				"vwCodeTables filter(TABLENAME=='CasePriority') ~> CasePriority",
+				"vwCodeTables filter(TABLENAME=='CaseOutcome') ~> CaseOutcome",
+				"vwCodeTables filter(TABLENAME=='CaseClassification') ~> CaseClassification",
+				"vwCodeTables filter(TABLENAME=='CaseTypeCode') ~> CaseTypeCode",
+				"CaseObjective sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string",
+				"     ),",
+				"     partitionFileNames:['CaseHeaderPOC'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DummyFile"
+			]
+		}
+	}
+}
