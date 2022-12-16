@@ -20,6 +20,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "srcSDRegion"
+				},
+				{
+					"dataset": {
+						"referenceName": "CodeTables",
+						"type": "DatasetReference"
+					},
+					"name": "vwCodeTable"
 				}
 			],
 			"sinks": [],
@@ -29,6 +36,12 @@
 				},
 				{
 					"name": "SelectRegion"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "filter2"
 				}
 			],
 			"scriptLines": [
@@ -72,6 +85,15 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcSDRegion",
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwCodeTable",
 				"srcLocation, srcSDRegion lookup(LOCATIONID == SDLOCATIONID,",
 				"     multiple: false,",
 				"     pickup: 'any',",
@@ -107,7 +129,9 @@
 				"          LASTWRITTEN = srcSDRegion@LASTWRITTEN",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectRegion"
+				"     skipDuplicateMapOutputs: true) ~> SelectRegion",
+				"filter2 filter(ERROR_FUNCTION('')) ~> filter1",
+				"vwCodeTable filter(ERROR_FUNCTION('')) ~> filter2"
 			]
 		}
 	}
