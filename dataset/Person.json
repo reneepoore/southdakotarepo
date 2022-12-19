@@ -1,0 +1,19 @@
+{
+	"name": "Person",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "PERSON"
+		}
+	}
+}
