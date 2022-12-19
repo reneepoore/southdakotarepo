@@ -3,7 +3,7 @@
 	"properties": {
 		"description": "This is not complete. Need Program Status to continue\n",
 		"folder": {
-			"name": "Dimensions/UnderConstruction"
+			"name": "Dimensions"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
