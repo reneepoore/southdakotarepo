@@ -1,0 +1,93 @@
+{
+	"name": "AlternateName",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ALTERNATENAMEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "CONCERNROLEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TITLE",
+				"type": "char"
+			},
+			{
+				"name": "FIRSTFORENAME",
+				"type": "varchar"
+			},
+			{
+				"name": "OTHERFORENAME",
+				"type": "varchar"
+			},
+			{
+				"name": "SURNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "UPPERFIRSTFORENAME",
+				"type": "varchar"
+			},
+			{
+				"name": "UPPERSURNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "PHONETICENCODING",
+				"type": "char"
+			},
+			{
+				"name": "VERSIONNO",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LASTWRITTEN",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "NAMESUFFIX",
+				"type": "char"
+			},
+			{
+				"name": "NAMETYPE",
+				"type": "char"
+			},
+			{
+				"name": "NAMESTATUS",
+				"type": "char"
+			},
+			{
+				"name": "FULLNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "COMMENTS",
+				"type": "varchar"
+			},
+			{
+				"name": "INITIALS",
+				"type": "char"
+			}
+		],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "ALTERNATENAME"
+		}
+	}
+}
