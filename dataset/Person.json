@@ -10,7 +10,137 @@
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
-		"schema": [],
+		"schema": [
+			{
+				"name": "CONCERNROLEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "PERSONBIRTHNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "DATEOFBIRTH",
+				"type": "date"
+			},
+			{
+				"name": "DATEOFDEATH",
+				"type": "date"
+			},
+			{
+				"name": "GENDER",
+				"type": "char"
+			},
+			{
+				"name": "SPECIALINTERESTCODE",
+				"type": "char"
+			},
+			{
+				"name": "LASTWRITTEN",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UPPERPERSONBIRTHNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "UPPERMOTHERBIRTHSURNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "RACE",
+				"type": "varchar"
+			},
+			{
+				"name": "INDIGENOUSGROUPCODE",
+				"type": "varchar"
+			},
+			{
+				"name": "INDIGENOUSPERSONIND",
+				"type": "char"
+			},
+			{
+				"name": "VERSIONNO",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRIMARYALTERNATENAMEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ETHNICORIGINCODE",
+				"type": "char"
+			},
+			{
+				"name": "PAYMENTFREQUENCY",
+				"type": "char"
+			},
+			{
+				"name": "NEXTPAYMENTDATE",
+				"type": "date"
+			},
+			{
+				"name": "CURRENCYTYPE",
+				"type": "char"
+			},
+			{
+				"name": "METHODOFPMTCODE",
+				"type": "char"
+			},
+			{
+				"name": "DATEOFBIRTHVERIND",
+				"type": "char"
+			},
+			{
+				"name": "DATEOFDEATHVERIND",
+				"type": "char"
+			},
+			{
+				"name": "PRIMARYALTERNATEID",
+				"type": "char"
+			},
+			{
+				"name": "COUNTRYOFBIRTH",
+				"type": "char"
+			},
+			{
+				"name": "PLACEOFBIRTH",
+				"type": "char"
+			},
+			{
+				"name": "PINNUMBER",
+				"type": "char"
+			},
+			{
+				"name": "MARITALSTATUSCODE",
+				"type": "char"
+			},
+			{
+				"name": "NATIONALITYCODE",
+				"type": "char"
+			},
+			{
+				"name": "RESIDENCYABROADIND",
+				"type": "char"
+			},
+			{
+				"name": "MOTHERBIRTHSURNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "COMMENTS",
+				"type": "varchar"
+			},
+			{
+				"name": "TYPE",
+				"type": "char"
+			}
+		],
 		"typeProperties": {
 			"schema": "CURAPD01",
 			"table": "PERSON"
