@@ -1,0 +1,42 @@
+{
+	"name": "vwProgramStatus",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "APPLICATIONID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "REFERENCE",
+				"type": "char"
+			},
+			{
+				"name": "PROGRAMAPPLICATIONID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "STATUS",
+				"type": "char"
+			},
+			{
+				"name": "DESCRIPTION",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "vw_ProgramStatus"
+		}
+	}
+}
