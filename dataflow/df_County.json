@@ -11,10 +11,41 @@
 						"type": "DatasetReference"
 					},
 					"name": "vwCodeTable"
+				},
+				{
+					"dataset": {
+						"referenceName": "CountyDetails",
+						"type": "DatasetReference"
+					},
+					"name": "srcCountyDetails"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DimensionTargetTesting",
+						"type": "DatasetReference"
+					},
+					"name": "tgtDimCounty"
+				}
+			],
+			"transformations": [
+				{
+					"name": "UtahCounties"
+				},
+				{
+					"name": "SelectSrcColumns"
+				},
+				{
+					"name": "drvTrimColumns"
+				},
+				{
+					"name": "LookupCounties"
+				},
+				{
+					"name": "SelectTgtColumns"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          TABLENAME as string,",
@@ -24,7 +55,53 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> vwCodeTable"
+				"     format: 'table') ~> vwCodeTable",
+				"source(output(",
+				"          COUNTYDETAILSID as long,",
+				"          COUNTYCODE as string,",
+				"          STATECODE as string,",
+				"          STATUSCODE as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcCountyDetails",
+				"vwCodeTable filter(TABLENAME=='UtahCounties') ~> UtahCounties",
+				"srcCountyDetails select(mapColumn(",
+				"          COUNTYDETAILSID,",
+				"          COUNTYCODE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns",
+				"SelectSrcColumns derive(ModifiedDate = currentUTC(),",
+				"          each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+				"drvTrimColumns, UtahCounties lookup(COUNTYCODE_Trim == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupCounties",
+				"LookupCounties select(mapColumn(",
+				"          CountyID = COUNTYDETAILSID,",
+				"          ModifiedDate,",
+				"          CountyName = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
+				"SelectTgtColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     partitionFileNames:['DimCounty.txt'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtDimCounty"
 			]
 		}
 	}
