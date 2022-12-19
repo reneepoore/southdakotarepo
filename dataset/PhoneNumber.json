@@ -1,0 +1,60 @@
+{
+	"name": "PhoneNumber",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "PHONENUMBERID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "PHONECOUNTRYCODE",
+				"type": "char"
+			},
+			{
+				"name": "PHONEAREACODE",
+				"type": "char"
+			},
+			{
+				"name": "PHONENUMBER",
+				"type": "char"
+			},
+			{
+				"name": "PHONEEXTENSION",
+				"type": "char"
+			},
+			{
+				"name": "STATUSCODE",
+				"type": "char"
+			},
+			{
+				"name": "COMMENTS",
+				"type": "varchar"
+			},
+			{
+				"name": "VERSIONNO",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LASTWRITTEN",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "PHONENUMBER"
+		}
+	}
+}
