@@ -10,7 +10,41 @@
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
-		"schema": [],
+		"schema": [
+			{
+				"name": "ADDRESSID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ADDRESS1",
+				"type": "varchar"
+			},
+			{
+				"name": "ADDRESS2",
+				"type": "varchar"
+			},
+			{
+				"name": "ADDRESS3",
+				"type": "varchar"
+			},
+			{
+				"name": "CITY",
+				"type": "varchar"
+			},
+			{
+				"name": "STATE",
+				"type": "varchar"
+			},
+			{
+				"name": "USCOUNTY",
+				"type": "varchar"
+			},
+			{
+				"name": "ZIP",
+				"type": "varchar"
+			}
+		],
 		"typeProperties": {
 			"schema": "dbo",
 			"table": "vw_Address"

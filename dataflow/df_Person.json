@@ -41,6 +41,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "srcPhoneNumber"
+				},
+				{
+					"dataset": {
+						"referenceName": "Address",
+						"type": "DatasetReference"
+					},
+					"name": "vwAddress"
 				}
 			],
 			"sinks": [
@@ -188,6 +195,20 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcPhoneNumber",
+				"source(output(",
+				"          ADDRESSID as long,",
+				"          ADDRESS1 as string,",
+				"          ADDRESS2 as string,",
+				"          ADDRESS3 as string,",
+				"          CITY as string,",
+				"          STATE as string,",
+				"          USCOUNTY as string,",
+				"          ZIP as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwAddress",
 				"vwCodeTables filter(TABLENAME=='CaseObjective') ~> CaseObjective",
 				"vwCodeTables filter(TABLENAME=='CaseStatus') ~> CaseStatus",
 				"vwCodeTables filter(TABLENAME=='CasePriority') ~> CasePriority",
