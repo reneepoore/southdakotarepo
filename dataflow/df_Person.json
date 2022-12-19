@@ -1,0 +1,187 @@
+{
+	"name": "df_Person",
+	"properties": {
+		"folder": {
+			"name": "Final df POCs"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CodeTables",
+						"type": "DatasetReference"
+					},
+					"name": "vwCodeTables"
+				},
+				{
+					"dataset": {
+						"referenceName": "Person",
+						"type": "DatasetReference"
+					},
+					"name": "srcPerson"
+				},
+				{
+					"dataset": {
+						"referenceName": "AlternateName",
+						"type": "DatasetReference"
+					},
+					"name": "srcAlternateName"
+				},
+				{
+					"dataset": {
+						"referenceName": "ConcernRole",
+						"type": "DatasetReference"
+					},
+					"name": "srcConcernRole"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Dummy1",
+						"type": "DatasetReference"
+					},
+					"name": "DummyFile"
+				}
+			],
+			"transformations": [
+				{
+					"name": "CaseObjective"
+				},
+				{
+					"name": "CaseStatus"
+				},
+				{
+					"name": "CasePriority"
+				},
+				{
+					"name": "CaseOutcome"
+				},
+				{
+					"name": "CaseClassification"
+				},
+				{
+					"name": "CaseTypeCode"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwCodeTables",
+				"source(output(",
+				"          CONCERNROLEID as long,",
+				"          PERSONBIRTHNAME as string,",
+				"          DATEOFBIRTH as date,",
+				"          DATEOFDEATH as date,",
+				"          GENDER as string,",
+				"          SPECIALINTERESTCODE as string,",
+				"          LASTWRITTEN as timestamp,",
+				"          UPPERPERSONBIRTHNAME as string,",
+				"          UPPERMOTHERBIRTHSURNAME as string,",
+				"          RACE as string,",
+				"          INDIGENOUSGROUPCODE as string,",
+				"          INDIGENOUSPERSONIND as string,",
+				"          VERSIONNO as integer,",
+				"          PRIMARYALTERNATENAMEID as long,",
+				"          ETHNICORIGINCODE as string,",
+				"          PAYMENTFREQUENCY as string,",
+				"          NEXTPAYMENTDATE as date,",
+				"          CURRENCYTYPE as string,",
+				"          METHODOFPMTCODE as string,",
+				"          DATEOFBIRTHVERIND as string,",
+				"          DATEOFDEATHVERIND as string,",
+				"          PRIMARYALTERNATEID as string,",
+				"          COUNTRYOFBIRTH as string,",
+				"          PLACEOFBIRTH as string,",
+				"          PINNUMBER as string,",
+				"          MARITALSTATUSCODE as string,",
+				"          NATIONALITYCODE as string,",
+				"          RESIDENCYABROADIND as string,",
+				"          MOTHERBIRTHSURNAME as string,",
+				"          COMMENTS as string,",
+				"          TYPE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcPerson",
+				"source(output(",
+				"          ALTERNATENAMEID as long,",
+				"          CONCERNROLEID as long,",
+				"          TITLE as string,",
+				"          FIRSTFORENAME as string,",
+				"          OTHERFORENAME as string,",
+				"          SURNAME as string,",
+				"          UPPERFIRSTFORENAME as string,",
+				"          UPPERSURNAME as string,",
+				"          PHONETICENCODING as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp,",
+				"          NAMESUFFIX as string,",
+				"          NAMETYPE as string,",
+				"          NAMESTATUS as string,",
+				"          FULLNAME as string,",
+				"          COMMENTS as string,",
+				"          INITIALS as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcAlternateName",
+				"source(output(",
+				"          CONCERNID as long,",
+				"          CONCERNROLEID as long,",
+				"          CONCERNROLETYPE as string,",
+				"          CREATIONDATE as date,",
+				"          REGISTRATIONDATE as date,",
+				"          STARTDATE as date,",
+				"          LASTWRITTEN as timestamp,",
+				"          SENSITIVITY as string,",
+				"          PREFCOMMMETHOD as string,",
+				"          PREFCOMMFROMDATE as date,",
+				"          PREFCOMMTODATE as date,",
+				"          PRIMARYWEBADDRESSID as long,",
+				"          VERSIONNO as integer,",
+				"          PRIMARYPHONENUMBERID as long,",
+				"          PRIMARYEMAILADDRESSID as long,",
+				"          PRIMARYBANKACCOUNTID as long,",
+				"          REGUSERNAME as string,",
+				"          PREFPUBLICOFFICEID as long,",
+				"          PREFERREDLANGUAGE as string,",
+				"          ENDDATE as date,",
+				"          STATUSCODE as string,",
+				"          CONCERNROLENAME as string,",
+				"          PRIMARYADDRESSID as long,",
+				"          PRIMARYALTERNATEID as string,",
+				"          COMMENTS as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcConcernRole",
+				"vwCodeTables filter(TABLENAME=='CaseObjective') ~> CaseObjective",
+				"vwCodeTables filter(TABLENAME=='CaseStatus') ~> CaseStatus",
+				"vwCodeTables filter(TABLENAME=='CasePriority') ~> CasePriority",
+				"vwCodeTables filter(TABLENAME=='CaseOutcome') ~> CaseOutcome",
+				"vwCodeTables filter(TABLENAME=='CaseClassification') ~> CaseClassification",
+				"vwCodeTables filter(TABLENAME=='CaseTypeCode') ~> CaseTypeCode",
+				"CaseObjective sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string",
+				"     ),",
+				"     partitionFileNames:['CaseHeaderPOC'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DummyFile"
+			]
+		}
+	}
+}
