@@ -2,6 +2,9 @@
 	"name": "df_County",
 	"properties": {
 		"description": "County Dimension",
+		"folder": {
+			"name": "Dimensions"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
