@@ -87,9 +87,6 @@
 					"name": "SelectProgramStatus"
 				},
 				{
-					"name": "SelectCaseID"
-				},
-				{
 					"name": "LookupCaseRefNumbr"
 				},
 				{
@@ -97,6 +94,9 @@
 				},
 				{
 					"name": "SelectCaseColumns"
+				},
+				{
+					"name": "SelectCase"
 				}
 			],
 			"scriptLines": [
@@ -279,17 +279,11 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectProgramStatus",
-				"srcCaseHeader select(mapColumn(",
-				"          CASEID,",
-				"          CASEREFERENCE",
-				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectCaseID",
-				"SelectProgramStatus, drvCaseRef lookup(SelectProgramStatus@CaseID == srcCaseHeader@CASEID,",
+				"SelectProgramStatus, SelectCase lookup(SelectProgramStatus@CaseID == SelectCase@CaseID,",
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LookupCaseRefNumbr",
-				"SelectCaseID derive(CASEREFERENCE = trim(CASEREFERENCE)) ~> drvCaseRef",
+				"srcCaseHeader derive(CASEREFERENCE = trim(CASEREFERENCE)) ~> drvCaseRef",
 				"LookupCaseRefNumbr select(mapColumn(",
 				"          ApplicationID,",
 				"          ApplicationSubmittedDate,",
@@ -299,10 +293,16 @@
 				"          ApplicationCurrentStatus,",
 				"          ApplicationMethod,",
 				"          ApplicationProgramStatus,",
-				"          ApplicationCaseNumber = CASEREFERENCE",
+				"          ApplicationCaseNumber = ApplicationCaseReferenceNumber",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectCaseColumns",
+				"drvCaseRef select(mapColumn(",
+				"          CaseID = CASEID,",
+				"          ApplicationCaseReferenceNumber = CASEREFERENCE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectCase",
 				"SelectCaseColumns sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
