@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_DimRegion",
+				"name": "df_County",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_DimRegion",
+						"referenceName": "df_County",
 						"type": "DataFlowReference"
 					},
 					"compute": {
