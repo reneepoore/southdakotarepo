@@ -34,6 +34,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "srcConcernRole"
+				},
+				{
+					"dataset": {
+						"referenceName": "PhoneNumber",
+						"type": "DatasetReference"
+					},
+					"name": "srcPhoneNumber"
 				}
 			],
 			"sinks": [
@@ -166,6 +173,21 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcConcernRole",
+				"source(output(",
+				"          PHONENUMBERID as long,",
+				"          PHONECOUNTRYCODE as string,",
+				"          PHONEAREACODE as string,",
+				"          PHONENUMBER as string,",
+				"          PHONEEXTENSION as string,",
+				"          STATUSCODE as string,",
+				"          COMMENTS as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcPhoneNumber",
 				"vwCodeTables filter(TABLENAME=='CaseObjective') ~> CaseObjective",
 				"vwCodeTables filter(TABLENAME=='CaseStatus') ~> CaseStatus",
 				"vwCodeTables filter(TABLENAME=='CasePriority') ~> CasePriority",
