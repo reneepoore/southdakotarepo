@@ -1,0 +1,242 @@
+{
+	"name": "Users",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ACCOUNTENABLED",
+				"type": "char"
+			},
+			{
+				"name": "APPLICATIONCODE",
+				"type": "char"
+			},
+			{
+				"name": "BUSINESSEMAILID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "BUSINESSPHONEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "CREATIONDATE",
+				"type": "date"
+			},
+			{
+				"name": "CTIENABLED",
+				"type": "char"
+			},
+			{
+				"name": "DEFAULTPRINTERID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FAXID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FIRSTNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "FULLNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "GRADECODE",
+				"type": "char"
+			},
+			{
+				"name": "LASTSUCCESSLOGIN",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LOCATIONID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "LOGINDAYFRI",
+				"type": "char"
+			},
+			{
+				"name": "LOGINDAYMON",
+				"type": "char"
+			},
+			{
+				"name": "LOGINDAYSAT",
+				"type": "char"
+			},
+			{
+				"name": "LOGINDAYSUN",
+				"type": "char"
+			},
+			{
+				"name": "LOGINDAYTHURS",
+				"type": "char"
+			},
+			{
+				"name": "LOGINDAYTUES",
+				"type": "char"
+			},
+			{
+				"name": "LOGINDAYWED",
+				"type": "char"
+			},
+			{
+				"name": "LOGINFAILURES",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LOGINRESTRICTIONS",
+				"type": "char"
+			},
+			{
+				"name": "LOGINTIMEFROM",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LOGINTIMETO",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LOGSSINCEPWDCHANGE",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MOBILEPHONEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "PAGERID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "PASSWORD",
+				"type": "char"
+			},
+			{
+				"name": "PASSWORDCHANGED",
+				"type": "date"
+			},
+			{
+				"name": "PASSWORDEXPIRYDATE",
+				"type": "date"
+			},
+			{
+				"name": "PERSONALEMAILID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "PERSONALPHONENUMBERID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "PWDCHANGEAFTERXLOG",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PWDCHANGEEVERYXDAY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ROLENAME",
+				"type": "char"
+			},
+			{
+				"name": "SENSITIVITY",
+				"type": "char"
+			},
+			{
+				"name": "STATUSCODE",
+				"type": "char"
+			},
+			{
+				"name": "SURNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "TITLE",
+				"type": "char"
+			},
+			{
+				"name": "USERNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "DEFAULTLOCALE",
+				"type": "char"
+			},
+			{
+				"name": "ENDDATE",
+				"type": "date"
+			},
+			{
+				"name": "USERPREFSETID",
+				"type": "char"
+			},
+			{
+				"name": "UPPERFIRSTNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "UPPERSURNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "UPPERUSERNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "UPPERROLENAME",
+				"type": "char"
+			},
+			{
+				"name": "SDPMIMAINFRAMEID",
+				"type": "char"
+			},
+			{
+				"name": "VERSIONNO",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LASTWRITTEN",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "USERS"
+		}
+	}
+}
