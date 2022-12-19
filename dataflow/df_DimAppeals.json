@@ -2,7 +2,7 @@
 	"name": "df_DimAppeals",
 	"properties": {
 		"folder": {
-			"name": "Final df POCs"
+			"name": "Dimensions/UnderConstruction"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
