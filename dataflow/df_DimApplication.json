@@ -1,5 +1,5 @@
 {
-	"name": "df_Application",
+	"name": "df_DimApplication",
 	"properties": {
 		"description": "This is not complete. Need Program Status to continue\n",
 		"folder": {
@@ -21,13 +21,32 @@
 						"type": "DatasetReference"
 					},
 					"name": "srcApplication"
+				},
+				{
+					"dataset": {
+						"referenceName": "vwProgramStatus",
+						"type": "DatasetReference"
+					},
+					"name": "vwProgramStatus"
+				},
+				{
+					"dataset": {
+						"referenceName": "CaseHeader",
+						"type": "DatasetReference"
+					},
+					"name": "srcCaseHeader"
 				}
 			],
-			"sinks": [],
-			"transformations": [
+			"sinks": [
 				{
-					"name": "ProgramStatus"
-				},
+					"dataset": {
+						"referenceName": "DimensionTargetTesting",
+						"type": "DatasetReference"
+					},
+					"name": "tgtDimApplication"
+				}
+			],
+			"transformations": [
 				{
 					"name": "RecordStatus"
 				},
@@ -60,6 +79,24 @@
 				},
 				{
 					"name": "SelectAppStatus"
+				},
+				{
+					"name": "LookupProgramStatus"
+				},
+				{
+					"name": "SelectProgramStatus"
+				},
+				{
+					"name": "SelectCaseID"
+				},
+				{
+					"name": "LookupCaseRefNumbr"
+				},
+				{
+					"name": "drvCaseRef"
+				},
+				{
+					"name": "SelectCaseColumns"
 				}
 			],
 			"scriptLines": [
@@ -99,7 +136,52 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcApplication",
-				"vwCodeTables filter(TABLENAME=='ProgramStatus') ~> ProgramStatus",
+				"source(output(",
+				"          APPLICATIONID as long,",
+				"          REFERENCE as string,",
+				"          PROGRAMAPPLICATIONID as long,",
+				"          STATUS as string,",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwProgramStatus",
+				"source(output(",
+				"          APPEALINDICATOR as string,",
+				"          CASEID as long,",
+				"          INTEGRATEDCASEID as long,",
+				"          CASEREFERENCE as string,",
+				"          CASETYPECODE as string,",
+				"          CLASSIFICATIONCODE as string,",
+				"          EXPECTEDOUTCOME as long,",
+				"          ACTUALOUTCOME as string,",
+				"          OWNERORGOBJECTLINKID as long,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp,",
+				"          INTEGRATEDCASETYPE as string,",
+				"          OBJECTIVECODE as string,",
+				"          OUTCOMECODE as string,",
+				"          PLANID as long,",
+				"          PRIORITYCODE as string,",
+				"          RECEIVEDDATE as date,",
+				"          EFFECTIVEDATE as date,",
+				"          STATUSCODE as string,",
+				"          ENDDATE as date,",
+				"          EXPECTEDENDDATE as date,",
+				"          EXPECTEDSTARTDATE as date,",
+				"          FIRSTREVIEWDATE as date,",
+				"          COMMENTS as string,",
+				"          CONCERNROLEID as long,",
+				"          REGISTRATIONDATE as date,",
+				"          STARTDATE as date,",
+				"          DEFAULTCURRENCYTYPECODE as string,",
+				"          DEFAULTDELIVERYMETHODTYPE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcCaseHeader",
 				"vwCodeTables filter(TABLENAME=='RecordStatus') ~> RecordStatus",
 				"vwCodeTables filter(TABLENAME=='ApplicationMethod') ~> ApplicationMethod",
 				"vwCodeTables filter(TABLENAME== 'ApplicationType') ~> ApplicationType",
@@ -180,7 +262,59 @@
 				"          ApplicationMethod",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectAppStatus"
+				"     skipDuplicateMapOutputs: true) ~> SelectAppStatus",
+				"SelectAppStatus, vwProgramStatus lookup(SelectAppStatus@APPLICATIONID == vwProgramStatus@APPLICATIONID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupProgramStatus",
+				"LookupProgramStatus select(mapColumn(",
+				"          ApplicationID = SelectAppStatus@APPLICATIONID,",
+				"          ApplicationSubmittedDate = SUBMITTEDDATETIME,",
+				"          ApplicationFilingDate = FILINGDATE,",
+				"          CaseID = CASEID,",
+				"          ApplicationType,",
+				"          ApplicationCurrentStatus,",
+				"          ApplicationMethod,",
+				"          ApplicationProgramStatus = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectProgramStatus",
+				"srcCaseHeader select(mapColumn(",
+				"          CASEID,",
+				"          CASEREFERENCE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectCaseID",
+				"SelectProgramStatus, drvCaseRef lookup(SelectProgramStatus@CaseID == srcCaseHeader@CASEID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupCaseRefNumbr",
+				"SelectCaseID derive(CASEREFERENCE = trim(CASEREFERENCE)) ~> drvCaseRef",
+				"LookupCaseRefNumbr select(mapColumn(",
+				"          ApplicationID,",
+				"          ApplicationSubmittedDate,",
+				"          ApplicationFilingDate,",
+				"          CaseID = SelectProgramStatus@CaseID,",
+				"          ApplicationType,",
+				"          ApplicationCurrentStatus,",
+				"          ApplicationMethod,",
+				"          ApplicationProgramStatus,",
+				"          ApplicationCaseNumber = CASEREFERENCE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectCaseColumns",
+				"SelectCaseColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> tgtDimApplication"
 			]
 		}
 	}
