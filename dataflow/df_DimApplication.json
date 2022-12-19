@@ -1,7 +1,7 @@
 {
 	"name": "df_DimApplication",
 	"properties": {
-		"description": "This is not complete. Need Program Status to continue\n",
+		"description": "This is not complete. Still need some flags\n\n",
 		"folder": {
 			"name": "Dimensions"
 		},
