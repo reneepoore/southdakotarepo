@@ -1,0 +1,89 @@
+{
+	"name": "df_DimAppeals",
+	"properties": {
+		"folder": {
+			"name": "Final df POCs"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CodeTables",
+						"type": "DatasetReference"
+					},
+					"name": "vwCodeTables"
+				},
+				{
+					"dataset": {
+						"referenceName": "Appeal",
+						"type": "DatasetReference"
+					},
+					"name": "srcAppeal"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "CaseObjective"
+				},
+				{
+					"name": "CaseStatus"
+				},
+				{
+					"name": "CasePriority"
+				},
+				{
+					"name": "CaseOutcome"
+				},
+				{
+					"name": "CaseClassification"
+				},
+				{
+					"name": "CaseTypeCode"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwCodeTables",
+				"source(output(",
+				"          APPEALID as long,",
+				"          CASEID as long,",
+				"          DIFFICULTYCODE as string,",
+				"          APPEALTYPECODE as string,",
+				"          DEADLINEDATE as timestamp,",
+				"          COMMENTS as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcAppeal",
+				"vwCodeTables filter(TABLENAME=='CaseObjective') ~> CaseObjective",
+				"vwCodeTables filter(TABLENAME=='CaseStatus') ~> CaseStatus",
+				"vwCodeTables filter(TABLENAME=='CasePriority') ~> CasePriority",
+				"vwCodeTables filter(TABLENAME=='CaseOutcome') ~> CaseOutcome",
+				"vwCodeTables filter(TABLENAME=='CaseClassification') ~> CaseClassification",
+				"vwCodeTables filter(TABLENAME=='CaseTypeCode') ~> CaseTypeCode",
+				"srcAppeal select(mapColumn(",
+				"          APPEALID,",
+				"          CASEID,",
+				"          APPEALTYPECODE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1"
+			]
+		}
+	}
+}
