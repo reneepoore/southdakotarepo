@@ -33,6 +33,12 @@
 					"name": "drvTrimColumns"
 				},
 				{
+					"name": "SelectTrimColumns"
+				},
+				{
+					"name": "drvNullColumns"
+				},
+				{
 					"name": "SelectTgtColumns"
 				}
 			],
@@ -51,8 +57,17 @@
 				"          each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
 				"drvTrimColumns select(mapColumn(",
 				"          ModifiedDate,",
-				"          ProgramID = CODE_Trim,",
+				"          ProgramTypeCode = CODE_Trim,",
 				"          ProgramType = DESCRIPTION_Trim",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectTrimColumns",
+				"SelectTrimColumns derive(column1 = ERROR_FUNCTION(''),",
+				"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvNullColumns",
+				"drvNullColumns select(mapColumn(",
+				"          ModifiedDate,",
+				"          ProgramTypeCode = ProgramTypeCode_null,",
+				"          ProgramType = ProgramType_null",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
