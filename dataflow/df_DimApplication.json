@@ -93,10 +93,13 @@
 					"name": "drvCaseRef"
 				},
 				{
-					"name": "SelectCaseColumns"
+					"name": "SelectTgtColumns"
 				},
 				{
 					"name": "SelectCase"
+				},
+				{
+					"name": "drvNullColumns"
 				}
 			],
 			"scriptLines": [
@@ -284,26 +287,27 @@
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LookupCaseRefNumbr",
 				"srcCaseHeader derive(CASEREFERENCE = trim(CASEREFERENCE)) ~> drvCaseRef",
-				"LookupCaseRefNumbr select(mapColumn(",
+				"drvNullColumns select(mapColumn(",
 				"          ApplicationID,",
 				"          ApplicationSubmittedDate,",
 				"          ApplicationFilingDate,",
 				"          CaseID = SelectProgramStatus@CaseID,",
-				"          ApplicationType,",
-				"          ApplicationCurrentStatus,",
-				"          ApplicationMethod,",
-				"          ApplicationProgramStatus,",
-				"          ApplicationCaseNumber = ApplicationCaseReferenceNumber",
+				"          ApplicationType = ApplicationType_null,",
+				"          ApplicationCurrentStatus = ApplicationCurrentStatus_null,",
+				"          ApplicationMethod = ApplicationMethod_null,",
+				"          ApplicationProgramStatus = ApplicationProgramStatus_null,",
+				"          ApplicationCaseNumber = ApplicationCaseReferenceNumber_null",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectCaseColumns",
+				"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
 				"drvCaseRef select(mapColumn(",
 				"          CaseID = CASEID,",
 				"          ApplicationCaseReferenceNumber = CASEREFERENCE",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectCase",
-				"SelectCaseColumns sink(allowSchemaDrift: true,",
+				"LookupCaseRefNumbr derive(each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvNullColumns",
+				"SelectTgtColumns sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          Column_1 as string,",
