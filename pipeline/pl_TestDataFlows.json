@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_DimApplication",
+				"name": "df_DimAppeals",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_DimApplication",
+						"referenceName": "df_DimAppeals",
 						"type": "DataFlowReference"
 					},
 					"compute": {
