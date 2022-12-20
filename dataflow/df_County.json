@@ -47,6 +47,9 @@
 				},
 				{
 					"name": "SelectTgtColumns"
+				},
+				{
+					"name": "drvNullValues"
 				}
 			],
 			"scriptLines": [
@@ -84,13 +87,15 @@
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LookupCounties",
-				"LookupCounties select(mapColumn(",
-				"          CountyID = COUNTYDETAILSID,",
+				"drvNullValues select(mapColumn(",
+				"          CountyDetailsID = COUNTYDETAILSID,",
 				"          ModifiedDate,",
-				"          CountyName = DESCRIPTION",
+				"          CountyName = DESCRIPTION_null",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
+				"LookupCounties derive(column1 = ERROR_FUNCTION(''),",
+				"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvNullValues",
 				"SelectTgtColumns sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
