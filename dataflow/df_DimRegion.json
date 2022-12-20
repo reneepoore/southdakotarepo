@@ -59,7 +59,7 @@
 					"name": "SelectTgtColumns"
 				},
 				{
-					"name": "drvModifiedDate"
+					"name": "drvNullValues"
 				}
 			],
 			"scriptLines": [
@@ -130,15 +130,16 @@
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LookupStatus",
-				"drvModifiedDate select(mapColumn(",
+				"drvNullValues select(mapColumn(",
 				"          RegionID = SDREGIONID,",
-				"          RegionName = SDREGIONNAME_Trim,",
-				"          RegionStatus = DESCRIPTION,",
+				"          RegionName = SDREGIONNAME_null,",
+				"          RegionStatus = DESCRIPTION_null,",
 				"          ModifiedDate",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
-				"LookupStatus derive(ModifiedDate = currentUTC()) ~> drvModifiedDate",
+				"LookupStatus derive(ModifiedDate = currentUTC(),",
+				"          each(match(type =='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvNullValues",
 				"SelectTgtColumns sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
