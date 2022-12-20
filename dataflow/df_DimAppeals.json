@@ -73,10 +73,10 @@
 					"name": "LookupAppealStatus"
 				},
 				{
-					"name": "derivedColumn1"
+					"name": "drvSelectAppealStatus"
 				},
 				{
-					"name": "select1"
+					"name": "SelectTgtColumns"
 				}
 			],
 			"scriptLines": [
@@ -173,17 +173,17 @@
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LookupAppealStatus",
 				"LookupAppealStatus derive(each(match(type=='string'), $$+'_null' = iifNull($$,'NA')),",
-				"          ModifiedDate = currentUTC()) ~> derivedColumn1",
-				"derivedColumn1 select(mapColumn(",
-				"          APPEALID,",
-				"          CASEID,",
+				"          ModifiedDate = currentUTC()) ~> drvSelectAppealStatus",
+				"drvSelectAppealStatus select(mapColumn(",
+				"          AppealID = APPEALID,",
+				"          CaseID = CASEID,",
 				"          AppealTypeName = AppealTypeName_null,",
 				"          AppealCaseStatus = AppealCaseStatus_null,",
 				"          ModifiedDate",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
+				"SelectTgtColumns sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          Column_1 as string,",
