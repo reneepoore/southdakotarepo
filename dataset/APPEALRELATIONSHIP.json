@@ -1,0 +1,115 @@
+{
+	"name": "APPEALRELATIONSHIP",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "APPEALRELATIONSHIPID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "APPEALCASEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "CASEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "PRIORAPPEALCASEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "RECEIVEDDATE",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			},
+			{
+				"name": "RECEIPTMETHOD",
+				"type": "char"
+			},
+			{
+				"name": "RECEIPTNOTICEINDICATOR",
+				"type": "char"
+			},
+			{
+				"name": "APPEALEDDECISIONDATE",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			},
+			{
+				"name": "REASONCODE",
+				"type": "char"
+			},
+			{
+				"name": "EMERGENCYCODE",
+				"type": "char"
+			},
+			{
+				"name": "TIMELYINDICATOR",
+				"type": "char"
+			},
+			{
+				"name": "REGISTRATIONDATE",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			},
+			{
+				"name": "CONTINUEBENEFITSINDICATOR",
+				"type": "char"
+			},
+			{
+				"name": "DEADLINEDATE",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			},
+			{
+				"name": "RESOLUTIONCODE",
+				"type": "char"
+			},
+			{
+				"name": "COMMENTS",
+				"type": "varchar"
+			},
+			{
+				"name": "RECORDSTATUS",
+				"type": "char"
+			},
+			{
+				"name": "STATUSCODE",
+				"type": "char"
+			},
+			{
+				"name": "VERSIONNO",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LASTWRITTEN",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "APPEALRELATIONSHIP"
+		}
+	}
+}
