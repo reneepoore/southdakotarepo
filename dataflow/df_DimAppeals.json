@@ -25,25 +25,13 @@
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "CaseObjective"
+					"name": "CaseAppealStatus"
 				},
 				{
-					"name": "CaseStatus"
+					"name": "AppealType"
 				},
 				{
-					"name": "CasePriority"
-				},
-				{
-					"name": "CaseOutcome"
-				},
-				{
-					"name": "CaseClassification"
-				},
-				{
-					"name": "CaseTypeCode"
-				},
-				{
-					"name": "select1"
+					"name": "SelectSrcColumns"
 				}
 			],
 			"scriptLines": [
@@ -70,19 +58,16 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcAppeal",
-				"vwCodeTables filter(TABLENAME=='CaseObjective') ~> CaseObjective",
-				"vwCodeTables filter(TABLENAME=='CaseStatus') ~> CaseStatus",
-				"vwCodeTables filter(TABLENAME=='CasePriority') ~> CasePriority",
-				"vwCodeTables filter(TABLENAME=='CaseOutcome') ~> CaseOutcome",
-				"vwCodeTables filter(TABLENAME=='CaseClassification') ~> CaseClassification",
-				"vwCodeTables filter(TABLENAME=='CaseTypeCode') ~> CaseTypeCode",
+				"vwCodeTables filter(TABLENAME=='CaseAppealStatus') ~> CaseAppealStatus",
+				"vwCodeTables filter(TABLENAME=='AppealType') ~> AppealType",
 				"srcAppeal select(mapColumn(",
 				"          APPEALID,",
 				"          CASEID,",
-				"          APPEALTYPECODE",
+				"          APPEALTYPECODE,",
+				"          CASEID",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1"
+				"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns"
 			]
 		}
 	}
