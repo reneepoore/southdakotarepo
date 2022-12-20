@@ -20,18 +20,60 @@
 						"type": "DatasetReference"
 					},
 					"name": "srcAppeal"
+				},
+				{
+					"dataset": {
+						"referenceName": "APPEALRELATIONSHIP",
+						"type": "DatasetReference"
+					},
+					"name": "srcAppealRelationship"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DimensionTargetTesting",
+						"type": "DatasetReference"
+					},
+					"name": "tgtDimAppeals"
+				}
+			],
 			"transformations": [
 				{
-					"name": "CaseAppealStatus"
+					"name": "AppealRelationshipStatus"
 				},
 				{
 					"name": "AppealType"
 				},
 				{
 					"name": "SelectSrcColumns"
+				},
+				{
+					"name": "SelectSrcAppRelColumns"
+				},
+				{
+					"name": "drvTrimStatus"
+				},
+				{
+					"name": "LookupCaseStatus"
+				},
+				{
+					"name": "SelectLookupCaseStatus"
+				},
+				{
+					"name": "drvTrimAppealCode"
+				},
+				{
+					"name": "LookupAppealType"
+				},
+				{
+					"name": "SelectAppealType"
+				},
+				{
+					"name": "LookupAppealStatus"
+				},
+				{
+					"name": "SelectTgtColumns"
 				}
 			],
 			"scriptLines": [
@@ -58,7 +100,33 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcAppeal",
-				"vwCodeTables filter(TABLENAME=='CaseAppealStatus') ~> CaseAppealStatus",
+				"source(output(",
+				"          APPEALRELATIONSHIPID as long,",
+				"          APPEALCASEID as long,",
+				"          CASEID as long,",
+				"          PRIORAPPEALCASEID as long,",
+				"          RECEIVEDDATE as timestamp,",
+				"          RECEIPTMETHOD as string,",
+				"          RECEIPTNOTICEINDICATOR as string,",
+				"          APPEALEDDECISIONDATE as timestamp,",
+				"          REASONCODE as string,",
+				"          EMERGENCYCODE as string,",
+				"          TIMELYINDICATOR as string,",
+				"          REGISTRATIONDATE as timestamp,",
+				"          CONTINUEBENEFITSINDICATOR as string,",
+				"          DEADLINEDATE as timestamp,",
+				"          RESOLUTIONCODE as string,",
+				"          COMMENTS as string,",
+				"          RECORDSTATUS as string,",
+				"          STATUSCODE as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcAppealRelationship",
+				"vwCodeTables filter(TABLENAME=='AppealRelationshipStatus') ~> AppealRelationshipStatus",
 				"vwCodeTables filter(TABLENAME=='AppealType') ~> AppealType",
 				"srcAppeal select(mapColumn(",
 				"          APPEALID,",
@@ -67,7 +135,62 @@
 				"          CASEID",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns"
+				"     skipDuplicateMapOutputs: true) ~> SelectSrcColumns",
+				"srcAppealRelationship select(mapColumn(",
+				"          APPEALRELATIONSHIPID,",
+				"          STATUSCODE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectSrcAppRelColumns",
+				"SelectSrcAppRelColumns derive(STATUSCODE = trim(STATUSCODE)) ~> drvTrimStatus",
+				"drvTrimStatus, AppealRelationshipStatus lookup(STATUSCODE == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupCaseStatus",
+				"LookupCaseStatus select(mapColumn(",
+				"          APPEALRELATIONSHIPID,",
+				"          AppealCaseStatus = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectLookupCaseStatus",
+				"SelectSrcColumns derive(APPEALTYPECODE = trim(APPEALTYPECODE)) ~> drvTrimAppealCode",
+				"drvTrimAppealCode, AppealType lookup(APPEALTYPECODE == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupAppealType",
+				"LookupAppealType select(mapColumn(",
+				"          APPEALID,",
+				"          CASEID,",
+				"          AppealTypeName = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectAppealType",
+				"SelectAppealType, SelectLookupCaseStatus lookup(APPEALID == APPEALRELATIONSHIPID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupAppealStatus",
+				"LookupAppealStatus select(mapColumn(",
+				"          AppealID = APPEALID,",
+				"          CaseID = CASEID,",
+				"          AppealTypeName,",
+				"          AppealCaseStatus",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
+				"SelectTgtColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     partitionFileNames:['DimAppeals'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtDimAppeals"
 			]
 		}
 	}
