@@ -72,9 +72,6 @@
 					"name": "drvTrimColumns"
 				},
 				{
-					"name": "SelectTgtColumns"
-				},
-				{
 					"name": "LookupSDRegion"
 				},
 				{
@@ -85,6 +82,15 @@
 				},
 				{
 					"name": "LookupRegion"
+				},
+				{
+					"name": "drvNullColumns"
+				},
+				{
+					"name": "SelectNullColumns"
+				},
+				{
+					"name": "SelectTrimColumns"
 				}
 			],
 			"scriptLines": [
@@ -247,24 +253,8 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectAddress",
-				"SelectRegionLocation derive(each(match(type=='string'), $$+'_Trim_Null' = iifNull(trim($$),'NA')),",
+				"SelectRegionLocation derive(each(match(type=='string'), $$+'_Trim' = trim($$)),",
 				"          ModifiedDate = currentUTC()) ~> drvTrimColumns",
-				"drvTrimColumns select(mapColumn(",
-				"          ConcernRoleID = CONCERNROLEID,",
-				"          AddressID = ADDRESSID,",
-				"          EmployerName = REGISTEREDNAME_Trim_Null,",
-				"          EmployerAddress1 = ADDRESS1_Trim_Null,",
-				"          EmployerAddress2 = ADDRESS2_Trim_Null,",
-				"          EmployerCity = CITY_Trim_Null,",
-				"          EmployerState = STATE_Trim_Null,",
-				"          EmployerUSCounty = USCOUNTY_Trim_Null,",
-				"          EmployerZip = ZIP_Trim_Null,",
-				"          EmployerLocation = LOCATION_Trim_Null,",
-				"          EmployerRegion = SDREGIONNAME_Trim_Null,",
-				"          ModifiedDate",
-				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
 				"srcLocation, srcSDRegion lookup(LOCATIONID == SDLOCATIONID,",
 				"     multiple: false,",
 				"     pickup: 'any',",
@@ -299,7 +289,45 @@
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LookupRegion",
-				"SelectTgtColumns sink(allowSchemaDrift: true,",
+				"SelectTrimColumns derive(each(match(type=='string'), $$+ '_null' = iifNull($$,'NA'))) ~> drvNullColumns",
+				"drvNullColumns select(mapColumn(",
+				"          CONCERNROLEID,",
+				"          ADDRESSID,",
+				"          ModifiedDate,",
+				"          EmployerName = REGISTEREDNAME_Trim_null,",
+				"          EmployerAddress1 = ADDRESS1_Trim_null,",
+				"          EmployerAddress2 = ADDRESS2_Trim_null,",
+				"          EmployerAddress3 = ADDRESS3_Trim_null,",
+				"          EmployerCity = CITY_Trim_null,",
+				"          EmployerState = STATE_Trim_null,",
+				"          EmployerUSCounty = USCOUNTY_Trim_null,",
+				"          EmployerZIP = ZIP_Trim_null,",
+				"          EmployerLocation = LOCATION_Trim_null,",
+				"          EmployerRegion = SDREGIONNAME_Trim_null",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectNullColumns",
+				"drvTrimColumns select(mapColumn(",
+				"          CONCERNROLEID,",
+				"          ADDRESSID,",
+				"          COMPANYTYPE_Trim,",
+				"          BUSINESSDESC_Trim,",
+				"          REGISTEREDNAME_Trim,",
+				"          UPPERREGISTEREDNAME_Trim,",
+				"          ADDRESS1_Trim,",
+				"          ADDRESS2_Trim,",
+				"          ADDRESS3_Trim,",
+				"          CITY_Trim,",
+				"          STATE_Trim,",
+				"          USCOUNTY_Trim,",
+				"          ZIP_Trim,",
+				"          LOCATION_Trim,",
+				"          SDREGIONNAME_Trim,",
+				"          ModifiedDate",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectTrimColumns",
+				"SelectNullColumns sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          Column_1 as string,",
