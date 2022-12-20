@@ -191,7 +191,7 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectStatus",
 				"SelectStatus derive(ModifiedDate = currentUTC(),",
-				"          each(match(type=='string'), $$+'_null' = trim($$))) ~> drvNullValues",
+				"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvNullValues",
 				"drvNullValues select(mapColumn(",
 				"          EvidenceID = EVIDENCEID,",
 				"          CaseParticipantRoleID = CASEPARTICIPANTROLEID,",
