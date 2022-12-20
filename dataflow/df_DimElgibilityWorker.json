@@ -3,7 +3,7 @@
 	"properties": {
 		"description": "Dim Elgibility Worker\n",
 		"folder": {
-			"name": "Dimensions"
+			"name": "Dimensions/UnderConstruction"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
