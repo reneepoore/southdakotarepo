@@ -1,0 +1,68 @@
+{
+	"name": "Service",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SERVICEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TYPECODE",
+				"type": "char"
+			},
+			{
+				"name": "DESCRIPTION",
+				"type": "varchar"
+			},
+			{
+				"name": "STARTDATE",
+				"type": "date"
+			},
+			{
+				"name": "ENDDATE",
+				"type": "date"
+			},
+			{
+				"name": "CESSATIONREASONCDE",
+				"type": "char"
+			},
+			{
+				"name": "CESSATIONREASONTXT",
+				"type": "varchar"
+			},
+			{
+				"name": "STATUSCODE",
+				"type": "char"
+			},
+			{
+				"name": "COMMENTS",
+				"type": "varchar"
+			},
+			{
+				"name": "VERSIONNO",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LASTWRITTEN",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "SERVICE"
+		}
+	}
+}
