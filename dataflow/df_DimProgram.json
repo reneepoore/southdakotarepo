@@ -10,10 +10,10 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "CodeTables",
+						"referenceName": "vwCodeTable",
 						"type": "DatasetReference"
 					},
-					"name": "vwCodeTables"
+					"name": "vwCodeTable"
 				}
 			],
 			"sinks": [
@@ -51,8 +51,8 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> vwCodeTables",
-				"vwCodeTables filter(TABLENAME=='ProgramType') ~> ProgramType",
+				"     format: 'table') ~> vwCodeTable",
+				"vwCodeTable filter(TABLENAME=='ProgramType') ~> ProgramType",
 				"ProgramType derive(ModifiedDate = currentUTC(),",
 				"          each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
 				"drvTrimColumns select(mapColumn(",
