@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_DimSuspension",
+				"name": "df_DimServiceSupplier",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_DimSuspension",
+						"referenceName": "df_DimServiceSupplier",
 						"type": "DataFlowReference"
 					},
 					"compute": {
