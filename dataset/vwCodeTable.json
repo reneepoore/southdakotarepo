@@ -1,5 +1,5 @@
 {
-	"name": "CodeTables",
+	"name": "vwCodeTable",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CURAPD01",
