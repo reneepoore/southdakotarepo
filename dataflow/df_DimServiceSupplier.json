@@ -10,58 +10,43 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "ServiceSupplier",
+						"referenceName": "vwServiceSupplier",
 						"type": "DatasetReference"
 					},
-					"name": "srcServiceSupplier"
+					"name": "vwServiceSupplier"
+				},
+				{
+					"dataset": {
+						"referenceName": "vwCodeTable",
+						"type": "DatasetReference"
+					},
+					"name": "vwCodeTable"
 				}
 			],
 			"sinks": [],
-			"transformations": [
-				{
-					"name": "drvTrimColumns"
-				},
-				{
-					"name": "select1"
-				}
-			],
+			"transformations": [],
 			"scriptLines": [
 				"source(output(",
-				"          CONCERNROLEID as long,",
-				"          NAME as string,",
-				"          STATUSCODE as string,",
-				"          COMMENTS as string,",
-				"          PRIMARYALTERNATEID as string,",
-				"          PAYMENTFREQUENCY as string,",
-				"          METHODOFPMTCODE as string,",
-				"          NEXTPAYMENTDATE as timestamp,",
-				"          CURRENCYTYPE as string,",
-				"          PINNUMBER as string,",
-				"          UPPERNAME as string,",
-				"          SDPROVIDERTYPE as string,",
-				"          VERSIONNO as integer,",
-				"          LASTWRITTEN as timestamp",
+				"          ConcernRoleID as long,",
+				"          SERVICESUPPLIERNAME as string,",
+				"          SERVICESUPPLIERSTATUSCODE as string,",
+				"          SERVICESUPPLIERCREATIONDATE as timestamp,",
+				"          SERVICETYPECODE as string,",
+				"          SERVICESTATUSCODE as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> srcServiceSupplier",
-				"srcServiceSupplier derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
-				"drvTrimColumns select(mapColumn(",
-				"          CONCERNROLEID,",
-				"          NEXTPAYMENTDATE,",
-				"          NAME_Trim,",
-				"          STATUSCODE_Trim,",
-				"          PRIMARYALTERNATEID_Trim,",
-				"          PAYMENTFREQUENCY_Trim,",
-				"          METHODOFPMTCODE_Trim,",
-				"          CURRENCYTYPE_Trim,",
-				"          PINNUMBER_Trim,",
-				"          UPPERNAME_Trim,",
-				"          SDPROVIDERTYPE_Trim",
+				"     format: 'table') ~> vwServiceSupplier",
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string",
 				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1"
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwCodeTable"
 			]
 		}
 	}
