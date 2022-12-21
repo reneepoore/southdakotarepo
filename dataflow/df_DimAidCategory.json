@@ -13,7 +13,7 @@
 						"referenceName": "vwCodeTable",
 						"type": "DatasetReference"
 					},
-					"name": "vwCodeTables"
+					"name": "vwCodeTable"
 				}
 			],
 			"sinks": [
@@ -45,8 +45,8 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> vwCodeTables",
-				"vwCodeTables filter(TABLENAME=='SDMedAidPrgmCatClass') ~> SDMedAidPrgmCatClass",
+				"     format: 'table') ~> vwCodeTable",
+				"vwCodeTable filter(TABLENAME=='SDMedAidPrgmCatClass') ~> SDMedAidPrgmCatClass",
 				"SDMedAidPrgmCatClass derive(ModifiedDate = currentUTC(),",
 				"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvTrimColumns",
 				"drvTrimColumns select(mapColumn(",
