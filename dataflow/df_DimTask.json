@@ -9,10 +9,10 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "CodeTables",
+						"referenceName": "vwCodeTable",
 						"type": "DatasetReference"
 					},
-					"name": "vwCodeTables"
+					"name": "vwCodeTable"
 				},
 				{
 					"dataset": {
@@ -114,7 +114,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> vwCodeTables",
+				"     format: 'table') ~> vwCodeTable",
 				"source(output(",
 				"          TASKID as long,",
 				"          WDOSNAPSHOT as string,",
@@ -173,11 +173,11 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcTaskAssignment",
-				"vwCodeTables filter(TABLENAME=='TargetItemType') ~> TargetItemType",
-				"vwCodeTables filter(TABLENAME=='TaskCategoryCode') ~> TaskCategoryCode",
-				"vwCodeTables filter(TABLENAME=='TaskChangeType') ~> TaskChangeType",
-				"vwCodeTables filter(TABLENAME=='TaskPriority') ~> TaskPriority",
-				"vwCodeTables filter(TABLENAME=='TaskStatus') ~> TaskStatus",
+				"vwCodeTable filter(TABLENAME=='TargetItemType') ~> TargetItemType",
+				"vwCodeTable filter(TABLENAME=='TaskCategoryCode') ~> TaskCategoryCode",
+				"vwCodeTable filter(TABLENAME=='TaskChangeType') ~> TaskChangeType",
+				"vwCodeTable filter(TABLENAME=='TaskPriority') ~> TaskPriority",
+				"vwCodeTable filter(TABLENAME=='TaskStatus') ~> TaskStatus",
 				"srcTask select(mapColumn(",
 				"          TASKID,",
 				"          CREATIONTIME,",

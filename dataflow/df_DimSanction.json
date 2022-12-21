@@ -9,10 +9,10 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "CodeTables",
+						"referenceName": "vwCodeTable",
 						"type": "DatasetReference"
 					},
-					"name": "vwCodeTables"
+					"name": "vwCodeTable"
 				},
 				{
 					"dataset": {
@@ -93,7 +93,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> vwCodeTables",
+				"     format: 'table') ~> vwCodeTable",
 				"source(output(",
 				"          SANCTIONID as long,",
 				"          CONCERNROLEID as long,",
@@ -117,10 +117,10 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcSantion",
-				"vwCodeTables filter(TABLENAME=='SanctionReason') ~> SanctionReason",
-				"vwCodeTables filter(TABLENAME=='SanctionLevel') ~> SanctionLevel",
-				"vwCodeTables filter(TABLENAME=='RecordStatus') ~> RecordStatus",
-				"vwCodeTables filter(TABLENAME=='SanctionProgram') ~> SanctionProgram",
+				"vwCodeTable filter(TABLENAME=='SanctionReason') ~> SanctionReason",
+				"vwCodeTable filter(TABLENAME=='SanctionLevel') ~> SanctionLevel",
+				"vwCodeTable filter(TABLENAME=='RecordStatus') ~> RecordStatus",
+				"vwCodeTable filter(TABLENAME=='SanctionProgram') ~> SanctionProgram",
 				"srcSantion select(mapColumn(",
 				"          SANCTIONID,",
 				"          CONCERNROLEID,",
