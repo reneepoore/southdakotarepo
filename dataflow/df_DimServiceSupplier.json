@@ -88,7 +88,7 @@
 				"     format: 'table') ~> vwCodeTable",
 				"vwCodeTable filter(TABLENAME== 'ServiceType') ~> ServiceType",
 				"vwCodeTable filter(TABLENAME=='RecordStatus') ~> RecordStatus",
-				"vwServiceSupplier, ServiceType lookup(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"vwServiceSupplier, ServiceType lookup(SERVICETYPECODE == CODE,",
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LookupServiceType",
