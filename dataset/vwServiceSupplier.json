@@ -1,0 +1,47 @@
+{
+	"name": "vwServiceSupplier",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ConcernRoleID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SERVICESUPPLIERNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "SERVICESUPPLIERSTATUSCODE",
+				"type": "varchar"
+			},
+			{
+				"name": "SERVICESUPPLIERCREATIONDATE",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			},
+			{
+				"name": "SERVICETYPECODE",
+				"type": "varchar"
+			},
+			{
+				"name": "SERVICESTATUSCODE",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "vw_ServiceSupplier"
+		}
+	}
+}
