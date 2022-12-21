@@ -10,10 +10,10 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "CodeTables",
+						"referenceName": "vwCodeTable",
 						"type": "DatasetReference"
 					},
-					"name": "vwCodeTables"
+					"name": "vwCodeTable"
 				},
 				{
 					"dataset": {
@@ -111,7 +111,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> vwCodeTables",
+				"     format: 'table') ~> vwCodeTable",
 				"source(output(",
 				"          APPLICATIONID as long,",
 				"          SUBMITTEDDATETIME as timestamp,",
@@ -185,9 +185,9 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcCaseHeader",
-				"vwCodeTables filter(TABLENAME=='RecordStatus') ~> RecordStatus",
-				"vwCodeTables filter(TABLENAME=='ApplicationMethod') ~> ApplicationMethod",
-				"vwCodeTables filter(TABLENAME== 'ApplicationType') ~> ApplicationType",
+				"vwCodeTable filter(TABLENAME=='RecordStatus') ~> RecordStatus",
+				"vwCodeTable filter(TABLENAME=='ApplicationMethod') ~> ApplicationMethod",
+				"vwCodeTable filter(TABLENAME== 'ApplicationType') ~> ApplicationType",
 				"drvTrimColumns select(mapColumn(",
 				"          APPLICATIONID,",
 				"          SUBMITTEDDATETIME,",
