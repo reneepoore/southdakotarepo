@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "POCWork"
+			"name": "Curam/Views"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",

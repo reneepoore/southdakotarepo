@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "Curam"
+			"name": "Curam/Views"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
