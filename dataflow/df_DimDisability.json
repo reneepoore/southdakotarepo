@@ -10,10 +10,10 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "CodeTables",
+						"referenceName": "vwCodeTable",
 						"type": "DatasetReference"
 					},
-					"name": "vwCodeTables"
+					"name": "vwCodeTable"
 				},
 				{
 					"dataset": {
@@ -85,7 +85,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> vwCodeTables",
+				"     format: 'table') ~> vwCodeTable",
 				"source(output(",
 				"          EVIDENCEID as long,",
 				"          CASEPARTICIPANTROLEID as long,",
@@ -109,9 +109,9 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcDisability",
-				"vwCodeTables filter(TABLENAME=='DisabilityType') ~> DisabilityType",
-				"vwCodeTables filter(TABLENAME=='DisabilityMode') ~> DisabilityMode",
-				"vwCodeTables filter(TABLENAME=='CompetencyStatus') ~> CompetencyStatus",
+				"vwCodeTable filter(TABLENAME=='DisabilityType') ~> DisabilityType",
+				"vwCodeTable filter(TABLENAME=='DisabilityMode') ~> DisabilityMode",
+				"vwCodeTable filter(TABLENAME=='CompetencyStatus') ~> CompetencyStatus",
 				"srcDisability select(mapColumn(",
 				"          EVIDENCEID,",
 				"          CASEPARTICIPANTROLEID,",
