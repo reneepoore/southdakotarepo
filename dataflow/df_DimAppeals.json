@@ -9,10 +9,10 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "CodeTables",
+						"referenceName": "vwCodeTable",
 						"type": "DatasetReference"
 					},
-					"name": "vwCodeTables"
+					"name": "vwCodeTable"
 				},
 				{
 					"dataset": {
@@ -88,7 +88,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> vwCodeTables",
+				"     format: 'table') ~> vwCodeTable",
 				"source(output(",
 				"          APPEALID as long,",
 				"          CASEID as long,",
@@ -129,8 +129,8 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcAppealRelationship",
-				"vwCodeTables filter(TABLENAME=='AppealRelationshipStatus') ~> AppealRelationshipStatus",
-				"vwCodeTables filter(TABLENAME=='AppealType') ~> AppealType",
+				"vwCodeTable filter(TABLENAME=='AppealRelationshipStatus') ~> AppealRelationshipStatus",
+				"vwCodeTable filter(TABLENAME=='AppealType') ~> AppealType",
 				"srcAppeal select(mapColumn(",
 				"          APPEALID,",
 				"          CASEID,",
