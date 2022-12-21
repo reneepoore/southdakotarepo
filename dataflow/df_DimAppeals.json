@@ -2,7 +2,7 @@
 	"name": "df_DimAppeals",
 	"properties": {
 		"folder": {
-			"name": "Dimensions/UnderConstruction"
+			"name": "Dimensions"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
