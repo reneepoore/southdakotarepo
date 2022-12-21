@@ -23,8 +23,47 @@
 					"name": "vwCodeTable"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DimensionTargetTesting",
+						"type": "DatasetReference"
+					},
+					"name": "tgtDimServiceSupplier"
+				}
+			],
+			"transformations": [
+				{
+					"name": "ServiceType"
+				},
+				{
+					"name": "RecordStatus"
+				},
+				{
+					"name": "LookupServiceType"
+				},
+				{
+					"name": "SelectServiceType"
+				},
+				{
+					"name": "LookupServiceSupplierStatus"
+				},
+				{
+					"name": "SelectServiceSupplierStatus"
+				},
+				{
+					"name": "LookupServiceTypeStatus"
+				},
+				{
+					"name": "SelectServiceTypeStatus"
+				},
+				{
+					"name": "drvNullValues"
+				},
+				{
+					"name": "SelectTgtColumns"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          ConcernRoleID as long,",
@@ -46,7 +85,78 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> vwCodeTable"
+				"     format: 'table') ~> vwCodeTable",
+				"vwCodeTable filter(TABLENAME== 'ServiceType') ~> ServiceType",
+				"vwCodeTable filter(TABLENAME=='RecordStatus') ~> RecordStatus",
+				"vwServiceSupplier, ServiceType lookup(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupServiceType",
+				"LookupServiceType select(mapColumn(",
+				"          ConcernRoleID,",
+				"          SERVICESUPPLIERNAME,",
+				"          SERVICESUPPLIERSTATUSCODE,",
+				"          SERVICESUPPLIERCREATIONDATE,",
+				"          SERVICESTATUSCODE,",
+				"          ServiceSupplierServiceType = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectServiceType",
+				"SelectServiceType, RecordStatus lookup(SERVICESUPPLIERSTATUSCODE == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupServiceSupplierStatus",
+				"LookupServiceSupplierStatus select(mapColumn(",
+				"          ConcernRoleID,",
+				"          SERVICESUPPLIERNAME,",
+				"          SERVICESUPPLIERCREATIONDATE,",
+				"          SERVICESTATUSCODE,",
+				"          ServiceSupplierServiceType,",
+				"          ServiceSupplierStatus = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectServiceSupplierStatus",
+				"SelectServiceSupplierStatus, RecordStatus lookup(SERVICESTATUSCODE == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupServiceTypeStatus",
+				"LookupServiceTypeStatus select(mapColumn(",
+				"          ConcernRoleID,",
+				"          SERVICESUPPLIERNAME,",
+				"          SERVICESUPPLIERCREATIONDATE,",
+				"          ServiceSupplierServiceType,",
+				"          ServiceSupplierStatus,",
+				"          ServiceSupplierTypeStatus = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectServiceTypeStatus",
+				"SelectServiceTypeStatus derive(ModifiedDate = currentUTC(),",
+				"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvNullValues",
+				"drvNullValues select(mapColumn(",
+				"          ConcernRoleID,",
+				"          ServiceSupplierCreationDate = SERVICESUPPLIERCREATIONDATE,",
+				"          ModifiedDate,",
+				"          ServiceSupplierName = SERVICESUPPLIERNAME_null,",
+				"          ServiceSupplierServiceType = ServiceSupplierServiceType_null,",
+				"          ServiceSupplierStatus = ServiceSupplierStatus_null,",
+				"          ServiceSupplierTypeStatus = ServiceSupplierTypeStatus_null",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
+				"SelectTgtColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     partitionFileNames:['DimServiceSupplier'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtDimServiceSupplier"
 			]
 		}
 	}
