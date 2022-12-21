@@ -1,0 +1,84 @@
+{
+	"name": "ServiceSupplierLink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SERVICESUPPLIERLINKID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SERVICEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SUPPLIERCONCERNROLEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "STARTDATE",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			},
+			{
+				"name": "ENDDATE",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			},
+			{
+				"name": "STATUSCODE",
+				"type": "char"
+			},
+			{
+				"name": "COMMENTS",
+				"type": "varchar"
+			},
+			{
+				"name": "NEXTPAYMENTDATE",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			},
+			{
+				"name": "PAYMENTFREQUENCY",
+				"type": "char"
+			},
+			{
+				"name": "METHODOFPMTCODE",
+				"type": "char"
+			},
+			{
+				"name": "CURRENCYTYPE",
+				"type": "char"
+			},
+			{
+				"name": "VERSIONNO",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LASTWRITTEN",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "SERVICESUPPLIERLINK"
+		}
+	}
+}

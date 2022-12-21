@@ -1,0 +1,68 @@
+{
+	"name": "df_DimServiceSupplier",
+	"properties": {
+		"description": "Service Supplier Dim",
+		"folder": {
+			"name": "Dimensions"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ServiceSupplier",
+						"type": "DatasetReference"
+					},
+					"name": "srcServiceSupplier"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "drvTrimColumns"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CONCERNROLEID as long,",
+				"          NAME as string,",
+				"          STATUSCODE as string,",
+				"          COMMENTS as string,",
+				"          PRIMARYALTERNATEID as string,",
+				"          PAYMENTFREQUENCY as string,",
+				"          METHODOFPMTCODE as string,",
+				"          NEXTPAYMENTDATE as timestamp,",
+				"          CURRENCYTYPE as string,",
+				"          PINNUMBER as string,",
+				"          UPPERNAME as string,",
+				"          SDPROVIDERTYPE as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcServiceSupplier",
+				"srcServiceSupplier derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+				"drvTrimColumns select(mapColumn(",
+				"          CONCERNROLEID,",
+				"          NEXTPAYMENTDATE,",
+				"          NAME_Trim,",
+				"          STATUSCODE_Trim,",
+				"          PRIMARYALTERNATEID_Trim,",
+				"          PAYMENTFREQUENCY_Trim,",
+				"          METHODOFPMTCODE_Trim,",
+				"          CURRENCYTYPE_Trim,",
+				"          PINNUMBER_Trim,",
+				"          UPPERNAME_Trim,",
+				"          SDPROVIDERTYPE_Trim",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1"
+			]
+		}
+	}
+}
