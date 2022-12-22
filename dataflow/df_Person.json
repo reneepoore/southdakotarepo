@@ -37,17 +37,17 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "PhoneNumber",
-						"type": "DatasetReference"
-					},
-					"name": "srcPhoneNumber"
-				},
-				{
-					"dataset": {
 						"referenceName": "Address",
 						"type": "DatasetReference"
 					},
 					"name": "vwAddress"
+				},
+				{
+					"dataset": {
+						"referenceName": "vwPersonPhoneNumber",
+						"type": "DatasetReference"
+					},
+					"name": "srcPersonPhoneNumber"
 				}
 			],
 			"sinks": [
@@ -91,10 +91,13 @@
 					"name": "SelectAlterName"
 				},
 				{
-					"name": "derivedColumn1"
+					"name": "drvTrimAltColumns"
 				},
 				{
 					"name": "SelectAlterNameColumns"
+				},
+				{
+					"name": "JoinPersonPhoneNumber"
 				}
 			],
 			"scriptLines": [
@@ -199,21 +202,6 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcConcernRole",
 				"source(output(",
-				"          PHONENUMBERID as long,",
-				"          PHONECOUNTRYCODE as string,",
-				"          PHONEAREACODE as string,",
-				"          PHONENUMBER as string,",
-				"          PHONEEXTENSION as string,",
-				"          STATUSCODE as string,",
-				"          COMMENTS as string,",
-				"          VERSIONNO as integer,",
-				"          LASTWRITTEN as timestamp",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> srcPhoneNumber",
-				"source(output(",
 				"          ADDRESSID as long,",
 				"          ADDRESS1 as string,",
 				"          ADDRESS2 as string,",
@@ -227,6 +215,15 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> vwAddress",
+				"source(output(",
+				"          CONCERNROLEID as long,",
+				"          HOMEPHONE as string,",
+				"          CELLPHONE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcPersonPhoneNumber",
 				"vwCodeTables filter(TABLENAME=='CaseObjective') ~> CaseObjective",
 				"vwCodeTables filter(TABLENAME=='CaseStatus') ~> CaseStatus",
 				"vwCodeTables filter(TABLENAME=='CasePriority') ~> CasePriority",
@@ -306,8 +303,8 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectAlterName",
-				"srcAlternateName derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> derivedColumn1",
-				"derivedColumn1 select(mapColumn(",
+				"srcAlternateName derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimAltColumns",
+				"drvTrimAltColumns select(mapColumn(",
 				"          ALTERNATENAMEID,",
 				"          CONCERNROLEID,",
 				"          FIRSTFORENAME_Trim,",
@@ -316,6 +313,11 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectAlterNameColumns",
+				"SelectAlterName, srcPersonPhoneNumber join(SelectAlterName@CONCERNROLEID == srcPersonPhoneNumber@CONCERNROLEID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoinPersonPhoneNumber",
 				"CaseObjective sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
