@@ -1,0 +1,141 @@
+{
+	"name": "df_Benefit",
+	"properties": {
+		"description": "Benefit Dimension\n",
+		"folder": {
+			"name": "Dimensions"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "vwCodeTable",
+						"type": "DatasetReference"
+					},
+					"name": "vwCodeTables"
+				},
+				{
+					"dataset": {
+						"referenceName": "Benefit",
+						"type": "DatasetReference"
+					},
+					"name": "srcBenefit"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "BenMethodOfDelivery"
+				},
+				{
+					"name": "FrequencyCode"
+				},
+				{
+					"name": "StateCodes"
+				},
+				{
+					"name": "BenefitType"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "drvTrimColumns"
+				},
+				{
+					"name": "SelectTrimColumns"
+				},
+				{
+					"name": "LookupBenefitType"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          TABLENAME as string,",
+				"          CODE as string,",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vwCodeTables",
+				"source(output(",
+				"          EVIDENCEID as long,",
+				"          CASEPARTICIPANTROLEID as long,",
+				"          CASENUMBER as string,",
+				"          DELIVERYTYPE as string,",
+				"          STARTDATE as timestamp,",
+				"          ENDDATE as timestamp,",
+				"          BENEFITTYPE as string,",
+				"          INDIANCOUNTRYIND as string,",
+				"          AMOUNT as decimal(18,0),",
+				"          FREQUENCYCODE as string,",
+				"          BENEFITUSAGE as string,",
+				"          LASTPAYMENTDATE as timestamp,",
+				"          PUBLICOFFICEID as long,",
+				"          PAYDAY as string,",
+				"          DEDUCTIONAMOUNT as decimal(18,0),",
+				"          AIDMOBILITYIND as string,",
+				"          AIDPERSONALCAREIND as string,",
+				"          COMMENTS as string,",
+				"          STATE as string,",
+				"          APPLICATIONDATE as timestamp,",
+				"          RATEPAYABLE as decimal(18,0),",
+				"          DEDUCTIONTYPE as string,",
+				"          ENDREASON as string,",
+				"          SDSERVICESUPPLIERCONCERNROLEID as long,",
+				"          SDCALCULATIONRESULTSDTLSID as long,",
+				"          SDCALCULATIONRULE as string,",
+				"          SDCONTRACTAMOUNT as decimal(18,0),",
+				"          SDEDITABLEATTRIBUTESIND as string,",
+				"          SDNUMBEROFMONTHS as integer,",
+				"          SDROOTENTITYID as long,",
+				"          SDPLANNUMBER as string,",
+				"          SDCOMPANYNAME as string,",
+				"          SDCLAIMACCOUNTNUMBER as string,",
+				"          SDINCOMEPROVIDEDBYSDX as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcBenefit",
+				"vwCodeTables filter(TABLENAME== 'BenMethodOfDelivery') ~> BenMethodOfDelivery",
+				"vwCodeTables filter(TABLENAME=='FrequencyCode') ~> FrequencyCode",
+				"vwCodeTables filter(TABLENAME== 'StateCodes') ~> StateCodes",
+				"vwCodeTables filter(ERROR_FUNCTION('TABLENAME = __SINGLE_QUOTE__BenefitType__SINGLE_QUOTE__')) ~> BenefitType",
+				"srcBenefit select(mapColumn(",
+				"          EVIDENCEID,",
+				"          DELIVERYTYPE,",
+				"          STARTDATE,",
+				"          ENDDATE,",
+				"          BENEFITTYPE,",
+				"          AMOUNT,",
+				"          FREQUENCYCODE,",
+				"          STATE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+				"drvTrimColumns select(mapColumn(",
+				"          EVIDENCEID,",
+				"          STARTDATE,",
+				"          ENDDATE,",
+				"          AMOUNT,",
+				"          DELIVERYTYPE_Trim,",
+				"          BENEFITTYPE_Trim,",
+				"          FREQUENCYCODE_Trim,",
+				"          STATE_Trim",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectTrimColumns",
+				"SelectTrimColumns, BenefitType lookup(BENEFITTYPE_Trim == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupBenefitType"
+			]
+		}
+	}
+}
