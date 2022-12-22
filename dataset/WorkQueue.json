@@ -1,0 +1,64 @@
+{
+	"name": "WorkQueue",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "WORKQUEUEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "ALLOWUSERSUBSCRIPTIONIND",
+				"type": "char"
+			},
+			{
+				"name": "SENSITIVITY",
+				"type": "char"
+			},
+			{
+				"name": "ADMINISTRATORUSERNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "COMMENTS",
+				"type": "varchar"
+			},
+			{
+				"name": "UPPERNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "UPPERADMINISTRATORUSERNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "VERSIONNO",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LASTWRITTEN",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "WORKQUEUE"
+		}
+	}
+}
