@@ -1,0 +1,79 @@
+{
+	"name": "df_WorkQueue",
+	"properties": {
+		"description": "Work Queue Dimension",
+		"folder": {
+			"name": "Dimensions"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "WorkQueue",
+						"type": "DatasetReference"
+					},
+					"name": "srcWorkQueue"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DimensionTargetTesting",
+						"type": "DatasetReference"
+					},
+					"name": "tgtWorkQueueDim"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SelectNullColumns"
+				},
+				{
+					"name": "drvNullColumns"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          WORKQUEUEID as long,",
+				"          NAME as string,",
+				"          ALLOWUSERSUBSCRIPTIONIND as string,",
+				"          SENSITIVITY as string,",
+				"          ADMINISTRATORUSERNAME as string,",
+				"          COMMENTS as string,",
+				"          UPPERNAME as string,",
+				"          UPPERADMINISTRATORUSERNAME as string,",
+				"          VERSIONNO as integer,",
+				"          LASTWRITTEN as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcWorkQueue",
+				"drvNullColumns select(mapColumn(",
+				"          WorkQueueID = WORKQUEUEID,",
+				"          ModifiedDate,",
+				"          WorkQueueName = NAME_null",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectNullColumns",
+				"srcWorkQueue derive(ModifiedDate = currentUTC(),",
+				"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvNullColumns",
+				"SelectNullColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     partitionFileNames:['DimWorkQueue.txt'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtWorkQueueDim"
+			]
+		}
+	}
+}
