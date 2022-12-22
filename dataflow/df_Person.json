@@ -37,7 +37,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "Address",
+						"referenceName": "vwAddress",
 						"type": "DatasetReference"
 					},
 					"name": "vwAddress"
@@ -57,6 +57,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "DummyFile"
+				},
+				{
+					"dataset": {
+						"referenceName": "DimensionTargetTesting",
+						"type": "DatasetReference"
+					},
+					"name": "tgtDimPerson"
 				}
 			],
 			"transformations": [
@@ -98,6 +105,12 @@
 				},
 				{
 					"name": "JoinPersonPhoneNumber"
+				},
+				{
+					"name": "JoinAddress"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -202,6 +215,8 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcConcernRole",
 				"source(output(",
+				"          CONCERNROLEID as long,",
+				"          PRIMARYADDRESSID as long,",
 				"          ADDRESSID as long,",
 				"          ADDRESS1 as string,",
 				"          ADDRESS2 as string,",
@@ -318,6 +333,55 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> JoinPersonPhoneNumber",
+				"JoinPersonPhoneNumber, vwAddress join(SelectAlterName@CONCERNROLEID == vwAddress@CONCERNROLEID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoinAddress",
+				"JoinAddress select(mapColumn(",
+				"          CONCERNROLEID = SelectAlterName@CONCERNROLEID,",
+				"          DATEOFBIRTH,",
+				"          DATEOFDEATH,",
+				"          LASTWRITTEN,",
+				"          VERSIONNO,",
+				"          PERSONBIRTHNAME_Trim,",
+				"          GENDER_Trim,",
+				"          UPPERMOTHERBIRTHSURNAME_Trim,",
+				"          RACE_Trim,",
+				"          INDIGENOUSGROUPCODE_Trim,",
+				"          INDIGENOUSPERSONIND_Trim,",
+				"          ETHNICORIGINCODE_Trim,",
+				"          DATEOFBIRTHVERIND_Trim,",
+				"          DATEOFDEATHVERIND_Trim,",
+				"          PRIMARYALTERNATEID_Trim,",
+				"          COUNTRYOFBIRTH_Trim,",
+				"          PLACEOFBIRTH_Trim,",
+				"          MARITALSTATUSCODE_Trim,",
+				"          NATIONALITYCODE_Trim,",
+				"          RESIDENCYABROADIND_Trim,",
+				"          MOTHERBIRTHSURNAME_Trim,",
+				"          COMMENTS_Trim,",
+				"          TYPE_Trim,",
+				"          ALTERNATENAMEID,",
+				"          FIRSTFORENAME_Trim,",
+				"          OTHERFORENAME_Trim,",
+				"          SURNAME_Trim,",
+				"          CONCERNROLEID = srcPersonPhoneNumber@CONCERNROLEID,",
+				"          HOMEPHONE,",
+				"          CELLPHONE,",
+				"          CONCERNROLEID = vwAddress@CONCERNROLEID,",
+				"          PRIMARYADDRESSID,",
+				"          ADDRESSID,",
+				"          ADDRESS1,",
+				"          ADDRESS2,",
+				"          ADDRESS3,",
+				"          CITY,",
+				"          STATE,",
+				"          USCOUNTY,",
+				"          ZIP",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
 				"CaseObjective sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -326,7 +390,19 @@
 				"     partitionFileNames:['CaseHeaderPOC'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> DummyFile"
+				"     partitionBy('hash', 1)) ~> DummyFile",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> tgtDimPerson"
 			]
 		}
 	}
