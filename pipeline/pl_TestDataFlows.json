@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_Benefit",
+				"name": "df_WorkQueue",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_Benefit",
+						"referenceName": "df_WorkQueue",
 						"type": "DataFlowReference"
 					},
 					"compute": {
