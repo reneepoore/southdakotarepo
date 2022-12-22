@@ -23,7 +23,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "Address",
+						"referenceName": "vwAddress",
 						"type": "DatasetReference"
 					},
 					"name": "srcAddress"
