@@ -1437,7 +1437,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "df_Benefit",
+						"name": "df_WorkQueue",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -1450,13 +1450,12 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_Benefit",
+								"referenceName": "df_WorkQueue",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"vwCodeTables": {},
-									"srcBenefit": {},
-									"tgtDimBenefit": {}
+									"srcWorkQueue": {},
+									"tgtWorkQueueDim": {}
 								}
 							},
 							"staging": {},
@@ -1478,7 +1477,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_Benefit')]"
+				"[concat(variables('factoryId'), '/dataflows/df_WorkQueue')]"
 			]
 		},
 		{
@@ -1959,6 +1958,201 @@
 				"typeProperties": {
 					"schema": "CURAPD01",
 					"table": "APPLICATION"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Benefit')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "EVIDENCEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CASEPARTICIPANTROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CASENUMBER",
+						"type": "char"
+					},
+					{
+						"name": "DELIVERYTYPE",
+						"type": "char"
+					},
+					{
+						"name": "STARTDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "ENDDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "BENEFITTYPE",
+						"type": "char"
+					},
+					{
+						"name": "INDIANCOUNTRYIND",
+						"type": "char"
+					},
+					{
+						"name": "AMOUNT",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 0
+					},
+					{
+						"name": "FREQUENCYCODE",
+						"type": "char"
+					},
+					{
+						"name": "BENEFITUSAGE",
+						"type": "char"
+					},
+					{
+						"name": "LASTPAYMENTDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "PUBLICOFFICEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "PAYDAY",
+						"type": "char"
+					},
+					{
+						"name": "DEDUCTIONAMOUNT",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 0
+					},
+					{
+						"name": "AIDMOBILITYIND",
+						"type": "char"
+					},
+					{
+						"name": "AIDPERSONALCAREIND",
+						"type": "char"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "STATE",
+						"type": "char"
+					},
+					{
+						"name": "APPLICATIONDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "RATEPAYABLE",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 0
+					},
+					{
+						"name": "DEDUCTIONTYPE",
+						"type": "char"
+					},
+					{
+						"name": "ENDREASON",
+						"type": "char"
+					},
+					{
+						"name": "SDSERVICESUPPLIERCONCERNROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "SDCALCULATIONRESULTSDTLSID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "SDCALCULATIONRULE",
+						"type": "char"
+					},
+					{
+						"name": "SDCONTRACTAMOUNT",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 0
+					},
+					{
+						"name": "SDEDITABLEATTRIBUTESIND",
+						"type": "char"
+					},
+					{
+						"name": "SDNUMBEROFMONTHS",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SDROOTENTITYID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "SDPLANNUMBER",
+						"type": "char"
+					},
+					{
+						"name": "SDCOMPANYNAME",
+						"type": "char"
+					},
+					{
+						"name": "SDCLAIMACCOUNTNUMBER",
+						"type": "char"
+					},
+					{
+						"name": "SDINCOMEPROVIDEDBYSDX",
+						"type": "char"
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "BENEFIT"
 				}
 			},
 			"dependsOn": [
@@ -4893,6 +5087,75 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/WorkQueue')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "WORKQUEUEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "ALLOWUSERSUBSCRIPTIONIND",
+						"type": "char"
+					},
+					{
+						"name": "SENSITIVITY",
+						"type": "char"
+					},
+					{
+						"name": "ADMINISTRATORUSERNAME",
+						"type": "varchar"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "UPPERNAME",
+						"type": "varchar"
+					},
+					{
+						"name": "UPPERADMINISTRATORUSERNAME",
+						"type": "varchar"
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "WORKQUEUE"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/blbDynamicTableReload')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -6295,6 +6558,278 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_Benefit')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Benefit Dimension\n",
+				"folder": {
+					"name": "Dimensions"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "vwCodeTable",
+								"type": "DatasetReference"
+							},
+							"name": "vwCodeTables"
+						},
+						{
+							"dataset": {
+								"referenceName": "Benefit",
+								"type": "DatasetReference"
+							},
+							"name": "srcBenefit"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DimensionTargetTesting",
+								"type": "DatasetReference"
+							},
+							"name": "tgtDimBenefit"
+						}
+					],
+					"transformations": [
+						{
+							"name": "BenMethodOfDelivery"
+						},
+						{
+							"name": "FrequencyCode"
+						},
+						{
+							"name": "StateCodes"
+						},
+						{
+							"name": "BenefitType"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "drvTrimColumns"
+						},
+						{
+							"name": "SelectTrimColumns"
+						},
+						{
+							"name": "LookupBenefitType"
+						},
+						{
+							"name": "SelectBenefitType"
+						},
+						{
+							"name": "LookupStateCodes"
+						},
+						{
+							"name": "SelectStateCode"
+						},
+						{
+							"name": "LookupFrequency"
+						},
+						{
+							"name": "SelectFrequency"
+						},
+						{
+							"name": "LookupBenMethDelivery"
+						},
+						{
+							"name": "SelectBenMethDelivery"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "SelectTgtColumns"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          TABLENAME as string,",
+						"          CODE as string,",
+						"          DESCRIPTION as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> vwCodeTables",
+						"source(output(",
+						"          EVIDENCEID as long,",
+						"          CASEPARTICIPANTROLEID as long,",
+						"          CASENUMBER as string,",
+						"          DELIVERYTYPE as string,",
+						"          STARTDATE as timestamp,",
+						"          ENDDATE as timestamp,",
+						"          BENEFITTYPE as string,",
+						"          INDIANCOUNTRYIND as string,",
+						"          AMOUNT as decimal(18,0),",
+						"          FREQUENCYCODE as string,",
+						"          BENEFITUSAGE as string,",
+						"          LASTPAYMENTDATE as timestamp,",
+						"          PUBLICOFFICEID as long,",
+						"          PAYDAY as string,",
+						"          DEDUCTIONAMOUNT as decimal(18,0),",
+						"          AIDMOBILITYIND as string,",
+						"          AIDPERSONALCAREIND as string,",
+						"          COMMENTS as string,",
+						"          STATE as string,",
+						"          APPLICATIONDATE as timestamp,",
+						"          RATEPAYABLE as decimal(18,0),",
+						"          DEDUCTIONTYPE as string,",
+						"          ENDREASON as string,",
+						"          SDSERVICESUPPLIERCONCERNROLEID as long,",
+						"          SDCALCULATIONRESULTSDTLSID as long,",
+						"          SDCALCULATIONRULE as string,",
+						"          SDCONTRACTAMOUNT as decimal(18,0),",
+						"          SDEDITABLEATTRIBUTESIND as string,",
+						"          SDNUMBEROFMONTHS as integer,",
+						"          SDROOTENTITYID as long,",
+						"          SDPLANNUMBER as string,",
+						"          SDCOMPANYNAME as string,",
+						"          SDCLAIMACCOUNTNUMBER as string,",
+						"          SDINCOMEPROVIDEDBYSDX as string,",
+						"          VERSIONNO as integer,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcBenefit",
+						"vwCodeTables filter(TABLENAME== 'BenMethodOfDelivery') ~> BenMethodOfDelivery",
+						"vwCodeTables filter(TABLENAME=='FrequencyCode') ~> FrequencyCode",
+						"vwCodeTables filter(TABLENAME== 'StateCodes') ~> StateCodes",
+						"vwCodeTables filter(TABLENAME == 'BenefitType') ~> BenefitType",
+						"srcBenefit select(mapColumn(",
+						"          EVIDENCEID,",
+						"          DELIVERYTYPE,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          BENEFITTYPE,",
+						"          AMOUNT,",
+						"          FREQUENCYCODE,",
+						"          STATE",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+						"drvTrimColumns select(mapColumn(",
+						"          EVIDENCEID,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          AMOUNT,",
+						"          DELIVERYTYPE_Trim,",
+						"          BENEFITTYPE_Trim,",
+						"          FREQUENCYCODE_Trim,",
+						"          STATE_Trim",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectTrimColumns",
+						"SelectTrimColumns, BenefitType lookup(BENEFITTYPE_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupBenefitType",
+						"LookupBenefitType select(mapColumn(",
+						"          EVIDENCEID,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          AMOUNT,",
+						"          DELIVERYTYPE_Trim,",
+						"          FREQUENCYCODE_Trim,",
+						"          STATE_Trim,",
+						"          BenefitType = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectBenefitType",
+						"SelectBenefitType, StateCodes lookup(STATE_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupStateCodes",
+						"LookupStateCodes select(mapColumn(",
+						"          EVIDENCEID,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          AMOUNT,",
+						"          DELIVERYTYPE_Trim,",
+						"          FREQUENCYCODE_Trim,",
+						"          BenefitType,",
+						"          BenefitState = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectStateCode",
+						"SelectStateCode, FrequencyCode lookup(FREQUENCYCODE_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupFrequency",
+						"LookupFrequency select(mapColumn(",
+						"          EVIDENCEID,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          AMOUNT,",
+						"          DELIVERYTYPE_Trim,",
+						"          BenefitType,",
+						"          BenefitState,",
+						"          BenefitFrequency = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectFrequency",
+						"SelectFrequency, BenMethodOfDelivery lookup(DELIVERYTYPE_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupBenMethDelivery",
+						"LookupBenMethDelivery select(mapColumn(",
+						"          EVIDENCEID,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          AMOUNT,",
+						"          BenefitType,",
+						"          BenefitState,",
+						"          BenefitFrequency,",
+						"          BenefitDeliveryType = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectBenMethDelivery",
+						"SelectBenMethDelivery derive(ModifiedDate = currentUTC(),",
+						"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> derivedColumn1",
+						"derivedColumn1 select(mapColumn(",
+						"          EvidenceID = EVIDENCEID,",
+						"          BenefitStartDate = STARTDATE,",
+						"          BenefitEndDate = ENDDATE,",
+						"          BenefitAmount = AMOUNT,",
+						"          ModifiedDate,",
+						"          BenefitType = BenefitType_null,",
+						"          BenefitState = BenefitState_null,",
+						"          BenefitFrequency = BenefitFrequency_null,",
+						"          BenefitDeliveryType = BenefitDeliveryType_null",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
+						"SelectTgtColumns sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     partitionFileNames:['DimBenefit.txt'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtDimBenefit"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
+				"[concat(variables('factoryId'), '/datasets/Benefit')]",
+				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/df_CaseHeader_Lookups_POC')]",
@@ -11500,6 +12035,61 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/df_OrganizationalUnit')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Organizational Unit Dimension",
+				"folder": {
+					"name": "Dimensions"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "OrganizationUnit",
+								"type": "DatasetReference"
+							},
+							"name": "srcOrganizationalUnit"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DimensionTargetTesting",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcOrganizationalUnit",
+						"srcOrganizationalUnit sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/OrganizationUnit')]",
+				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/df_Person')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -12565,11 +13155,11 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_OrganizationalUnit')]",
+			"name": "[concat(parameters('factoryName'), '/df_WorkQueue')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "Organizational Unit Dimension",
+				"description": "Work Queue Dimension",
 				"folder": {
 					"name": "Dimensions"
 				},
@@ -12578,10 +13168,10 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "OrganizationUnit",
+								"referenceName": "WorkQueue",
 								"type": "DatasetReference"
 							},
-							"name": "srcOrganizationalUnit"
+							"name": "srcWorkQueue"
 						}
 					],
 					"sinks": [
@@ -12590,480 +13180,44 @@
 								"referenceName": "DimensionTargetTesting",
 								"type": "DatasetReference"
 							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [],
-					"scriptLines": [
-						"source(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> srcOrganizationalUnit",
-						"srcOrganizationalUnit sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          Column_1 as string,",
-						"          Column_2 as string,",
-						"          Column_3 as string,",
-						"          Column_4 as string,",
-						"          Column_5 as string,",
-						"          Column_6 as string",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> sink1"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/OrganizationUnit')]",
-				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Benefit')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CURAPD01",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Curam"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "EVIDENCEID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "CASEPARTICIPANTROLEID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "CASENUMBER",
-						"type": "char"
-					},
-					{
-						"name": "DELIVERYTYPE",
-						"type": "char"
-					},
-					{
-						"name": "STARTDATE",
-						"type": "smalldatetime",
-						"precision": 16,
-						"scale": 0
-					},
-					{
-						"name": "ENDDATE",
-						"type": "smalldatetime",
-						"precision": 16,
-						"scale": 0
-					},
-					{
-						"name": "BENEFITTYPE",
-						"type": "char"
-					},
-					{
-						"name": "INDIANCOUNTRYIND",
-						"type": "char"
-					},
-					{
-						"name": "AMOUNT",
-						"type": "decimal",
-						"precision": 18,
-						"scale": 0
-					},
-					{
-						"name": "FREQUENCYCODE",
-						"type": "char"
-					},
-					{
-						"name": "BENEFITUSAGE",
-						"type": "char"
-					},
-					{
-						"name": "LASTPAYMENTDATE",
-						"type": "smalldatetime",
-						"precision": 16,
-						"scale": 0
-					},
-					{
-						"name": "PUBLICOFFICEID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "PAYDAY",
-						"type": "char"
-					},
-					{
-						"name": "DEDUCTIONAMOUNT",
-						"type": "decimal",
-						"precision": 18,
-						"scale": 0
-					},
-					{
-						"name": "AIDMOBILITYIND",
-						"type": "char"
-					},
-					{
-						"name": "AIDPERSONALCAREIND",
-						"type": "char"
-					},
-					{
-						"name": "COMMENTS",
-						"type": "varchar"
-					},
-					{
-						"name": "STATE",
-						"type": "char"
-					},
-					{
-						"name": "APPLICATIONDATE",
-						"type": "smalldatetime",
-						"precision": 16,
-						"scale": 0
-					},
-					{
-						"name": "RATEPAYABLE",
-						"type": "decimal",
-						"precision": 18,
-						"scale": 0
-					},
-					{
-						"name": "DEDUCTIONTYPE",
-						"type": "char"
-					},
-					{
-						"name": "ENDREASON",
-						"type": "char"
-					},
-					{
-						"name": "SDSERVICESUPPLIERCONCERNROLEID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "SDCALCULATIONRESULTSDTLSID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "SDCALCULATIONRULE",
-						"type": "char"
-					},
-					{
-						"name": "SDCONTRACTAMOUNT",
-						"type": "decimal",
-						"precision": 18,
-						"scale": 0
-					},
-					{
-						"name": "SDEDITABLEATTRIBUTESIND",
-						"type": "char"
-					},
-					{
-						"name": "SDNUMBEROFMONTHS",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "SDROOTENTITYID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "SDPLANNUMBER",
-						"type": "char"
-					},
-					{
-						"name": "SDCOMPANYNAME",
-						"type": "char"
-					},
-					{
-						"name": "SDCLAIMACCOUNTNUMBER",
-						"type": "char"
-					},
-					{
-						"name": "SDINCOMEPROVIDEDBYSDX",
-						"type": "char"
-					},
-					{
-						"name": "VERSIONNO",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "LASTWRITTEN",
-						"type": "smalldatetime",
-						"precision": 16,
-						"scale": 0
-					}
-				],
-				"typeProperties": {
-					"schema": "CURAPD01",
-					"table": "BENEFIT"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_Benefit')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Benefit Dimension\n",
-				"folder": {
-					"name": "Dimensions"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "vwCodeTable",
-								"type": "DatasetReference"
-							},
-							"name": "vwCodeTables"
-						},
-						{
-							"dataset": {
-								"referenceName": "Benefit",
-								"type": "DatasetReference"
-							},
-							"name": "srcBenefit"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "DimensionTargetTesting",
-								"type": "DatasetReference"
-							},
-							"name": "tgtDimBenefit"
+							"name": "tgtWorkQueueDim"
 						}
 					],
 					"transformations": [
 						{
-							"name": "BenMethodOfDelivery"
+							"name": "SelectNullColumns"
 						},
 						{
-							"name": "FrequencyCode"
-						},
-						{
-							"name": "StateCodes"
-						},
-						{
-							"name": "BenefitType"
-						},
-						{
-							"name": "select1"
-						},
-						{
-							"name": "drvTrimColumns"
-						},
-						{
-							"name": "SelectTrimColumns"
-						},
-						{
-							"name": "LookupBenefitType"
-						},
-						{
-							"name": "SelectBenefitType"
-						},
-						{
-							"name": "LookupStateCodes"
-						},
-						{
-							"name": "SelectStateCode"
-						},
-						{
-							"name": "LookupFrequency"
-						},
-						{
-							"name": "SelectFrequency"
-						},
-						{
-							"name": "LookupBenMethDelivery"
-						},
-						{
-							"name": "SelectBenMethDelivery"
-						},
-						{
-							"name": "derivedColumn1"
-						},
-						{
-							"name": "SelectTgtColumns"
+							"name": "drvNullColumns"
 						}
 					],
 					"scriptLines": [
 						"source(output(",
-						"          TABLENAME as string,",
-						"          CODE as string,",
-						"          DESCRIPTION as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> vwCodeTables",
-						"source(output(",
-						"          EVIDENCEID as long,",
-						"          CASEPARTICIPANTROLEID as long,",
-						"          CASENUMBER as string,",
-						"          DELIVERYTYPE as string,",
-						"          STARTDATE as timestamp,",
-						"          ENDDATE as timestamp,",
-						"          BENEFITTYPE as string,",
-						"          INDIANCOUNTRYIND as string,",
-						"          AMOUNT as decimal(18,0),",
-						"          FREQUENCYCODE as string,",
-						"          BENEFITUSAGE as string,",
-						"          LASTPAYMENTDATE as timestamp,",
-						"          PUBLICOFFICEID as long,",
-						"          PAYDAY as string,",
-						"          DEDUCTIONAMOUNT as decimal(18,0),",
-						"          AIDMOBILITYIND as string,",
-						"          AIDPERSONALCAREIND as string,",
+						"          WORKQUEUEID as long,",
+						"          NAME as string,",
+						"          ALLOWUSERSUBSCRIPTIONIND as string,",
+						"          SENSITIVITY as string,",
+						"          ADMINISTRATORUSERNAME as string,",
 						"          COMMENTS as string,",
-						"          STATE as string,",
-						"          APPLICATIONDATE as timestamp,",
-						"          RATEPAYABLE as decimal(18,0),",
-						"          DEDUCTIONTYPE as string,",
-						"          ENDREASON as string,",
-						"          SDSERVICESUPPLIERCONCERNROLEID as long,",
-						"          SDCALCULATIONRESULTSDTLSID as long,",
-						"          SDCALCULATIONRULE as string,",
-						"          SDCONTRACTAMOUNT as decimal(18,0),",
-						"          SDEDITABLEATTRIBUTESIND as string,",
-						"          SDNUMBEROFMONTHS as integer,",
-						"          SDROOTENTITYID as long,",
-						"          SDPLANNUMBER as string,",
-						"          SDCOMPANYNAME as string,",
-						"          SDCLAIMACCOUNTNUMBER as string,",
-						"          SDINCOMEPROVIDEDBYSDX as string,",
+						"          UPPERNAME as string,",
+						"          UPPERADMINISTRATORUSERNAME as string,",
 						"          VERSIONNO as integer,",
 						"          LASTWRITTEN as timestamp",
 						"     ),",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> srcBenefit",
-						"vwCodeTables filter(TABLENAME== 'BenMethodOfDelivery') ~> BenMethodOfDelivery",
-						"vwCodeTables filter(TABLENAME=='FrequencyCode') ~> FrequencyCode",
-						"vwCodeTables filter(TABLENAME== 'StateCodes') ~> StateCodes",
-						"vwCodeTables filter(TABLENAME == 'BenefitType') ~> BenefitType",
-						"srcBenefit select(mapColumn(",
-						"          EVIDENCEID,",
-						"          DELIVERYTYPE,",
-						"          STARTDATE,",
-						"          ENDDATE,",
-						"          BENEFITTYPE,",
-						"          AMOUNT,",
-						"          FREQUENCYCODE,",
-						"          STATE",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> select1",
-						"select1 derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
-						"drvTrimColumns select(mapColumn(",
-						"          EVIDENCEID,",
-						"          STARTDATE,",
-						"          ENDDATE,",
-						"          AMOUNT,",
-						"          DELIVERYTYPE_Trim,",
-						"          BENEFITTYPE_Trim,",
-						"          FREQUENCYCODE_Trim,",
-						"          STATE_Trim",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectTrimColumns",
-						"SelectTrimColumns, BenefitType lookup(BENEFITTYPE_Trim == CODE,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> LookupBenefitType",
-						"LookupBenefitType select(mapColumn(",
-						"          EVIDENCEID,",
-						"          STARTDATE,",
-						"          ENDDATE,",
-						"          AMOUNT,",
-						"          DELIVERYTYPE_Trim,",
-						"          FREQUENCYCODE_Trim,",
-						"          STATE_Trim,",
-						"          BenefitType = DESCRIPTION",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectBenefitType",
-						"SelectBenefitType, StateCodes lookup(STATE_Trim == CODE,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> LookupStateCodes",
-						"LookupStateCodes select(mapColumn(",
-						"          EVIDENCEID,",
-						"          STARTDATE,",
-						"          ENDDATE,",
-						"          AMOUNT,",
-						"          DELIVERYTYPE_Trim,",
-						"          FREQUENCYCODE_Trim,",
-						"          BenefitType,",
-						"          BenefitState = DESCRIPTION",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectStateCode",
-						"SelectStateCode, FrequencyCode lookup(FREQUENCYCODE_Trim == CODE,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> LookupFrequency",
-						"LookupFrequency select(mapColumn(",
-						"          EVIDENCEID,",
-						"          STARTDATE,",
-						"          ENDDATE,",
-						"          AMOUNT,",
-						"          DELIVERYTYPE_Trim,",
-						"          BenefitType,",
-						"          BenefitState,",
-						"          BenefitFrequency = DESCRIPTION",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectFrequency",
-						"SelectFrequency, BenMethodOfDelivery lookup(DELIVERYTYPE_Trim == CODE,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> LookupBenMethDelivery",
-						"LookupBenMethDelivery select(mapColumn(",
-						"          EVIDENCEID,",
-						"          STARTDATE,",
-						"          ENDDATE,",
-						"          AMOUNT,",
-						"          BenefitType,",
-						"          BenefitState,",
-						"          BenefitFrequency,",
-						"          BenefitDeliveryType = DESCRIPTION",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectBenMethDelivery",
-						"SelectBenMethDelivery derive(ModifiedDate = currentUTC(),",
-						"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> derivedColumn1",
-						"derivedColumn1 select(mapColumn(",
-						"          EvidenceID = EVIDENCEID,",
-						"          BenefitStartDate = STARTDATE,",
-						"          BenefitEndDate = ENDDATE,",
-						"          BenefitAmount = AMOUNT,",
+						"     format: 'table') ~> srcWorkQueue",
+						"drvNullColumns select(mapColumn(",
+						"          WorkQueueID = WORKQUEUEID,",
 						"          ModifiedDate,",
-						"          BenefitType = BenefitType_null,",
-						"          BenefitState = BenefitState_null,",
-						"          BenefitFrequency = BenefitFrequency_null,",
-						"          BenefitDeliveryType = BenefitDeliveryType_null",
+						"          WorkQueueName = NAME_null",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
-						"SelectTgtColumns sink(allowSchemaDrift: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectNullColumns",
+						"srcWorkQueue derive(ModifiedDate = currentUTC(),",
+						"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvNullColumns",
+						"SelectNullColumns sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
 						"          Column_1 as string,",
@@ -13073,16 +13227,15 @@
 						"          Column_5 as string,",
 						"          Column_6 as string",
 						"     ),",
-						"     partitionFileNames:['DimBenefit.txt'],",
+						"     partitionFileNames:['DimWorkQueue.txt'],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> tgtDimBenefit"
+						"     partitionBy('hash', 1)) ~> tgtWorkQueueDim"
 					]
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
-				"[concat(variables('factoryId'), '/datasets/Benefit')]",
+				"[concat(variables('factoryId'), '/datasets/WorkQueue')]",
 				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
 			]
 		}

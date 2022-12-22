@@ -13,29 +13,190 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/df_OrganizationalUnit')]",
+			"name": "[concat(parameters('factoryName'), '/df_SCD2_Example')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "Organizational Unit Dimension",
 				"folder": {
-					"name": "Dimensions"
+					"name": "Final df POCs"
 				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "OrganizationUnit",
+								"referenceName": "TestDataForEmployee",
 								"type": "DatasetReference"
 							},
-							"name": "srcOrganizationalUnit"
+							"name": "srcEmployee"
+						},
+						{
+							"dataset": {
+								"referenceName": "TestDataForEmployeeDim",
+								"type": "DatasetReference"
+							},
+							"name": "srcEmployeeDim"
 						}
 					],
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "DimensionTargetTesting",
+								"referenceName": "TestDataForEmployeeDim",
+								"type": "DatasetReference"
+							},
+							"name": "SinkEmployeeDimInsert"
+						},
+						{
+							"dataset": {
+								"referenceName": "TestDataForEmployeeDim",
+								"type": "DatasetReference"
+							},
+							"name": "SinkEmployeeDimUpdate"
+						}
+					],
+					"transformations": [
+						{
+							"name": "HASHInput"
+						},
+						{
+							"name": "HASHRef"
+						},
+						{
+							"name": "SetToActive"
+						},
+						{
+							"name": "ExistsCheckforUpdates"
+						},
+						{
+							"name": "ExistsCheckforObsolete"
+						},
+						{
+							"name": "SetToInActive"
+						},
+						{
+							"name": "AlterRow1"
+						},
+						{
+							"name": "SelectColumns"
+						},
+						{
+							"name": "FilterForTesting"
+						}
+					],
+					"script": "source(output(\n\t\tEmpID as short,\n\t\tFirstName as string,\n\t\tLastName as string,\n\t\tMiddleName as string,\n\t\tTitle as string,\n\t\tHireDate as date,\n\t\tBirthDate as date,\n\t\tPhone as string,\n\t\tMaritalStatus as string,\n\t\tEmergencyContactName as string,\n\t\tEmergencyContactPhone as string,\n\t\tSalariedFlag as boolean,\n\t\tGender as string,\n\t\tDepartmentName as string,\n\t\tStartDate as date,\n\t\tEndDate as string,\n\t\tStatus as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\twildcardPaths:['2021/*.csv']) ~> srcEmployee\nsource(output(\n\t\tEmployeeKey as integer,\n\t\tEmpID as short,\n\t\tFirstName as string,\n\t\tLastName as string,\n\t\tMiddleName as string,\n\t\tTitle as string,\n\t\tHireDate as date,\n\t\tBirthDate as date,\n\t\tPhone as string,\n\t\tMaritalStatus as string,\n\t\tEmergencyContactName as string,\n\t\tEmergencyContactPhone as string,\n\t\tSalariedFlag as boolean,\n\t\tGender as string,\n\t\tDepartmentName as string,\n\t\tStartDate as date,\n\t\tEndDate as string,\n\t\tStatus as string,\n\t\tIsActive as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> srcEmployeeDim\nSelectColumns derive(inputhash = md5(EmpID,LastName,Title,Phone,MaritalStatus,SalariedFlag,DepartmentName)) ~> HASHInput\nsrcEmployeeDim derive(sqlhash = md5(EmpID,LastName,Title,Phone,MaritalStatus,SalariedFlag,DepartmentName)) ~> HASHRef\nExistsCheckforUpdates derive(IsActive = 1,\n\t\tEndDate = toDate('9999-12-31')) ~> SetToActive\nHASHInput, HASHRef exists(inputhash == sqlhash,\n\tnegate:true,\n\tbroadcast: 'auto')~> ExistsCheckforUpdates\nHASHRef, SetToActive exists(srcEmployeeDim@EmpID == SelectColumns@EmpID,\n\tnegate:false,\n\tbroadcast: 'auto')~> ExistsCheckforObsolete\nExistsCheckforObsolete derive(EndDate = toDate(currentUTC()),\n\t\tIsActive = 0,\n\t\tStatus = 'Termed') ~> SetToInActive\nSetToInActive alterRow(updateIf(true())) ~> AlterRow1\nFilterForTesting select(mapColumn(\n\t\tEmpID,\n\t\tFirstName,\n\t\tLastName,\n\t\tMiddleName,\n\t\tTitle,\n\t\tHireDate,\n\t\tBirthDate,\n\t\tPhone,\n\t\tMaritalStatus,\n\t\tEmergencyContactName,\n\t\tEmergencyContactPhone,\n\t\tSalariedFlag,\n\t\tGender,\n\t\tDepartmentName,\n\t\tStartDate,\n\t\tEndDate,\n\t\tStatus\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectColumns\nsrcEmployee filter(EmpID ==1002) ~> FilterForTesting\nSetToActive sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tEmpID,\n\t\tFirstName,\n\t\tLastName,\n\t\tMiddleName,\n\t\tTitle,\n\t\tHireDate,\n\t\tBirthDate,\n\t\tPhone,\n\t\tMaritalStatus,\n\t\tEmergencyContactName,\n\t\tEmergencyContactPhone,\n\t\tSalariedFlag,\n\t\tGender,\n\t\tDepartmentName,\n\t\tStartDate,\n\t\tEndDate,\n\t\tStatus,\n\t\tIsActive\n\t)) ~> SinkEmployeeDimInsert\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['EmployeeKey'],\n\tskipKeyWrites:true,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tEmployeeKey,\n\t\tEmpID,\n\t\tFirstName,\n\t\tLastName,\n\t\tMiddleName,\n\t\tTitle,\n\t\tHireDate,\n\t\tBirthDate,\n\t\tPhone,\n\t\tMaritalStatus,\n\t\tEmergencyContactName,\n\t\tEmergencyContactPhone,\n\t\tSalariedFlag,\n\t\tGender,\n\t\tDepartmentName,\n\t\tStartDate,\n\t\tEndDate,\n\t\tStatus,\n\t\tIsActive\n\t)) ~> SinkEmployeeDimUpdate"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_Simple_Error_Handling_POC')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Final df POCs"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DimAddress",
+								"type": "DatasetReference"
+							},
+							"name": "srcAddress"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "rowswritten",
+								"type": "DatasetReference"
+							},
+							"name": "tgtErrors"
+						},
+						{
+							"dataset": {
+								"referenceName": "rowswritten",
+								"type": "DatasetReference"
+							},
+							"name": "tgtValidRows"
+						}
+					],
+					"transformations": [
+						{
+							"name": "AssertCityBothell"
+						},
+						{
+							"name": "drvErrorColumns"
+						},
+						{
+							"name": "split1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          AddressID as integer,",
+						"          AddressLine1 as string,",
+						"          AddressLine2 as string,",
+						"          City as string,",
+						"          StateProvince as string,",
+						"          CountryRegion as string,",
+						"          PostalCode as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcAddress",
+						"srcAddress assert(expectTrue(City=='Bothell', false, 'assertIsBothell', null, 'City is  not Bothell')) ~> AssertCityBothell",
+						"AssertCityBothell derive(TotalErrors = assertErrorMessages(),",
+						"          CityError = at(assertErrorMessages(),'assertIsBothell')) ~> drvErrorColumns",
+						"drvErrorColumns split(hasError('assertIsBothell'),",
+						"     disjoint: false) ~> split1@(InvalidRecords, ValidRows)",
+						"split1@InvalidRecords sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['Error.txt'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     outputAssertFailedRows: true,",
+						"     assertFailure_container: 'newcontainer',",
+						"     partitionBy('hash', 1)) ~> tgtErrors",
+						"split1@ValidRows sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['ValidRows.txt'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtValidRows"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_StagePlaceHolder')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Staging"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "reportingSalesOrderHeader",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Dummy",
 								"type": "DatasetReference"
 							},
 							"name": "sink1"
@@ -43,19 +204,38 @@
 					],
 					"transformations": [],
 					"scriptLines": [
-						"source(allowSchemaDrift: true,",
+						"source(output(",
+						"          SalesOrderID as integer,",
+						"          RevisionNumber as integer,",
+						"          OrderDate as timestamp,",
+						"          DueDate as timestamp,",
+						"          ShipDate as timestamp,",
+						"          Status as integer,",
+						"          OnlineOrderFlag as boolean,",
+						"          SalesOrderNumber as string,",
+						"          PurchaseOrderNumber as string,",
+						"          AccountNumber as string,",
+						"          CustomerID as integer,",
+						"          ShipToAddressID as integer,",
+						"          BillToAddressID as integer,",
+						"          ShipMethod as string,",
+						"          CreditCardApprovalCode as string,",
+						"          SubTotal as decimal(19,4),",
+						"          TaxAmt as decimal(19,4),",
+						"          Freight as decimal(19,4),",
+						"          TotalDue as decimal(19,4),",
+						"          Comment as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> srcOrganizationalUnit",
-						"srcOrganizationalUnit sink(allowSchemaDrift: true,",
+						"     format: 'table') ~> source1",
+						"source1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
-						"          Column_1 as string,",
-						"          Column_2 as string,",
-						"          Column_3 as string,",
-						"          Column_4 as string,",
-						"          Column_5 as string,",
-						"          Column_6 as string",
+						"          Column_1 as string",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> sink1"
@@ -65,11 +245,11 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_Benefit')]",
+			"name": "[concat(parameters('factoryName'), '/df_WorkQueue')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "Benefit Dimension\n",
+				"description": "Work Queue Dimension",
 				"folder": {
 					"name": "Dimensions"
 				},
@@ -78,17 +258,10 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "vwCodeTable",
+								"referenceName": "WorkQueue",
 								"type": "DatasetReference"
 							},
-							"name": "vwCodeTables"
-						},
-						{
-							"dataset": {
-								"referenceName": "Benefit",
-								"type": "DatasetReference"
-							},
-							"name": "srcBenefit"
+							"name": "srcWorkQueue"
 						}
 					],
 					"sinks": [
@@ -97,223 +270,44 @@
 								"referenceName": "DimensionTargetTesting",
 								"type": "DatasetReference"
 							},
-							"name": "tgtDimBenefit"
+							"name": "tgtWorkQueueDim"
 						}
 					],
 					"transformations": [
 						{
-							"name": "BenMethodOfDelivery"
+							"name": "SelectNullColumns"
 						},
 						{
-							"name": "FrequencyCode"
-						},
-						{
-							"name": "StateCodes"
-						},
-						{
-							"name": "BenefitType"
-						},
-						{
-							"name": "select1"
-						},
-						{
-							"name": "drvTrimColumns"
-						},
-						{
-							"name": "SelectTrimColumns"
-						},
-						{
-							"name": "LookupBenefitType"
-						},
-						{
-							"name": "SelectBenefitType"
-						},
-						{
-							"name": "LookupStateCodes"
-						},
-						{
-							"name": "SelectStateCode"
-						},
-						{
-							"name": "LookupFrequency"
-						},
-						{
-							"name": "SelectFrequency"
-						},
-						{
-							"name": "LookupBenMethDelivery"
-						},
-						{
-							"name": "SelectBenMethDelivery"
-						},
-						{
-							"name": "derivedColumn1"
-						},
-						{
-							"name": "SelectTgtColumns"
+							"name": "drvNullColumns"
 						}
 					],
 					"scriptLines": [
 						"source(output(",
-						"          TABLENAME as string,",
-						"          CODE as string,",
-						"          DESCRIPTION as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> vwCodeTables",
-						"source(output(",
-						"          EVIDENCEID as long,",
-						"          CASEPARTICIPANTROLEID as long,",
-						"          CASENUMBER as string,",
-						"          DELIVERYTYPE as string,",
-						"          STARTDATE as timestamp,",
-						"          ENDDATE as timestamp,",
-						"          BENEFITTYPE as string,",
-						"          INDIANCOUNTRYIND as string,",
-						"          AMOUNT as decimal(18,0),",
-						"          FREQUENCYCODE as string,",
-						"          BENEFITUSAGE as string,",
-						"          LASTPAYMENTDATE as timestamp,",
-						"          PUBLICOFFICEID as long,",
-						"          PAYDAY as string,",
-						"          DEDUCTIONAMOUNT as decimal(18,0),",
-						"          AIDMOBILITYIND as string,",
-						"          AIDPERSONALCAREIND as string,",
+						"          WORKQUEUEID as long,",
+						"          NAME as string,",
+						"          ALLOWUSERSUBSCRIPTIONIND as string,",
+						"          SENSITIVITY as string,",
+						"          ADMINISTRATORUSERNAME as string,",
 						"          COMMENTS as string,",
-						"          STATE as string,",
-						"          APPLICATIONDATE as timestamp,",
-						"          RATEPAYABLE as decimal(18,0),",
-						"          DEDUCTIONTYPE as string,",
-						"          ENDREASON as string,",
-						"          SDSERVICESUPPLIERCONCERNROLEID as long,",
-						"          SDCALCULATIONRESULTSDTLSID as long,",
-						"          SDCALCULATIONRULE as string,",
-						"          SDCONTRACTAMOUNT as decimal(18,0),",
-						"          SDEDITABLEATTRIBUTESIND as string,",
-						"          SDNUMBEROFMONTHS as integer,",
-						"          SDROOTENTITYID as long,",
-						"          SDPLANNUMBER as string,",
-						"          SDCOMPANYNAME as string,",
-						"          SDCLAIMACCOUNTNUMBER as string,",
-						"          SDINCOMEPROVIDEDBYSDX as string,",
+						"          UPPERNAME as string,",
+						"          UPPERADMINISTRATORUSERNAME as string,",
 						"          VERSIONNO as integer,",
 						"          LASTWRITTEN as timestamp",
 						"     ),",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> srcBenefit",
-						"vwCodeTables filter(TABLENAME== 'BenMethodOfDelivery') ~> BenMethodOfDelivery",
-						"vwCodeTables filter(TABLENAME=='FrequencyCode') ~> FrequencyCode",
-						"vwCodeTables filter(TABLENAME== 'StateCodes') ~> StateCodes",
-						"vwCodeTables filter(TABLENAME == 'BenefitType') ~> BenefitType",
-						"srcBenefit select(mapColumn(",
-						"          EVIDENCEID,",
-						"          DELIVERYTYPE,",
-						"          STARTDATE,",
-						"          ENDDATE,",
-						"          BENEFITTYPE,",
-						"          AMOUNT,",
-						"          FREQUENCYCODE,",
-						"          STATE",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> select1",
-						"select1 derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
-						"drvTrimColumns select(mapColumn(",
-						"          EVIDENCEID,",
-						"          STARTDATE,",
-						"          ENDDATE,",
-						"          AMOUNT,",
-						"          DELIVERYTYPE_Trim,",
-						"          BENEFITTYPE_Trim,",
-						"          FREQUENCYCODE_Trim,",
-						"          STATE_Trim",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectTrimColumns",
-						"SelectTrimColumns, BenefitType lookup(BENEFITTYPE_Trim == CODE,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> LookupBenefitType",
-						"LookupBenefitType select(mapColumn(",
-						"          EVIDENCEID,",
-						"          STARTDATE,",
-						"          ENDDATE,",
-						"          AMOUNT,",
-						"          DELIVERYTYPE_Trim,",
-						"          FREQUENCYCODE_Trim,",
-						"          STATE_Trim,",
-						"          BenefitType = DESCRIPTION",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectBenefitType",
-						"SelectBenefitType, StateCodes lookup(STATE_Trim == CODE,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> LookupStateCodes",
-						"LookupStateCodes select(mapColumn(",
-						"          EVIDENCEID,",
-						"          STARTDATE,",
-						"          ENDDATE,",
-						"          AMOUNT,",
-						"          DELIVERYTYPE_Trim,",
-						"          FREQUENCYCODE_Trim,",
-						"          BenefitType,",
-						"          BenefitState = DESCRIPTION",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectStateCode",
-						"SelectStateCode, FrequencyCode lookup(FREQUENCYCODE_Trim == CODE,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> LookupFrequency",
-						"LookupFrequency select(mapColumn(",
-						"          EVIDENCEID,",
-						"          STARTDATE,",
-						"          ENDDATE,",
-						"          AMOUNT,",
-						"          DELIVERYTYPE_Trim,",
-						"          BenefitType,",
-						"          BenefitState,",
-						"          BenefitFrequency = DESCRIPTION",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectFrequency",
-						"SelectFrequency, BenMethodOfDelivery lookup(DELIVERYTYPE_Trim == CODE,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> LookupBenMethDelivery",
-						"LookupBenMethDelivery select(mapColumn(",
-						"          EVIDENCEID,",
-						"          STARTDATE,",
-						"          ENDDATE,",
-						"          AMOUNT,",
-						"          BenefitType,",
-						"          BenefitState,",
-						"          BenefitFrequency,",
-						"          BenefitDeliveryType = DESCRIPTION",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectBenMethDelivery",
-						"SelectBenMethDelivery derive(ModifiedDate = currentUTC(),",
-						"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> derivedColumn1",
-						"derivedColumn1 select(mapColumn(",
-						"          EvidenceID = EVIDENCEID,",
-						"          BenefitStartDate = STARTDATE,",
-						"          BenefitEndDate = ENDDATE,",
-						"          BenefitAmount = AMOUNT,",
+						"     format: 'table') ~> srcWorkQueue",
+						"drvNullColumns select(mapColumn(",
+						"          WorkQueueID = WORKQUEUEID,",
 						"          ModifiedDate,",
-						"          BenefitType = BenefitType_null,",
-						"          BenefitState = BenefitState_null,",
-						"          BenefitFrequency = BenefitFrequency_null,",
-						"          BenefitDeliveryType = BenefitDeliveryType_null",
+						"          WorkQueueName = NAME_null",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
-						"SelectTgtColumns sink(allowSchemaDrift: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectNullColumns",
+						"srcWorkQueue derive(ModifiedDate = currentUTC(),",
+						"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvNullColumns",
+						"SelectNullColumns sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
 						"          Column_1 as string,",
@@ -323,10 +317,10 @@
 						"          Column_5 as string,",
 						"          Column_6 as string",
 						"     ),",
-						"     partitionFileNames:['DimBenefit.txt'],",
+						"     partitionFileNames:['DimWorkQueue.txt'],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> tgtDimBenefit"
+						"     partitionBy('hash', 1)) ~> tgtWorkQueueDim"
 					]
 				}
 			},
@@ -821,7 +815,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_StagePlaceHolder')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pl_MasterFact')]",
@@ -875,7 +871,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_StagePlaceHolder')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pl_SCD1_POC_Example')]",
@@ -978,7 +976,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_SCD2_Example')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pl_TestDataFlows')]",
@@ -987,7 +987,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "df_Benefit",
+						"name": "df_WorkQueue",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -1000,13 +1000,12 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_Benefit",
+								"referenceName": "df_WorkQueue",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"vwCodeTables": {},
-									"srcBenefit": {},
-									"tgtDimBenefit": {}
+									"srcWorkQueue": {},
+									"tgtWorkQueueDim": {}
 								}
 							},
 							"staging": {},
@@ -1028,7 +1027,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_Benefit')]"
+				"[concat(variables('factoryId'), '/dataflows/df_WorkQueue')]"
 			]
 		},
 		{

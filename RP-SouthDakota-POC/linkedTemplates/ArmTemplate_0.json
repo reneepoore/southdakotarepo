@@ -655,6 +655,201 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Benefit')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "EVIDENCEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CASEPARTICIPANTROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CASENUMBER",
+						"type": "char"
+					},
+					{
+						"name": "DELIVERYTYPE",
+						"type": "char"
+					},
+					{
+						"name": "STARTDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "ENDDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "BENEFITTYPE",
+						"type": "char"
+					},
+					{
+						"name": "INDIANCOUNTRYIND",
+						"type": "char"
+					},
+					{
+						"name": "AMOUNT",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 0
+					},
+					{
+						"name": "FREQUENCYCODE",
+						"type": "char"
+					},
+					{
+						"name": "BENEFITUSAGE",
+						"type": "char"
+					},
+					{
+						"name": "LASTPAYMENTDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "PUBLICOFFICEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "PAYDAY",
+						"type": "char"
+					},
+					{
+						"name": "DEDUCTIONAMOUNT",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 0
+					},
+					{
+						"name": "AIDMOBILITYIND",
+						"type": "char"
+					},
+					{
+						"name": "AIDPERSONALCAREIND",
+						"type": "char"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "STATE",
+						"type": "char"
+					},
+					{
+						"name": "APPLICATIONDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "RATEPAYABLE",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 0
+					},
+					{
+						"name": "DEDUCTIONTYPE",
+						"type": "char"
+					},
+					{
+						"name": "ENDREASON",
+						"type": "char"
+					},
+					{
+						"name": "SDSERVICESUPPLIERCONCERNROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "SDCALCULATIONRESULTSDTLSID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "SDCALCULATIONRULE",
+						"type": "char"
+					},
+					{
+						"name": "SDCONTRACTAMOUNT",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 0
+					},
+					{
+						"name": "SDEDITABLEATTRIBUTESIND",
+						"type": "char"
+					},
+					{
+						"name": "SDNUMBEROFMONTHS",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SDROOTENTITYID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "SDPLANNUMBER",
+						"type": "char"
+					},
+					{
+						"name": "SDCOMPANYNAME",
+						"type": "char"
+					},
+					{
+						"name": "SDCLAIMACCOUNTNUMBER",
+						"type": "char"
+					},
+					{
+						"name": "SDINCOMEPROVIDEDBYSDX",
+						"type": "char"
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "BENEFIT"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CaseHeader')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1225,94 +1420,6 @@
 				"typeProperties": {
 					"schema": "SalesLT",
 					"table": "Address"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AdventureWorksLT2019')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DimCustomer')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AdventureWorksLT2019",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Dimensions"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "CustomerID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "NameStyle",
-						"type": "bit"
-					},
-					{
-						"name": "Title",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FirstName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MiddleName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LastName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Suffix",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CompanyName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SalesPerson",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EmailAddress",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Phone",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PasswordHash",
-						"type": "varchar"
-					},
-					{
-						"name": "PasswordSalt",
-						"type": "varchar"
-					},
-					{
-						"name": "rowguid",
-						"type": "uniqueidentifier"
-					},
-					{
-						"name": "ModifiedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "SalesLT",
-					"table": "Customer"
 				}
 			},
 			"dependsOn": [
