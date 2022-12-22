@@ -140,7 +140,7 @@
 				"vwCodeTables filter(TABLENAME== 'BenMethodOfDelivery') ~> BenMethodOfDelivery",
 				"vwCodeTables filter(TABLENAME=='FrequencyCode') ~> FrequencyCode",
 				"vwCodeTables filter(TABLENAME== 'StateCodes') ~> StateCodes",
-				"vwCodeTables filter(ERROR_FUNCTION('TABLENAME = __SINGLE_QUOTE__BenefitType__SINGLE_QUOTE__')) ~> BenefitType",
+				"vwCodeTables filter(TABLENAME == 'BenefitType') ~> BenefitType",
 				"srcBenefit select(mapColumn(",
 				"          EVIDENCEID,",
 				"          DELIVERYTYPE,",
