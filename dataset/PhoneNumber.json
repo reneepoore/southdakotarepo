@@ -54,7 +54,7 @@
 		],
 		"typeProperties": {
 			"schema": "CURAPD01",
-			"table": "PHONENUMBER"
+			"table": "CONCERNROLEPHONENUMBER"
 		}
 	}
 }
