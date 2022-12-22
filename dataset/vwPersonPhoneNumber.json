@@ -1,0 +1,33 @@
+{
+	"name": "vwPersonPhoneNumber",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam/Views"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "CONCERNROLEID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "HOMEPHONE",
+				"type": "varchar"
+			},
+			{
+				"name": "CELLPHONE",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "vw_PersonPhoneNumber"
+		}
+	}
+}
