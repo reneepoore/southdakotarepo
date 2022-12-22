@@ -23,7 +23,15 @@
 					"name": "srcBenefit"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DimensionTargetTesting",
+						"type": "DatasetReference"
+					},
+					"name": "tgtDimBenefit"
+				}
+			],
 			"transformations": [
 				{
 					"name": "BenMethodOfDelivery"
@@ -48,6 +56,33 @@
 				},
 				{
 					"name": "LookupBenefitType"
+				},
+				{
+					"name": "SelectBenefitType"
+				},
+				{
+					"name": "LookupStateCodes"
+				},
+				{
+					"name": "SelectStateCode"
+				},
+				{
+					"name": "LookupFrequency"
+				},
+				{
+					"name": "SelectFrequency"
+				},
+				{
+					"name": "LookupBenMethDelivery"
+				},
+				{
+					"name": "SelectBenMethDelivery"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "SelectTgtColumns"
 				}
 			],
 			"scriptLines": [
@@ -134,7 +169,96 @@
 				"SelectTrimColumns, BenefitType lookup(BENEFITTYPE_Trim == CODE,",
 				"     multiple: false,",
 				"     pickup: 'any',",
-				"     broadcast: 'auto')~> LookupBenefitType"
+				"     broadcast: 'auto')~> LookupBenefitType",
+				"LookupBenefitType select(mapColumn(",
+				"          EVIDENCEID,",
+				"          STARTDATE,",
+				"          ENDDATE,",
+				"          AMOUNT,",
+				"          DELIVERYTYPE_Trim,",
+				"          FREQUENCYCODE_Trim,",
+				"          STATE_Trim,",
+				"          BenefitType = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectBenefitType",
+				"SelectBenefitType, StateCodes lookup(STATE_Trim == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupStateCodes",
+				"LookupStateCodes select(mapColumn(",
+				"          EVIDENCEID,",
+				"          STARTDATE,",
+				"          ENDDATE,",
+				"          AMOUNT,",
+				"          DELIVERYTYPE_Trim,",
+				"          FREQUENCYCODE_Trim,",
+				"          BenefitType,",
+				"          BenefitState = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectStateCode",
+				"SelectStateCode, FrequencyCode lookup(FREQUENCYCODE_Trim == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupFrequency",
+				"LookupFrequency select(mapColumn(",
+				"          EVIDENCEID,",
+				"          STARTDATE,",
+				"          ENDDATE,",
+				"          AMOUNT,",
+				"          DELIVERYTYPE_Trim,",
+				"          BenefitType,",
+				"          BenefitState,",
+				"          BenefitFrequency = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectFrequency",
+				"SelectFrequency, BenMethodOfDelivery lookup(DELIVERYTYPE_Trim == CODE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupBenMethDelivery",
+				"LookupBenMethDelivery select(mapColumn(",
+				"          EVIDENCEID,",
+				"          STARTDATE,",
+				"          ENDDATE,",
+				"          AMOUNT,",
+				"          BenefitType,",
+				"          BenefitState,",
+				"          BenefitFrequency,",
+				"          BenefitDeliveryType = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectBenMethDelivery",
+				"SelectBenMethDelivery derive(ModifiedDate = currentUTC(),",
+				"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          EvidenceID = EVIDENCEID,",
+				"          BenefitStartDate = STARTDATE,",
+				"          BenefitEndDate = ENDDATE,",
+				"          BenefitAmount = AMOUNT,",
+				"          ModifiedDate,",
+				"          BenefitType = BenefitType_null,",
+				"          BenefitState = BenefitState_null,",
+				"          BenefitFrequency = BenefitFrequency_null,",
+				"          BenefitDeliveryType = BenefitDeliveryType_null",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
+				"SelectTgtColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     partitionFileNames:['DimBenefit'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtDimBenefit"
 			]
 		}
 	}
