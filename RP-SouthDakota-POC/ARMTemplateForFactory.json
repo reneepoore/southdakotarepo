@@ -1625,64 +1625,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Address')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CURAPD01",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Curam"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "ADDRESSID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "ADDRESS1",
-						"type": "varchar"
-					},
-					{
-						"name": "ADDRESS2",
-						"type": "varchar"
-					},
-					{
-						"name": "ADDRESS3",
-						"type": "varchar"
-					},
-					{
-						"name": "CITY",
-						"type": "varchar"
-					},
-					{
-						"name": "STATE",
-						"type": "varchar"
-					},
-					{
-						"name": "USCOUNTY",
-						"type": "varchar"
-					},
-					{
-						"name": "ZIP",
-						"type": "varchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "vw_Address"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/AlternateName')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -3988,71 +3930,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PhoneNumber')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CURAPD01",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Curam"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "PHONENUMBERID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "PHONECOUNTRYCODE",
-						"type": "char"
-					},
-					{
-						"name": "PHONEAREACODE",
-						"type": "char"
-					},
-					{
-						"name": "PHONENUMBER",
-						"type": "char"
-					},
-					{
-						"name": "PHONEEXTENSION",
-						"type": "char"
-					},
-					{
-						"name": "STATUSCODE",
-						"type": "char"
-					},
-					{
-						"name": "COMMENTS",
-						"type": "varchar"
-					},
-					{
-						"name": "VERSIONNO",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "LASTWRITTEN",
-						"type": "smalldatetime",
-						"precision": 16,
-						"scale": 0
-					}
-				],
-				"typeProperties": {
-					"schema": "CURAPD01",
-					"table": "PHONENUMBER"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/SDRegion')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -6314,6 +6191,64 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/vwAddress')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam/Views"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ADDRESSID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ADDRESS1",
+						"type": "varchar"
+					},
+					{
+						"name": "ADDRESS2",
+						"type": "varchar"
+					},
+					{
+						"name": "ADDRESS3",
+						"type": "varchar"
+					},
+					{
+						"name": "CITY",
+						"type": "varchar"
+					},
+					{
+						"name": "STATE",
+						"type": "varchar"
+					},
+					{
+						"name": "USCOUNTY",
+						"type": "varchar"
+					},
+					{
+						"name": "ZIP",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "vw_Address"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/vwCodeTable')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -6344,6 +6279,44 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "vw_CODETABLES"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/vwPersonPhoneNumber')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam/Views"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CONCERNROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "HOMEPHONE",
+						"type": "varchar"
+					},
+					{
+						"name": "CELLPHONE",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "vw_PersonPhoneNumber"
 				}
 			},
 			"dependsOn": [
@@ -8432,7 +8405,7 @@
 						},
 						{
 							"dataset": {
-								"referenceName": "Address",
+								"referenceName": "vwAddress",
 								"type": "DatasetReference"
 							},
 							"name": "srcAddress"
@@ -8756,7 +8729,7 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Employer')]",
 				"[concat(variables('factoryId'), '/datasets/ConcernRole')]",
-				"[concat(variables('factoryId'), '/datasets/Address')]",
+				"[concat(variables('factoryId'), '/datasets/vwAddress')]",
 				"[concat(variables('factoryId'), '/datasets/Location')]",
 				"[concat(variables('factoryId'), '/datasets/SDRegion')]",
 				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
@@ -12095,7 +12068,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"folder": {
-					"name": "Final df POCs"
+					"name": "Dimensions"
 				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
@@ -12130,17 +12103,17 @@
 						},
 						{
 							"dataset": {
-								"referenceName": "PhoneNumber",
-								"type": "DatasetReference"
-							},
-							"name": "srcPhoneNumber"
-						},
-						{
-							"dataset": {
-								"referenceName": "Address",
+								"referenceName": "vwAddress",
 								"type": "DatasetReference"
 							},
 							"name": "vwAddress"
+						},
+						{
+							"dataset": {
+								"referenceName": "vwPersonPhoneNumber",
+								"type": "DatasetReference"
+							},
+							"name": "srcPersonPhoneNumber"
 						}
 					],
 					"sinks": [
@@ -12150,6 +12123,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "DummyFile"
+						},
+						{
+							"dataset": {
+								"referenceName": "DimensionTargetTesting",
+								"type": "DatasetReference"
+							},
+							"name": "tgtDimPerson"
 						}
 					],
 					"transformations": [
@@ -12170,6 +12150,33 @@
 						},
 						{
 							"name": "CaseTypeCode"
+						},
+						{
+							"name": "drvTrimColumns"
+						},
+						{
+							"name": "SelectTrimColumns"
+						},
+						{
+							"name": "JoinAlternateName"
+						},
+						{
+							"name": "SelectAlterName"
+						},
+						{
+							"name": "drvTrimAltColumns"
+						},
+						{
+							"name": "SelectAlterNameColumns"
+						},
+						{
+							"name": "JoinPersonPhoneNumber"
+						},
+						{
+							"name": "JoinAddress"
+						},
+						{
+							"name": "select1"
 						}
 					],
 					"scriptLines": [
@@ -12274,21 +12281,8 @@
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> srcConcernRole",
 						"source(output(",
-						"          PHONENUMBERID as long,",
-						"          PHONECOUNTRYCODE as string,",
-						"          PHONEAREACODE as string,",
-						"          PHONENUMBER as string,",
-						"          PHONEEXTENSION as string,",
-						"          STATUSCODE as string,",
-						"          COMMENTS as string,",
-						"          VERSIONNO as integer,",
-						"          LASTWRITTEN as timestamp",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> srcPhoneNumber",
-						"source(output(",
+						"          CONCERNROLEID as long,",
+						"          PRIMARYADDRESSID as long,",
 						"          ADDRESSID as long,",
 						"          ADDRESS1 as string,",
 						"          ADDRESS2 as string,",
@@ -12302,12 +12296,155 @@
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> vwAddress",
+						"source(output(",
+						"          CONCERNROLEID as long,",
+						"          HOMEPHONE as string,",
+						"          CELLPHONE as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcPersonPhoneNumber",
 						"vwCodeTables filter(TABLENAME=='CaseObjective') ~> CaseObjective",
 						"vwCodeTables filter(TABLENAME=='CaseStatus') ~> CaseStatus",
 						"vwCodeTables filter(TABLENAME=='CasePriority') ~> CasePriority",
 						"vwCodeTables filter(TABLENAME=='CaseOutcome') ~> CaseOutcome",
 						"vwCodeTables filter(TABLENAME=='CaseClassification') ~> CaseClassification",
 						"vwCodeTables filter(TABLENAME=='CaseTypeCode') ~> CaseTypeCode",
+						"srcPerson derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+						"drvTrimColumns select(mapColumn(",
+						"          CONCERNROLEID,",
+						"          DATEOFBIRTH,",
+						"          DATEOFDEATH,",
+						"          LASTWRITTEN,",
+						"          VERSIONNO,",
+						"          PRIMARYALTERNATENAMEID,",
+						"          NEXTPAYMENTDATE,",
+						"          PERSONBIRTHNAME_Trim,",
+						"          GENDER_Trim,",
+						"          SPECIALINTERESTCODE_Trim,",
+						"          UPPERPERSONBIRTHNAME_Trim,",
+						"          UPPERMOTHERBIRTHSURNAME_Trim,",
+						"          RACE_Trim,",
+						"          INDIGENOUSGROUPCODE_Trim,",
+						"          INDIGENOUSPERSONIND_Trim,",
+						"          ETHNICORIGINCODE_Trim,",
+						"          PAYMENTFREQUENCY_Trim,",
+						"          CURRENCYTYPE_Trim,",
+						"          METHODOFPMTCODE_Trim,",
+						"          DATEOFBIRTHVERIND_Trim,",
+						"          DATEOFDEATHVERIND_Trim,",
+						"          PRIMARYALTERNATEID_Trim,",
+						"          COUNTRYOFBIRTH_Trim,",
+						"          PLACEOFBIRTH_Trim,",
+						"          PINNUMBER_Trim,",
+						"          MARITALSTATUSCODE_Trim,",
+						"          NATIONALITYCODE_Trim,",
+						"          RESIDENCYABROADIND_Trim,",
+						"          MOTHERBIRTHSURNAME_Trim,",
+						"          COMMENTS_Trim,",
+						"          TYPE_Trim",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectTrimColumns",
+						"SelectTrimColumns, SelectAlterNameColumns join(SelectTrimColumns@CONCERNROLEID == SelectAlterNameColumns@CONCERNROLEID,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> JoinAlternateName",
+						"JoinAlternateName select(mapColumn(",
+						"          CONCERNROLEID = SelectTrimColumns@CONCERNROLEID,",
+						"          DATEOFBIRTH,",
+						"          DATEOFDEATH,",
+						"          LASTWRITTEN,",
+						"          VERSIONNO,",
+						"          PERSONBIRTHNAME_Trim,",
+						"          GENDER_Trim,",
+						"          UPPERMOTHERBIRTHSURNAME_Trim,",
+						"          RACE_Trim,",
+						"          INDIGENOUSGROUPCODE_Trim,",
+						"          INDIGENOUSPERSONIND_Trim,",
+						"          ETHNICORIGINCODE_Trim,",
+						"          DATEOFBIRTHVERIND_Trim,",
+						"          DATEOFDEATHVERIND_Trim,",
+						"          PRIMARYALTERNATEID_Trim,",
+						"          COUNTRYOFBIRTH_Trim,",
+						"          PLACEOFBIRTH_Trim,",
+						"          MARITALSTATUSCODE_Trim,",
+						"          NATIONALITYCODE_Trim,",
+						"          RESIDENCYABROADIND_Trim,",
+						"          MOTHERBIRTHSURNAME_Trim,",
+						"          COMMENTS_Trim,",
+						"          TYPE_Trim,",
+						"          ALTERNATENAMEID,",
+						"          CONCERNROLEID = SelectAlterNameColumns@CONCERNROLEID,",
+						"          FIRSTFORENAME_Trim,",
+						"          OTHERFORENAME_Trim,",
+						"          SURNAME_Trim",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectAlterName",
+						"srcAlternateName derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimAltColumns",
+						"drvTrimAltColumns select(mapColumn(",
+						"          ALTERNATENAMEID,",
+						"          CONCERNROLEID,",
+						"          FIRSTFORENAME_Trim,",
+						"          OTHERFORENAME_Trim,",
+						"          SURNAME_Trim",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectAlterNameColumns",
+						"SelectAlterName, srcPersonPhoneNumber join(SelectAlterName@CONCERNROLEID == srcPersonPhoneNumber@CONCERNROLEID,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> JoinPersonPhoneNumber",
+						"JoinPersonPhoneNumber, vwAddress join(SelectAlterName@CONCERNROLEID == vwAddress@CONCERNROLEID,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> JoinAddress",
+						"JoinAddress select(mapColumn(",
+						"          CONCERNROLEID = SelectAlterName@CONCERNROLEID,",
+						"          DATEOFBIRTH,",
+						"          DATEOFDEATH,",
+						"          LASTWRITTEN,",
+						"          VERSIONNO,",
+						"          PERSONBIRTHNAME_Trim,",
+						"          GENDER_Trim,",
+						"          UPPERMOTHERBIRTHSURNAME_Trim,",
+						"          RACE_Trim,",
+						"          INDIGENOUSGROUPCODE_Trim,",
+						"          INDIGENOUSPERSONIND_Trim,",
+						"          ETHNICORIGINCODE_Trim,",
+						"          DATEOFBIRTHVERIND_Trim,",
+						"          DATEOFDEATHVERIND_Trim,",
+						"          PRIMARYALTERNATEID_Trim,",
+						"          COUNTRYOFBIRTH_Trim,",
+						"          PLACEOFBIRTH_Trim,",
+						"          MARITALSTATUSCODE_Trim,",
+						"          NATIONALITYCODE_Trim,",
+						"          RESIDENCYABROADIND_Trim,",
+						"          MOTHERBIRTHSURNAME_Trim,",
+						"          COMMENTS_Trim,",
+						"          TYPE_Trim,",
+						"          ALTERNATENAMEID,",
+						"          FIRSTFORENAME_Trim,",
+						"          OTHERFORENAME_Trim,",
+						"          SURNAME_Trim,",
+						"          HOMEPHONE,",
+						"          CELLPHONE,",
+						"          ADDRESSID,",
+						"          ADDRESS1,",
+						"          ADDRESS2,",
+						"          ADDRESS3,",
+						"          CITY,",
+						"          STATE,",
+						"          USCOUNTY,",
+						"          ZIP",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
 						"CaseObjective sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -12316,7 +12453,19 @@
 						"     partitionFileNames:['CaseHeaderPOC'],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> DummyFile"
+						"     partitionBy('hash', 1)) ~> DummyFile",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> tgtDimPerson"
 					]
 				}
 			},
@@ -12325,9 +12474,10 @@
 				"[concat(variables('factoryId'), '/datasets/Person')]",
 				"[concat(variables('factoryId'), '/datasets/AlternateName')]",
 				"[concat(variables('factoryId'), '/datasets/ConcernRole')]",
-				"[concat(variables('factoryId'), '/datasets/PhoneNumber')]",
-				"[concat(variables('factoryId'), '/datasets/Address')]",
-				"[concat(variables('factoryId'), '/datasets/Dummy1')]"
+				"[concat(variables('factoryId'), '/datasets/vwAddress')]",
+				"[concat(variables('factoryId'), '/datasets/vwPersonPhoneNumber')]",
+				"[concat(variables('factoryId'), '/datasets/Dummy1')]",
+				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
 			]
 		},
 		{
