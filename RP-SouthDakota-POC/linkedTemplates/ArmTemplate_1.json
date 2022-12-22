@@ -13,92 +13,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/DimCustomer')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AdventureWorksLT2019",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Dimensions"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "CustomerID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "NameStyle",
-						"type": "bit"
-					},
-					{
-						"name": "Title",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FirstName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MiddleName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LastName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Suffix",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CompanyName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SalesPerson",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EmailAddress",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Phone",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PasswordHash",
-						"type": "varchar"
-					},
-					{
-						"name": "PasswordSalt",
-						"type": "varchar"
-					},
-					{
-						"name": "rowguid",
-						"type": "uniqueidentifier"
-					},
-					{
-						"name": "ModifiedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "SalesLT",
-					"table": "Customer"
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/DimCustomer1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1063,6 +977,25 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/OrganizationUnit')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Person')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1450,11 +1383,10 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Task')]",
+			"name": "[concat(parameters('factoryName'), '/Service')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "Task Table",
 				"linkedServiceName": {
 					"referenceName": "CURAPD01",
 					"type": "LinkedServiceReference"
@@ -1466,44 +1398,41 @@
 				"type": "AzureSqlTable",
 				"schema": [
 					{
-						"name": "APPEALINDICATOR",
-						"type": "char"
-					},
-					{
-						"name": "CASEID",
+						"name": "SERVICEID",
 						"type": "bigint",
 						"precision": 19
 					},
 					{
-						"name": "INTEGRATEDCASEID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "CASEREFERENCE",
+						"name": "TYPECODE",
 						"type": "char"
 					},
 					{
-						"name": "CASETYPECODE",
+						"name": "DESCRIPTION",
+						"type": "varchar"
+					},
+					{
+						"name": "STARTDATE",
+						"type": "date"
+					},
+					{
+						"name": "ENDDATE",
+						"type": "date"
+					},
+					{
+						"name": "CESSATIONREASONCDE",
 						"type": "char"
 					},
 					{
-						"name": "CLASSIFICATIONCODE",
+						"name": "CESSATIONREASONTXT",
+						"type": "varchar"
+					},
+					{
+						"name": "STATUSCODE",
 						"type": "char"
 					},
 					{
-						"name": "EXPECTEDOUTCOME",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "ACTUALOUTCOME",
-						"type": "char"
-					},
-					{
-						"name": "OWNERORGOBJECTLINKID",
-						"type": "bigint",
-						"precision": 19
+						"name": "COMMENTS",
+						"type": "varchar"
 					},
 					{
 						"name": "VERSIONNO",
@@ -1512,88 +1441,14 @@
 					},
 					{
 						"name": "LASTWRITTEN",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "INTEGRATEDCASETYPE",
-						"type": "char"
-					},
-					{
-						"name": "OBJECTIVECODE",
-						"type": "char"
-					},
-					{
-						"name": "OUTCOMECODE",
-						"type": "char"
-					},
-					{
-						"name": "PLANID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "PRIORITYCODE",
-						"type": "char"
-					},
-					{
-						"name": "RECEIVEDDATE",
-						"type": "date"
-					},
-					{
-						"name": "EFFECTIVEDATE",
-						"type": "date"
-					},
-					{
-						"name": "STATUSCODE",
-						"type": "char"
-					},
-					{
-						"name": "ENDDATE",
-						"type": "date"
-					},
-					{
-						"name": "EXPECTEDENDDATE",
-						"type": "date"
-					},
-					{
-						"name": "EXPECTEDSTARTDATE",
-						"type": "date"
-					},
-					{
-						"name": "FIRSTREVIEWDATE",
-						"type": "date"
-					},
-					{
-						"name": "COMMENTS",
-						"type": "varchar"
-					},
-					{
-						"name": "CONCERNROLEID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "REGISTRATIONDATE",
-						"type": "date"
-					},
-					{
-						"name": "STARTDATE",
-						"type": "date"
-					},
-					{
-						"name": "DEFAULTCURRENCYTYPECODE",
-						"type": "char"
-					},
-					{
-						"name": "DEFAULTDELIVERYMETHODTYPE",
-						"type": "char"
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
 					}
 				],
 				"typeProperties": {
 					"schema": "CURAPD01",
-					"table": "TASK"
+					"table": "SERVICE"
 				}
 			},
 			"dependsOn": []

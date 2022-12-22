@@ -1437,7 +1437,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "df_DimSuspension",
+						"name": "df_Benefit",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -1450,13 +1450,13 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_DimSuspension",
+								"referenceName": "df_Benefit",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
 									"vwCodeTables": {},
-									"srcSuspension": {},
-									"tgtDimSuspension": {}
+									"srcBenefit": {},
+									"tgtDimBenefit": {}
 								}
 							},
 							"staging": {},
@@ -1478,7 +1478,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_DimSuspension')]"
+				"[concat(variables('factoryId'), '/dataflows/df_Benefit')]"
 			]
 		},
 		{
@@ -2280,43 +2280,6 @@
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "vw_CODETABLES"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CodeTables')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CURAPD01",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "POCWork"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "TABLENAME",
-						"type": "varchar"
-					},
-					{
-						"name": "CODE",
-						"type": "varchar"
-					},
-					{
-						"name": "DESCRIPTION",
-						"type": "varchar"
-					}
-				],
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "vw_CODETABLES"
@@ -3656,6 +3619,27 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/OrganizationUnit')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Person')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -4048,6 +4032,255 @@
 				"typeProperties": {
 					"schema": "CURAPD01",
 					"table": "SANCTION"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Service')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "SERVICEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "TYPECODE",
+						"type": "char"
+					},
+					{
+						"name": "DESCRIPTION",
+						"type": "varchar"
+					},
+					{
+						"name": "STARTDATE",
+						"type": "date"
+					},
+					{
+						"name": "ENDDATE",
+						"type": "date"
+					},
+					{
+						"name": "CESSATIONREASONCDE",
+						"type": "char"
+					},
+					{
+						"name": "CESSATIONREASONTXT",
+						"type": "varchar"
+					},
+					{
+						"name": "STATUSCODE",
+						"type": "char"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "SERVICE"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ServiceSupplier')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CONCERNROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "STATUSCODE",
+						"type": "char"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "PRIMARYALTERNATEID",
+						"type": "char"
+					},
+					{
+						"name": "PAYMENTFREQUENCY",
+						"type": "char"
+					},
+					{
+						"name": "METHODOFPMTCODE",
+						"type": "char"
+					},
+					{
+						"name": "NEXTPAYMENTDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "CURRENCYTYPE",
+						"type": "char"
+					},
+					{
+						"name": "PINNUMBER",
+						"type": "char"
+					},
+					{
+						"name": "UPPERNAME",
+						"type": "varchar"
+					},
+					{
+						"name": "SDPROVIDERTYPE",
+						"type": "char"
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "SERVICESUPPLIER"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ServiceSupplierLink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "SERVICESUPPLIERLINKID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "SERVICEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "SUPPLIERCONCERNROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "STARTDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "ENDDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "STATUSCODE",
+						"type": "char"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "NEXTPAYMENTDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "PAYMENTFREQUENCY",
+						"type": "char"
+					},
+					{
+						"name": "METHODOFPMTCODE",
+						"type": "char"
+					},
+					{
+						"name": "CURRENCYTYPE",
+						"type": "char"
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "SERVICESUPPLIERLINK"
 				}
 			},
 			"dependsOn": [
@@ -5818,6 +6051,43 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/vwCodeTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam/Views"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "TABLENAME",
+						"type": "varchar"
+					},
+					{
+						"name": "CODE",
+						"type": "varchar"
+					},
+					{
+						"name": "DESCRIPTION",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "vw_CODETABLES"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/vwProgramStatus')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -5827,7 +6097,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "Curam"
+					"name": "Curam/Views"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -5858,6 +6128,58 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "vw_ProgramStatus"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/vwServiceSupplier')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam/Views"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ConcernRoleID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "SERVICESUPPLIERNAME",
+						"type": "varchar"
+					},
+					{
+						"name": "SERVICESUPPLIERSTATUSCODE",
+						"type": "varchar"
+					},
+					{
+						"name": "SERVICESUPPLIERCREATIONDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "SERVICETYPECODE",
+						"type": "varchar"
+					},
+					{
+						"name": "SERVICESTATUSCODE",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "vw_ServiceSupplier"
 				}
 			},
 			"dependsOn": [
@@ -5987,7 +6309,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CodeTables",
+								"referenceName": "vwCodeTable",
 								"type": "DatasetReference"
 							},
 							"name": "vwCodeTables"
@@ -6313,7 +6635,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
 				"[concat(variables('factoryId'), '/datasets/CaseHeader1')]",
 				"[concat(variables('factoryId'), '/datasets/Dummy1')]"
 			]
@@ -6578,7 +6900,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CodeTables",
+								"referenceName": "vwCodeTable",
 								"type": "DatasetReference"
 							},
 							"name": "vwCodeTable"
@@ -6681,7 +7003,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
 				"[concat(variables('factoryId'), '/datasets/CountyDetails')]",
 				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
 			]
@@ -6700,10 +7022,10 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CodeTables",
+								"referenceName": "vwCodeTable",
 								"type": "DatasetReference"
 							},
-							"name": "vwCodeTables"
+							"name": "vwCodeTable"
 						}
 					],
 					"sinks": [
@@ -6735,8 +7057,8 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> vwCodeTables",
-						"vwCodeTables filter(TABLENAME=='SDMedAidPrgmCatClass') ~> SDMedAidPrgmCatClass",
+						"     format: 'table') ~> vwCodeTable",
+						"vwCodeTable filter(TABLENAME=='SDMedAidPrgmCatClass') ~> SDMedAidPrgmCatClass",
 						"SDMedAidPrgmCatClass derive(ModifiedDate = currentUTC(),",
 						"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvTrimColumns",
 						"drvTrimColumns select(mapColumn(",
@@ -6764,7 +7086,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
 				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
 			]
 		},
@@ -6781,10 +7103,10 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CodeTables",
+								"referenceName": "vwCodeTable",
 								"type": "DatasetReference"
 							},
-							"name": "vwCodeTables"
+							"name": "vwCodeTable"
 						},
 						{
 							"dataset": {
@@ -6860,7 +7182,7 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> vwCodeTables",
+						"     format: 'table') ~> vwCodeTable",
 						"source(output(",
 						"          APPEALID as long,",
 						"          CASEID as long,",
@@ -6901,8 +7223,8 @@
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> srcAppealRelationship",
-						"vwCodeTables filter(TABLENAME=='AppealRelationshipStatus') ~> AppealRelationshipStatus",
-						"vwCodeTables filter(TABLENAME=='AppealType') ~> AppealType",
+						"vwCodeTable filter(TABLENAME=='AppealRelationshipStatus') ~> AppealRelationshipStatus",
+						"vwCodeTable filter(TABLENAME=='AppealType') ~> AppealType",
 						"srcAppeal select(mapColumn(",
 						"          APPEALID,",
 						"          CASEID,",
@@ -6973,7 +7295,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
 				"[concat(variables('factoryId'), '/datasets/Appeal')]",
 				"[concat(variables('factoryId'), '/datasets/APPEALRELATIONSHIP')]",
 				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
@@ -6993,10 +7315,10 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CodeTables",
+								"referenceName": "vwCodeTable",
 								"type": "DatasetReference"
 							},
-							"name": "vwCodeTables"
+							"name": "vwCodeTable"
 						},
 						{
 							"dataset": {
@@ -7094,7 +7416,7 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> vwCodeTables",
+						"     format: 'table') ~> vwCodeTable",
 						"source(output(",
 						"          APPLICATIONID as long,",
 						"          SUBMITTEDDATETIME as timestamp,",
@@ -7168,9 +7490,9 @@
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> srcCaseHeader",
-						"vwCodeTables filter(TABLENAME=='RecordStatus') ~> RecordStatus",
-						"vwCodeTables filter(TABLENAME=='ApplicationMethod') ~> ApplicationMethod",
-						"vwCodeTables filter(TABLENAME== 'ApplicationType') ~> ApplicationType",
+						"vwCodeTable filter(TABLENAME=='RecordStatus') ~> RecordStatus",
+						"vwCodeTable filter(TABLENAME=='ApplicationMethod') ~> ApplicationMethod",
+						"vwCodeTable filter(TABLENAME== 'ApplicationType') ~> ApplicationType",
 						"drvTrimColumns select(mapColumn(",
 						"          APPLICATIONID,",
 						"          SUBMITTEDDATETIME,",
@@ -7308,7 +7630,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
 				"[concat(variables('factoryId'), '/datasets/Application')]",
 				"[concat(variables('factoryId'), '/datasets/vwProgramStatus')]",
 				"[concat(variables('factoryId'), '/datasets/CaseHeader')]",
@@ -7329,10 +7651,10 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CodeTables",
+								"referenceName": "vwCodeTable",
 								"type": "DatasetReference"
 							},
-							"name": "vwCodeTables"
+							"name": "vwCodeTable"
 						},
 						{
 							"dataset": {
@@ -7404,7 +7726,7 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> vwCodeTables",
+						"     format: 'table') ~> vwCodeTable",
 						"source(output(",
 						"          EVIDENCEID as long,",
 						"          CASEPARTICIPANTROLEID as long,",
@@ -7428,9 +7750,9 @@
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> srcDisability",
-						"vwCodeTables filter(TABLENAME=='DisabilityType') ~> DisabilityType",
-						"vwCodeTables filter(TABLENAME=='DisabilityMode') ~> DisabilityMode",
-						"vwCodeTables filter(TABLENAME=='CompetencyStatus') ~> CompetencyStatus",
+						"vwCodeTable filter(TABLENAME=='DisabilityType') ~> DisabilityType",
+						"vwCodeTable filter(TABLENAME=='DisabilityMode') ~> DisabilityMode",
+						"vwCodeTable filter(TABLENAME=='CompetencyStatus') ~> CompetencyStatus",
 						"srcDisability select(mapColumn(",
 						"          EVIDENCEID,",
 						"          CASEPARTICIPANTROLEID,",
@@ -7543,7 +7865,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
 				"[concat(variables('factoryId'), '/datasets/Disability')]",
 				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
 			]
@@ -7992,10 +8314,10 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CodeTables",
+								"referenceName": "vwCodeTable",
 								"type": "DatasetReference"
 							},
-							"name": "vwCodeTables"
+							"name": "vwCodeTable"
 						}
 					],
 					"sinks": [
@@ -8033,8 +8355,8 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> vwCodeTables",
-						"vwCodeTables filter(TABLENAME=='ProgramType') ~> ProgramType",
+						"     format: 'table') ~> vwCodeTable",
+						"vwCodeTable filter(TABLENAME=='ProgramType') ~> ProgramType",
 						"ProgramType derive(ModifiedDate = currentUTC(),",
 						"          each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
 						"drvTrimColumns select(mapColumn(",
@@ -8070,7 +8392,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
 				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
 			]
 		},
@@ -8102,7 +8424,7 @@
 						},
 						{
 							"dataset": {
-								"referenceName": "CodeTables",
+								"referenceName": "vwCodeTable",
 								"type": "DatasetReference"
 							},
 							"name": "vwCodeTable"
@@ -8286,7 +8608,7 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Location')]",
 				"[concat(variables('factoryId'), '/datasets/SDRegion')]",
-				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
 				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
 			]
 		},
@@ -8303,10 +8625,10 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CodeTables",
+								"referenceName": "vwCodeTable",
 								"type": "DatasetReference"
 							},
-							"name": "vwCodeTables"
+							"name": "vwCodeTable"
 						},
 						{
 							"dataset": {
@@ -8387,7 +8709,7 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> vwCodeTables",
+						"     format: 'table') ~> vwCodeTable",
 						"source(output(",
 						"          SANCTIONID as long,",
 						"          CONCERNROLEID as long,",
@@ -8411,10 +8733,10 @@
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> srcSantion",
-						"vwCodeTables filter(TABLENAME=='SanctionReason') ~> SanctionReason",
-						"vwCodeTables filter(TABLENAME=='SanctionLevel') ~> SanctionLevel",
-						"vwCodeTables filter(TABLENAME=='RecordStatus') ~> RecordStatus",
-						"vwCodeTables filter(TABLENAME=='SanctionProgram') ~> SanctionProgram",
+						"vwCodeTable filter(TABLENAME=='SanctionReason') ~> SanctionReason",
+						"vwCodeTable filter(TABLENAME=='SanctionLevel') ~> SanctionLevel",
+						"vwCodeTable filter(TABLENAME=='RecordStatus') ~> RecordStatus",
+						"vwCodeTable filter(TABLENAME=='SanctionProgram') ~> SanctionProgram",
 						"srcSantion select(mapColumn(",
 						"          SANCTIONID,",
 						"          CONCERNROLEID,",
@@ -8550,8 +8872,178 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
 				"[concat(variables('factoryId'), '/datasets/Sanction')]",
+				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_DimServiceSupplier')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Service Supplier Dim",
+				"folder": {
+					"name": "Dimensions"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "vwServiceSupplier",
+								"type": "DatasetReference"
+							},
+							"name": "vwServiceSupplier"
+						},
+						{
+							"dataset": {
+								"referenceName": "vwCodeTable",
+								"type": "DatasetReference"
+							},
+							"name": "vwCodeTable"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DimensionTargetTesting",
+								"type": "DatasetReference"
+							},
+							"name": "tgtDimServiceSupplier"
+						}
+					],
+					"transformations": [
+						{
+							"name": "ServiceType"
+						},
+						{
+							"name": "RecordStatus"
+						},
+						{
+							"name": "LookupServiceType"
+						},
+						{
+							"name": "SelectServiceType"
+						},
+						{
+							"name": "LookupServiceSupplierStatus"
+						},
+						{
+							"name": "SelectServiceSupplierStatus"
+						},
+						{
+							"name": "LookupServiceTypeStatus"
+						},
+						{
+							"name": "SelectServiceTypeStatus"
+						},
+						{
+							"name": "drvNullValues"
+						},
+						{
+							"name": "SelectTgtColumns"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          ConcernRoleID as long,",
+						"          SERVICESUPPLIERNAME as string,",
+						"          SERVICESUPPLIERSTATUSCODE as string,",
+						"          SERVICESUPPLIERCREATIONDATE as timestamp,",
+						"          SERVICETYPECODE as string,",
+						"          SERVICESTATUSCODE as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> vwServiceSupplier",
+						"source(output(",
+						"          TABLENAME as string,",
+						"          CODE as string,",
+						"          DESCRIPTION as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> vwCodeTable",
+						"vwCodeTable filter(TABLENAME== 'ServiceType') ~> ServiceType",
+						"vwCodeTable filter(TABLENAME=='RecordStatus') ~> RecordStatus",
+						"vwServiceSupplier, ServiceType lookup(SERVICETYPECODE == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupServiceType",
+						"LookupServiceType select(mapColumn(",
+						"          ConcernRoleID,",
+						"          SERVICESUPPLIERNAME,",
+						"          SERVICESUPPLIERSTATUSCODE,",
+						"          SERVICESUPPLIERCREATIONDATE,",
+						"          SERVICESTATUSCODE,",
+						"          ServiceSupplierServiceType = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectServiceType",
+						"SelectServiceType, RecordStatus lookup(SERVICESUPPLIERSTATUSCODE == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupServiceSupplierStatus",
+						"LookupServiceSupplierStatus select(mapColumn(",
+						"          ConcernRoleID,",
+						"          SERVICESUPPLIERNAME,",
+						"          SERVICESUPPLIERCREATIONDATE,",
+						"          SERVICESTATUSCODE,",
+						"          ServiceSupplierServiceType,",
+						"          ServiceSupplierStatus = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectServiceSupplierStatus",
+						"SelectServiceSupplierStatus, RecordStatus lookup(SERVICESTATUSCODE == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupServiceTypeStatus",
+						"LookupServiceTypeStatus select(mapColumn(",
+						"          ConcernRoleID,",
+						"          SERVICESUPPLIERNAME,",
+						"          SERVICESUPPLIERCREATIONDATE,",
+						"          ServiceSupplierServiceType,",
+						"          ServiceSupplierStatus,",
+						"          ServiceSupplierTypeStatus = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectServiceTypeStatus",
+						"SelectServiceTypeStatus derive(ModifiedDate = currentUTC(),",
+						"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> drvNullValues",
+						"drvNullValues select(mapColumn(",
+						"          ConcernRoleID,",
+						"          ServiceSupplierCreationDate = SERVICESUPPLIERCREATIONDATE,",
+						"          ModifiedDate,",
+						"          ServiceSupplierName = SERVICESUPPLIERNAME_null,",
+						"          ServiceSupplierServiceType = ServiceSupplierServiceType_null,",
+						"          ServiceSupplierStatus = ServiceSupplierStatus_null,",
+						"          ServiceSupplierTypeStatus = ServiceSupplierTypeStatus_null",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
+						"SelectTgtColumns sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     partitionFileNames:['DimServiceSupplier'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtDimServiceSupplier"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/vwServiceSupplier')]",
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
 				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
 			]
 		},
@@ -8757,10 +9249,10 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CodeTables",
+								"referenceName": "vwCodeTable",
 								"type": "DatasetReference"
 							},
-							"name": "vwCodeTables"
+							"name": "vwCodeTable"
 						},
 						{
 							"dataset": {
@@ -8862,7 +9354,7 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> vwCodeTables",
+						"     format: 'table') ~> vwCodeTable",
 						"source(output(",
 						"          TASKID as long,",
 						"          WDOSNAPSHOT as string,",
@@ -8921,11 +9413,11 @@
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> srcTaskAssignment",
-						"vwCodeTables filter(TABLENAME=='TargetItemType') ~> TargetItemType",
-						"vwCodeTables filter(TABLENAME=='TaskCategoryCode') ~> TaskCategoryCode",
-						"vwCodeTables filter(TABLENAME=='TaskChangeType') ~> TaskChangeType",
-						"vwCodeTables filter(TABLENAME=='TaskPriority') ~> TaskPriority",
-						"vwCodeTables filter(TABLENAME=='TaskStatus') ~> TaskStatus",
+						"vwCodeTable filter(TABLENAME=='TargetItemType') ~> TargetItemType",
+						"vwCodeTable filter(TABLENAME=='TaskCategoryCode') ~> TaskCategoryCode",
+						"vwCodeTable filter(TABLENAME=='TaskChangeType') ~> TaskChangeType",
+						"vwCodeTable filter(TABLENAME=='TaskPriority') ~> TaskPriority",
+						"vwCodeTable filter(TABLENAME=='TaskStatus') ~> TaskStatus",
 						"srcTask select(mapColumn(",
 						"          TASKID,",
 						"          CREATIONTIME,",
@@ -9067,7 +9559,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
 				"[concat(variables('factoryId'), '/datasets/Task')]",
 				"[concat(variables('factoryId'), '/datasets/TaskDefinition')]",
 				"[concat(variables('factoryId'), '/datasets/TaskAssignment')]",
@@ -9970,7 +10462,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CodeTables",
+								"referenceName": "vwCodeTable",
 								"type": "DatasetReference"
 							},
 							"name": "vwCodeTables"
@@ -10034,7 +10526,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
 				"[concat(variables('factoryId'), '/datasets/Dummy1')]"
 			]
 		},
@@ -10051,7 +10543,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CodeTables",
+								"referenceName": "vwCodeTable",
 								"type": "DatasetReference"
 							},
 							"name": "vwCodeTables"
@@ -10115,7 +10607,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
 				"[concat(variables('factoryId'), '/datasets/Dummy1')]"
 			]
 		},
@@ -10132,7 +10624,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CodeTables",
+								"referenceName": "vwCodeTable",
 								"type": "DatasetReference"
 							},
 							"name": "vwCodeTables"
@@ -11003,7 +11495,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
 				"[concat(variables('factoryId'), '/datasets/ds_Dummy_Lookup')]"
 			]
 		},
@@ -11020,7 +11512,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CodeTables",
+								"referenceName": "vwCodeTable",
 								"type": "DatasetReference"
 							},
 							"name": "vwCodeTables"
@@ -11239,7 +11731,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CodeTables')]",
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
 				"[concat(variables('factoryId'), '/datasets/Person')]",
 				"[concat(variables('factoryId'), '/datasets/AlternateName')]",
 				"[concat(variables('factoryId'), '/datasets/ConcernRole')]",
@@ -12070,6 +12562,528 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/reportingSalesOrderHeader')]",
 				"[concat(variables('factoryId'), '/datasets/Dummy')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_OrganizationalUnit')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Organizational Unit Dimension",
+				"folder": {
+					"name": "Dimensions"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "OrganizationUnit",
+								"type": "DatasetReference"
+							},
+							"name": "srcOrganizationalUnit"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DimensionTargetTesting",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcOrganizationalUnit",
+						"srcOrganizationalUnit sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/OrganizationUnit')]",
+				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Benefit')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CURAPD01",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Curam"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "EVIDENCEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CASEPARTICIPANTROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CASENUMBER",
+						"type": "char"
+					},
+					{
+						"name": "DELIVERYTYPE",
+						"type": "char"
+					},
+					{
+						"name": "STARTDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "ENDDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "BENEFITTYPE",
+						"type": "char"
+					},
+					{
+						"name": "INDIANCOUNTRYIND",
+						"type": "char"
+					},
+					{
+						"name": "AMOUNT",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 0
+					},
+					{
+						"name": "FREQUENCYCODE",
+						"type": "char"
+					},
+					{
+						"name": "BENEFITUSAGE",
+						"type": "char"
+					},
+					{
+						"name": "LASTPAYMENTDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "PUBLICOFFICEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "PAYDAY",
+						"type": "char"
+					},
+					{
+						"name": "DEDUCTIONAMOUNT",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 0
+					},
+					{
+						"name": "AIDMOBILITYIND",
+						"type": "char"
+					},
+					{
+						"name": "AIDPERSONALCAREIND",
+						"type": "char"
+					},
+					{
+						"name": "COMMENTS",
+						"type": "varchar"
+					},
+					{
+						"name": "STATE",
+						"type": "char"
+					},
+					{
+						"name": "APPLICATIONDATE",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					},
+					{
+						"name": "RATEPAYABLE",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 0
+					},
+					{
+						"name": "DEDUCTIONTYPE",
+						"type": "char"
+					},
+					{
+						"name": "ENDREASON",
+						"type": "char"
+					},
+					{
+						"name": "SDSERVICESUPPLIERCONCERNROLEID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "SDCALCULATIONRESULTSDTLSID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "SDCALCULATIONRULE",
+						"type": "char"
+					},
+					{
+						"name": "SDCONTRACTAMOUNT",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 0
+					},
+					{
+						"name": "SDEDITABLEATTRIBUTESIND",
+						"type": "char"
+					},
+					{
+						"name": "SDNUMBEROFMONTHS",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SDROOTENTITYID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "SDPLANNUMBER",
+						"type": "char"
+					},
+					{
+						"name": "SDCOMPANYNAME",
+						"type": "char"
+					},
+					{
+						"name": "SDCLAIMACCOUNTNUMBER",
+						"type": "char"
+					},
+					{
+						"name": "SDINCOMEPROVIDEDBYSDX",
+						"type": "char"
+					},
+					{
+						"name": "VERSIONNO",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LASTWRITTEN",
+						"type": "smalldatetime",
+						"precision": 16,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "CURAPD01",
+					"table": "BENEFIT"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CURAPD01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_Benefit')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Benefit Dimension\n",
+				"folder": {
+					"name": "Dimensions"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "vwCodeTable",
+								"type": "DatasetReference"
+							},
+							"name": "vwCodeTables"
+						},
+						{
+							"dataset": {
+								"referenceName": "Benefit",
+								"type": "DatasetReference"
+							},
+							"name": "srcBenefit"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DimensionTargetTesting",
+								"type": "DatasetReference"
+							},
+							"name": "tgtDimBenefit"
+						}
+					],
+					"transformations": [
+						{
+							"name": "BenMethodOfDelivery"
+						},
+						{
+							"name": "FrequencyCode"
+						},
+						{
+							"name": "StateCodes"
+						},
+						{
+							"name": "BenefitType"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "drvTrimColumns"
+						},
+						{
+							"name": "SelectTrimColumns"
+						},
+						{
+							"name": "LookupBenefitType"
+						},
+						{
+							"name": "SelectBenefitType"
+						},
+						{
+							"name": "LookupStateCodes"
+						},
+						{
+							"name": "SelectStateCode"
+						},
+						{
+							"name": "LookupFrequency"
+						},
+						{
+							"name": "SelectFrequency"
+						},
+						{
+							"name": "LookupBenMethDelivery"
+						},
+						{
+							"name": "SelectBenMethDelivery"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "SelectTgtColumns"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          TABLENAME as string,",
+						"          CODE as string,",
+						"          DESCRIPTION as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> vwCodeTables",
+						"source(output(",
+						"          EVIDENCEID as long,",
+						"          CASEPARTICIPANTROLEID as long,",
+						"          CASENUMBER as string,",
+						"          DELIVERYTYPE as string,",
+						"          STARTDATE as timestamp,",
+						"          ENDDATE as timestamp,",
+						"          BENEFITTYPE as string,",
+						"          INDIANCOUNTRYIND as string,",
+						"          AMOUNT as decimal(18,0),",
+						"          FREQUENCYCODE as string,",
+						"          BENEFITUSAGE as string,",
+						"          LASTPAYMENTDATE as timestamp,",
+						"          PUBLICOFFICEID as long,",
+						"          PAYDAY as string,",
+						"          DEDUCTIONAMOUNT as decimal(18,0),",
+						"          AIDMOBILITYIND as string,",
+						"          AIDPERSONALCAREIND as string,",
+						"          COMMENTS as string,",
+						"          STATE as string,",
+						"          APPLICATIONDATE as timestamp,",
+						"          RATEPAYABLE as decimal(18,0),",
+						"          DEDUCTIONTYPE as string,",
+						"          ENDREASON as string,",
+						"          SDSERVICESUPPLIERCONCERNROLEID as long,",
+						"          SDCALCULATIONRESULTSDTLSID as long,",
+						"          SDCALCULATIONRULE as string,",
+						"          SDCONTRACTAMOUNT as decimal(18,0),",
+						"          SDEDITABLEATTRIBUTESIND as string,",
+						"          SDNUMBEROFMONTHS as integer,",
+						"          SDROOTENTITYID as long,",
+						"          SDPLANNUMBER as string,",
+						"          SDCOMPANYNAME as string,",
+						"          SDCLAIMACCOUNTNUMBER as string,",
+						"          SDINCOMEPROVIDEDBYSDX as string,",
+						"          VERSIONNO as integer,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcBenefit",
+						"vwCodeTables filter(TABLENAME== 'BenMethodOfDelivery') ~> BenMethodOfDelivery",
+						"vwCodeTables filter(TABLENAME=='FrequencyCode') ~> FrequencyCode",
+						"vwCodeTables filter(TABLENAME== 'StateCodes') ~> StateCodes",
+						"vwCodeTables filter(TABLENAME == 'BenefitType') ~> BenefitType",
+						"srcBenefit select(mapColumn(",
+						"          EVIDENCEID,",
+						"          DELIVERYTYPE,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          BENEFITTYPE,",
+						"          AMOUNT,",
+						"          FREQUENCYCODE,",
+						"          STATE",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+						"drvTrimColumns select(mapColumn(",
+						"          EVIDENCEID,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          AMOUNT,",
+						"          DELIVERYTYPE_Trim,",
+						"          BENEFITTYPE_Trim,",
+						"          FREQUENCYCODE_Trim,",
+						"          STATE_Trim",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectTrimColumns",
+						"SelectTrimColumns, BenefitType lookup(BENEFITTYPE_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupBenefitType",
+						"LookupBenefitType select(mapColumn(",
+						"          EVIDENCEID,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          AMOUNT,",
+						"          DELIVERYTYPE_Trim,",
+						"          FREQUENCYCODE_Trim,",
+						"          STATE_Trim,",
+						"          BenefitType = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectBenefitType",
+						"SelectBenefitType, StateCodes lookup(STATE_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupStateCodes",
+						"LookupStateCodes select(mapColumn(",
+						"          EVIDENCEID,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          AMOUNT,",
+						"          DELIVERYTYPE_Trim,",
+						"          FREQUENCYCODE_Trim,",
+						"          BenefitType,",
+						"          BenefitState = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectStateCode",
+						"SelectStateCode, FrequencyCode lookup(FREQUENCYCODE_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupFrequency",
+						"LookupFrequency select(mapColumn(",
+						"          EVIDENCEID,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          AMOUNT,",
+						"          DELIVERYTYPE_Trim,",
+						"          BenefitType,",
+						"          BenefitState,",
+						"          BenefitFrequency = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectFrequency",
+						"SelectFrequency, BenMethodOfDelivery lookup(DELIVERYTYPE_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupBenMethDelivery",
+						"LookupBenMethDelivery select(mapColumn(",
+						"          EVIDENCEID,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          AMOUNT,",
+						"          BenefitType,",
+						"          BenefitState,",
+						"          BenefitFrequency,",
+						"          BenefitDeliveryType = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectBenMethDelivery",
+						"SelectBenMethDelivery derive(ModifiedDate = currentUTC(),",
+						"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> derivedColumn1",
+						"derivedColumn1 select(mapColumn(",
+						"          EvidenceID = EVIDENCEID,",
+						"          BenefitStartDate = STARTDATE,",
+						"          BenefitEndDate = ENDDATE,",
+						"          BenefitAmount = AMOUNT,",
+						"          ModifiedDate,",
+						"          BenefitType = BenefitType_null,",
+						"          BenefitState = BenefitState_null,",
+						"          BenefitFrequency = BenefitFrequency_null,",
+						"          BenefitDeliveryType = BenefitDeliveryType_null",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
+						"SelectTgtColumns sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     partitionFileNames:['DimBenefit.txt'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtDimBenefit"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/vwCodeTable')]",
+				"[concat(variables('factoryId'), '/datasets/Benefit')]",
+				"[concat(variables('factoryId'), '/datasets/DimensionTargetTesting')]"
 			]
 		}
 	]

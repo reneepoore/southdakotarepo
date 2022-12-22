@@ -13,6 +13,924 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/df_OrganizationalUnit')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Organizational Unit Dimension",
+				"folder": {
+					"name": "Dimensions"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "OrganizationUnit",
+								"type": "DatasetReference"
+							},
+							"name": "srcOrganizationalUnit"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DimensionTargetTesting",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcOrganizationalUnit",
+						"srcOrganizationalUnit sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_Benefit')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Benefit Dimension\n",
+				"folder": {
+					"name": "Dimensions"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "vwCodeTable",
+								"type": "DatasetReference"
+							},
+							"name": "vwCodeTables"
+						},
+						{
+							"dataset": {
+								"referenceName": "Benefit",
+								"type": "DatasetReference"
+							},
+							"name": "srcBenefit"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DimensionTargetTesting",
+								"type": "DatasetReference"
+							},
+							"name": "tgtDimBenefit"
+						}
+					],
+					"transformations": [
+						{
+							"name": "BenMethodOfDelivery"
+						},
+						{
+							"name": "FrequencyCode"
+						},
+						{
+							"name": "StateCodes"
+						},
+						{
+							"name": "BenefitType"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "drvTrimColumns"
+						},
+						{
+							"name": "SelectTrimColumns"
+						},
+						{
+							"name": "LookupBenefitType"
+						},
+						{
+							"name": "SelectBenefitType"
+						},
+						{
+							"name": "LookupStateCodes"
+						},
+						{
+							"name": "SelectStateCode"
+						},
+						{
+							"name": "LookupFrequency"
+						},
+						{
+							"name": "SelectFrequency"
+						},
+						{
+							"name": "LookupBenMethDelivery"
+						},
+						{
+							"name": "SelectBenMethDelivery"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "SelectTgtColumns"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          TABLENAME as string,",
+						"          CODE as string,",
+						"          DESCRIPTION as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> vwCodeTables",
+						"source(output(",
+						"          EVIDENCEID as long,",
+						"          CASEPARTICIPANTROLEID as long,",
+						"          CASENUMBER as string,",
+						"          DELIVERYTYPE as string,",
+						"          STARTDATE as timestamp,",
+						"          ENDDATE as timestamp,",
+						"          BENEFITTYPE as string,",
+						"          INDIANCOUNTRYIND as string,",
+						"          AMOUNT as decimal(18,0),",
+						"          FREQUENCYCODE as string,",
+						"          BENEFITUSAGE as string,",
+						"          LASTPAYMENTDATE as timestamp,",
+						"          PUBLICOFFICEID as long,",
+						"          PAYDAY as string,",
+						"          DEDUCTIONAMOUNT as decimal(18,0),",
+						"          AIDMOBILITYIND as string,",
+						"          AIDPERSONALCAREIND as string,",
+						"          COMMENTS as string,",
+						"          STATE as string,",
+						"          APPLICATIONDATE as timestamp,",
+						"          RATEPAYABLE as decimal(18,0),",
+						"          DEDUCTIONTYPE as string,",
+						"          ENDREASON as string,",
+						"          SDSERVICESUPPLIERCONCERNROLEID as long,",
+						"          SDCALCULATIONRESULTSDTLSID as long,",
+						"          SDCALCULATIONRULE as string,",
+						"          SDCONTRACTAMOUNT as decimal(18,0),",
+						"          SDEDITABLEATTRIBUTESIND as string,",
+						"          SDNUMBEROFMONTHS as integer,",
+						"          SDROOTENTITYID as long,",
+						"          SDPLANNUMBER as string,",
+						"          SDCOMPANYNAME as string,",
+						"          SDCLAIMACCOUNTNUMBER as string,",
+						"          SDINCOMEPROVIDEDBYSDX as string,",
+						"          VERSIONNO as integer,",
+						"          LASTWRITTEN as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> srcBenefit",
+						"vwCodeTables filter(TABLENAME== 'BenMethodOfDelivery') ~> BenMethodOfDelivery",
+						"vwCodeTables filter(TABLENAME=='FrequencyCode') ~> FrequencyCode",
+						"vwCodeTables filter(TABLENAME== 'StateCodes') ~> StateCodes",
+						"vwCodeTables filter(TABLENAME == 'BenefitType') ~> BenefitType",
+						"srcBenefit select(mapColumn(",
+						"          EVIDENCEID,",
+						"          DELIVERYTYPE,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          BENEFITTYPE,",
+						"          AMOUNT,",
+						"          FREQUENCYCODE,",
+						"          STATE",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+						"drvTrimColumns select(mapColumn(",
+						"          EVIDENCEID,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          AMOUNT,",
+						"          DELIVERYTYPE_Trim,",
+						"          BENEFITTYPE_Trim,",
+						"          FREQUENCYCODE_Trim,",
+						"          STATE_Trim",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectTrimColumns",
+						"SelectTrimColumns, BenefitType lookup(BENEFITTYPE_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupBenefitType",
+						"LookupBenefitType select(mapColumn(",
+						"          EVIDENCEID,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          AMOUNT,",
+						"          DELIVERYTYPE_Trim,",
+						"          FREQUENCYCODE_Trim,",
+						"          STATE_Trim,",
+						"          BenefitType = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectBenefitType",
+						"SelectBenefitType, StateCodes lookup(STATE_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupStateCodes",
+						"LookupStateCodes select(mapColumn(",
+						"          EVIDENCEID,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          AMOUNT,",
+						"          DELIVERYTYPE_Trim,",
+						"          FREQUENCYCODE_Trim,",
+						"          BenefitType,",
+						"          BenefitState = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectStateCode",
+						"SelectStateCode, FrequencyCode lookup(FREQUENCYCODE_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupFrequency",
+						"LookupFrequency select(mapColumn(",
+						"          EVIDENCEID,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          AMOUNT,",
+						"          DELIVERYTYPE_Trim,",
+						"          BenefitType,",
+						"          BenefitState,",
+						"          BenefitFrequency = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectFrequency",
+						"SelectFrequency, BenMethodOfDelivery lookup(DELIVERYTYPE_Trim == CODE,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> LookupBenMethDelivery",
+						"LookupBenMethDelivery select(mapColumn(",
+						"          EVIDENCEID,",
+						"          STARTDATE,",
+						"          ENDDATE,",
+						"          AMOUNT,",
+						"          BenefitType,",
+						"          BenefitState,",
+						"          BenefitFrequency,",
+						"          BenefitDeliveryType = DESCRIPTION",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectBenMethDelivery",
+						"SelectBenMethDelivery derive(ModifiedDate = currentUTC(),",
+						"          each(match(type=='string'), $$+'_null' = iifNull($$,'NA'))) ~> derivedColumn1",
+						"derivedColumn1 select(mapColumn(",
+						"          EvidenceID = EVIDENCEID,",
+						"          BenefitStartDate = STARTDATE,",
+						"          BenefitEndDate = ENDDATE,",
+						"          BenefitAmount = AMOUNT,",
+						"          ModifiedDate,",
+						"          BenefitType = BenefitType_null,",
+						"          BenefitState = BenefitState_null,",
+						"          BenefitFrequency = BenefitFrequency_null,",
+						"          BenefitDeliveryType = BenefitDeliveryType_null",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
+						"SelectTgtColumns sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     partitionFileNames:['DimBenefit.txt'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> tgtDimBenefit"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_CaseHeader_Code_Research_POC')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "df_CaseHeader_Lookups_POC",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:05:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_CaseHeader_Lookups_POC",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"vwCodeTables": {},
+									"srcCaseHeader": {},
+									"DummyFile": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Final POCs"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_DynamicDataFlow')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkupTableNames",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "/*\n********************************************************************************************************\nThe first sql select will get the table names.\nthe second sql will get the max ordinal. This is to check if there are multiple columns that make up\na unique row. In the case of CODETABLEITEM there are 3. I only want to process on row. If there is\none row the column is use in as the Key Identifier in the data flow.\nIf the Ordinal Position is greater than 1 it is the CODETABLEITEM. Then that data is processed \ndifferently in the data flow via Conditional split.\nThe third sql gets the columns used in the Primary Key\n\nCode by: Renee Poore\n  \n\n*******************************************************************************************************\n*/\n\nSELECT tblinfo.TABLE_NAME,\n       tblinfo.TABLE_SCHEMA,\n       ISNULL(tblid.COLUMN_NAME, 'NA') UNIQUE_ID,\n       mop.ORDINAL_POSITION \nFROM   (SELECT TABLE_NAME,\n               TABLE_SCHEMA\n        FROM   INFORMATION_SCHEMA.TABLES\n        WHERE\n         TABLE_TYPE = 'BASE TABLE'\n         AND TABLE_SCHEMA = 'CURAPD01') tblinfo\n       LEFT OUTER JOIN (SELECT TABLE_NAME,\n                               MAX(ORDINAL_POSITION) AS ORDINAL_POSITION\n                        FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                        WHERE\n                         OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                                  + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1\n                        GROUP  BY TABLE_NAME) mop\n                    ON tblinfo.TABLE_NAME = mop.TABLE_NAME\n\n       INNER JOIN (SELECT DISTINCT TABLE_NAME,\n                                   COLUMN_NAME,\n                                   ORDINAL_POSITION\n                   FROM   INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n                   WHERE\n                    OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.'\n                                             + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1) tblid\n               ON mop.TABLE_NAME = tblid.TABLE_NAME\n                  AND mop.ORDINAL_POSITION = tblid.ORDINAL_POSITION \n\n\n\t\t\t\tWHERE MOP.ORDINAL_POSITION = 1",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "LookupDynamicAllTables",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "GetEachTableName",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LkupTableNames",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkupTableNames').output.value\n\n",
+								"type": "Expression"
+							},
+							"batchCount": 4,
+							"activities": [
+								{
+									"name": "df_RptToStage",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.00:03:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "df_RptToStage",
+											"type": "DataFlowReference",
+											"parameters": {
+												"TableName": {
+													"value": "'@{item().table_name}'",
+													"type": "Expression"
+												},
+												"SchemaName": {
+													"value": "'@{item().table_schema}'",
+													"type": "Expression"
+												},
+												"UniqueID": {
+													"value": "'@{item().unique_id}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"RptDB": {
+													"Schema": {
+														"value": "@item().table_schema",
+														"type": "Expression"
+													},
+													"TableName": {
+														"value": "@item().table_name",
+														"type": "Expression"
+													}
+												},
+												"StgDB": {
+													"Schema": "STG",
+													"TableName": {
+														"value": "@item().table_name",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "df_CodeTableItem",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_CodeTableItem",
+								"type": "DataFlowReference",
+								"parameters": {
+									"TableName": "'CODETABLEITEM'",
+									"SchemaName": "'CURAPD01'",
+									"UniqueID": "'na'"
+								},
+								"datasetParameters": {
+									"RptDB": {},
+									"StgDB": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Staging"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_FixedWidth_Email_SFTP_Server')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "df_Fixed_Width_Test",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:05:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_Fixed_Width_Test",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"srcDimCustomer": {},
+									"tgtEmailFile": {},
+									"tgtSFTPServer": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "SendEmailWithAttachment",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "df_Fixed_Width_Test",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.00:05:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://rpsendemails.azurewebsites.net:443/api/SendEmailsAttachment/triggers/manual/invoke?api-version=2022-05-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=utmn1rr58YwpbXvNns-CAvWjbj_KDQkfOtnJxcux8k4",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "{\n \"title\":   \"@{pipeline().Pipeline} Succeeded!\",\n\"message\": \"Pipeline run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"pipeline().Pipeline\",\n    \"pipelineRunId\": \"pipeline().RunId\",\n     \"time\": \"@{utcnow()}\"\n\n\n}",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Final POCs"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_ManualTableReload')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkupTableNames",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "blbDynamicTableReload",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "GetEachTableName",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "FilterRowsWithY",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('FilterRowsWithY').output.value",
+								"type": "Expression"
+							},
+							"batchCount": 4,
+							"activities": [
+								{
+									"name": "df_DynamicSelect",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.00:10:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "df_DynamicSelect",
+											"type": "DataFlowReference",
+											"parameters": {
+												"ptblTableName": {
+													"value": "'@{item().Table}'",
+													"type": "Expression"
+												},
+												"ptblLastWritten": {
+													"value": "'@{item().DateTime}'",
+													"type": "Expression"
+												},
+												"ptblPrimaryKeyColumn": {
+													"value": "'@{item().PrimaryKeyColumn}'",
+													"type": "Expression"
+												},
+												"ptblSchema": {
+													"value": "'@{item().SourceSchema}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"RptDBTEST": {
+													"Schema": {
+														"value": "@item().SourceSchema",
+														"type": "Expression"
+													},
+													"TableName": {
+														"value": "@item().Table",
+														"type": "Expression"
+													}
+												},
+												"StgDBTEST": {
+													"Schema": "STG",
+													"TableName": {
+														"value": "@item().Table",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "FilterRowsWithY",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "LkupTableNames",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkupTableNames').output.value",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@startswith(item().Process,'Y')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Staging"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_MasterDimension')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "df_StagePlaceHolder",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_StagePlaceHolder",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Dimensions"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_MasterFact')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "This is the Main pipeline that will execute all pipelines.",
+				"activities": [
+					{
+						"name": "df_StagePlaceHolder",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_StagePlaceHolder",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"failure": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Facts"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_SCD1_POC_Example')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "df_SCD1_Example",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:05:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_SCD1_Example",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"reportingSalesOrderHeader": {},
+									"DimAddress": {},
+									"DimCustomer": {},
+									"targetSalesOrders": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine",
+							"continuationSettings": {
+								"customizedCheckpointKey": "b646b04b-86c5-49a5-a9a4-c5073a53bc78"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Facts"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/pl_SCD2_POC_Example')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -69,7 +987,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "df_DimSuspension",
+						"name": "df_Benefit",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -82,13 +1000,13 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_DimSuspension",
+								"referenceName": "df_Benefit",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
 									"vwCodeTables": {},
-									"srcSuspension": {},
-									"tgtDimSuspension": {}
+									"srcBenefit": {},
+									"tgtDimBenefit": {}
 								}
 							},
 							"staging": {},
@@ -109,7 +1027,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_Benefit')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pl_MasterStaging')]",
@@ -141,7 +1061,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_DynamicDataFlow')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pl_SendEmails')]",
@@ -634,7 +1556,9 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pl_MasterStaging')]"
+				"[concat(variables('factoryId'), '/pipelines/pl_MasterStaging')]",
+				"[concat(variables('factoryId'), '/pipelines/pl_MasterDimension')]",
+				"[concat(variables('factoryId'), '/pipelines/pl_MasterFact')]"
 			]
 		},
 		{
