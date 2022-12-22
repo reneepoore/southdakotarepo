@@ -2,7 +2,7 @@
 	"name": "df_Person",
 	"properties": {
 		"folder": {
-			"name": "Final df POCs"
+			"name": "Dimensions"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -77,6 +77,24 @@
 				},
 				{
 					"name": "CaseTypeCode"
+				},
+				{
+					"name": "drvTrimColumns"
+				},
+				{
+					"name": "SelectTrimColumns"
+				},
+				{
+					"name": "JoinAlternateName"
+				},
+				{
+					"name": "SelectAlterName"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "SelectAlterNameColumns"
 				}
 			],
 			"scriptLines": [
@@ -215,6 +233,89 @@
 				"vwCodeTables filter(TABLENAME=='CaseOutcome') ~> CaseOutcome",
 				"vwCodeTables filter(TABLENAME=='CaseClassification') ~> CaseClassification",
 				"vwCodeTables filter(TABLENAME=='CaseTypeCode') ~> CaseTypeCode",
+				"srcPerson derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> drvTrimColumns",
+				"drvTrimColumns select(mapColumn(",
+				"          CONCERNROLEID,",
+				"          DATEOFBIRTH,",
+				"          DATEOFDEATH,",
+				"          LASTWRITTEN,",
+				"          VERSIONNO,",
+				"          PRIMARYALTERNATENAMEID,",
+				"          NEXTPAYMENTDATE,",
+				"          PERSONBIRTHNAME_Trim,",
+				"          GENDER_Trim,",
+				"          SPECIALINTERESTCODE_Trim,",
+				"          UPPERPERSONBIRTHNAME_Trim,",
+				"          UPPERMOTHERBIRTHSURNAME_Trim,",
+				"          RACE_Trim,",
+				"          INDIGENOUSGROUPCODE_Trim,",
+				"          INDIGENOUSPERSONIND_Trim,",
+				"          ETHNICORIGINCODE_Trim,",
+				"          PAYMENTFREQUENCY_Trim,",
+				"          CURRENCYTYPE_Trim,",
+				"          METHODOFPMTCODE_Trim,",
+				"          DATEOFBIRTHVERIND_Trim,",
+				"          DATEOFDEATHVERIND_Trim,",
+				"          PRIMARYALTERNATEID_Trim,",
+				"          COUNTRYOFBIRTH_Trim,",
+				"          PLACEOFBIRTH_Trim,",
+				"          PINNUMBER_Trim,",
+				"          MARITALSTATUSCODE_Trim,",
+				"          NATIONALITYCODE_Trim,",
+				"          RESIDENCYABROADIND_Trim,",
+				"          MOTHERBIRTHSURNAME_Trim,",
+				"          COMMENTS_Trim,",
+				"          TYPE_Trim",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectTrimColumns",
+				"SelectTrimColumns, SelectAlterNameColumns join(SelectTrimColumns@CONCERNROLEID == SelectAlterNameColumns@CONCERNROLEID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoinAlternateName",
+				"JoinAlternateName select(mapColumn(",
+				"          CONCERNROLEID = SelectTrimColumns@CONCERNROLEID,",
+				"          DATEOFBIRTH,",
+				"          DATEOFDEATH,",
+				"          LASTWRITTEN,",
+				"          VERSIONNO,",
+				"          PERSONBIRTHNAME_Trim,",
+				"          GENDER_Trim,",
+				"          UPPERMOTHERBIRTHSURNAME_Trim,",
+				"          RACE_Trim,",
+				"          INDIGENOUSGROUPCODE_Trim,",
+				"          INDIGENOUSPERSONIND_Trim,",
+				"          ETHNICORIGINCODE_Trim,",
+				"          DATEOFBIRTHVERIND_Trim,",
+				"          DATEOFDEATHVERIND_Trim,",
+				"          PRIMARYALTERNATEID_Trim,",
+				"          COUNTRYOFBIRTH_Trim,",
+				"          PLACEOFBIRTH_Trim,",
+				"          MARITALSTATUSCODE_Trim,",
+				"          NATIONALITYCODE_Trim,",
+				"          RESIDENCYABROADIND_Trim,",
+				"          MOTHERBIRTHSURNAME_Trim,",
+				"          COMMENTS_Trim,",
+				"          TYPE_Trim,",
+				"          ALTERNATENAMEID,",
+				"          CONCERNROLEID = SelectAlterNameColumns@CONCERNROLEID,",
+				"          FIRSTFORENAME_Trim,",
+				"          OTHERFORENAME_Trim,",
+				"          SURNAME_Trim",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectAlterName",
+				"srcAlternateName derive(each(match(type=='string'), $$+'_Trim' = trim($$))) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          ALTERNATENAMEID,",
+				"          CONCERNROLEID,",
+				"          FIRSTFORENAME_Trim,",
+				"          OTHERFORENAME_Trim,",
+				"          SURNAME_Trim",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectAlterNameColumns",
 				"CaseObjective sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
