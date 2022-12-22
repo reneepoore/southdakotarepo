@@ -1,12 +1,12 @@
 {
-	"name": "Address",
+	"name": "vwAddress",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CURAPD01",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "Curam"
+			"name": "Curam/Views"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
