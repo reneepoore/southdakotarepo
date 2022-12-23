@@ -23,7 +23,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "APPEALRELATIONSHIP",
+						"referenceName": "AppealRelationship",
 						"type": "DatasetReference"
 					},
 					"name": "srcAppealRelationship"
