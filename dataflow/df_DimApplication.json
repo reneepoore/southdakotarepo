@@ -51,7 +51,7 @@
 					"name": "RecordStatus"
 				},
 				{
-					"name": "ApplicationMethod"
+					"name": "ApplicationStatus"
 				},
 				{
 					"name": "ApplicationType"
@@ -186,7 +186,7 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> srcCaseHeader",
 				"vwCodeTable filter(TABLENAME=='RecordStatus') ~> RecordStatus",
-				"vwCodeTable filter(TABLENAME=='ApplicationMethod') ~> ApplicationMethod",
+				"vwCodeTable filter(TABLENAME=='ApplicationStatus') ~> ApplicationStatus",
 				"vwCodeTable filter(TABLENAME== 'ApplicationType') ~> ApplicationType",
 				"drvTrimColumns select(mapColumn(",
 				"          APPLICATIONID,",
@@ -226,7 +226,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectAppType",
-				"SelectAppType, ApplicationMethod lookup(APPLICATIONMETHOD_Trim == CODE,",
+				"SelectAppType, ApplicationStatus lookup(CURRENTAPPLICATIONSTATUSID == CODE,",
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> LookAppMethod",
