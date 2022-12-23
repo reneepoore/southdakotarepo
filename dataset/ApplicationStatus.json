@@ -1,0 +1,55 @@
+{
+	"name": "ApplicationStatus",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CURAPD01",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Curam"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "STATUS",
+				"type": "char"
+			},
+			{
+				"name": "APPLICATIONSTATUSID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "DATETIME",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "USERNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "APPLICATIONID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "VERSIONNO",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LASTWRITTEN",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "CURAPD01",
+			"table": "APPLICATIONSTATUS"
+		}
+	}
+}
