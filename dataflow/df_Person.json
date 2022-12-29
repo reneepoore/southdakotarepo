@@ -110,7 +110,7 @@
 					"name": "JoinAddress"
 				},
 				{
-					"name": "select1"
+					"name": "SelectTgtColumns"
 				}
 			],
 			"scriptLines": [
@@ -378,7 +378,7 @@
 				"          ZIP",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
+				"     skipDuplicateMapOutputs: true) ~> SelectTgtColumns",
 				"CaseObjective sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -388,7 +388,7 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     partitionBy('hash', 1)) ~> DummyFile",
-				"select1 sink(allowSchemaDrift: true,",
+				"SelectTgtColumns sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          Column_1 as string,",
