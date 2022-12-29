@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_WorkQueue",
+				"name": "df_DimRegion",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_WorkQueue",
+						"referenceName": "df_DimRegion",
 						"type": "DataFlowReference"
 					},
 					"compute": {
